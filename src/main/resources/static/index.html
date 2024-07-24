@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Authentication Test</title>
+</head>
+<body>
+<h1>JWT Authentication Test</h1>
+<form id="auth-form">
+    <label for="login">Login:</label>
+    <input type="text" id="login" name="login" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Authenticate</button>
+</form>
+<br>
+<button id="test-button" style="display:none;">Send POST Request</button>
+<p id="response"></p>
+
+<script>
+    document.getElementById('auth-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const login = document.getElementById('login').value;
+        const password = document.getElementById('password').value;
+
+        fetch(`http://localhost:8080/auth?login=${login}&password=${password}`, {
+            method: 'GET',
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data && !data.includes("Invalid credentials")) {
+                localStorage.setItem('jwtToken', data);
+                document.getElementById('test-button').style.display = 'block';
+                document.getElementById('response').innerText = 'Authentication successful. Token stored.';
+            } else {
+                document.getElementById('response').innerText = 'Authentication failed.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('response').innerText = 'Authentication failed.';
+        });
+    });
+
+    document.getElementById('test-button').addEventListener('click', function() {
+        const token = localStorage.getItem('jwtToken');
+
+        fetch('http://localhost:8080/account/test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ message: 'Hello, World!' })
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('response').innerText = 'POST request successful. Response: ' + data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('response').innerText = 'POST request failed.';
+        });
+    });
+</script>
+</body>
+</html>
