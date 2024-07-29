@@ -32,9 +32,8 @@ public class JWToken {
 
     private String createToken(String login) throws JOSEException {
         JWSAlgorithm algorithm = JWSAlgorithm.HS256;
-
         Date now = new Date();
-        Date expirationTime = new Date(now.getTime() + 3600 * 100);
+        Date expirationTime = new Date(now.getTime() + 3600 * 1000);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(login)
