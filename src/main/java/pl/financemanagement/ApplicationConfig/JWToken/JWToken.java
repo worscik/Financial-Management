@@ -8,26 +8,29 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pl.financemanagement.User.UserController.UserCredentialsRequest;
 
 import java.util.Date;
 
 @RestController
 public class JWToken {
 
+    private static final String USER = "user";
     @Value("${jwt.secret.key}")
     private String secretKey;
 
 
+
     @GetMapping("/auth")
-    public String getToken(@RequestParam String login, @RequestParam String password) throws JOSEException {
-        // TODO USER DAO
-        return createToken(login);
+    public String getToken(@RequestBody UserCredentialsRequest userCredentialsRequest) throws JOSEException {
+        if(USER.equals(userCredentialsRequest.login())){
+            return createToken(userCredentialsRequest.login());
+        }
+            return "User with login " + userCredentialsRequest.login() + " not found!";
     }
 
     private String createToken(String login) throws JOSEException {

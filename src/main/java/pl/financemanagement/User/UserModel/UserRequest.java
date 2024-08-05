@@ -14,7 +14,7 @@ public class UserRequest {
     @Size(max = 64)
     private String name;
     @JsonProperty("isDemo")
-    private boolean isDemo;
+    private boolean isDemo = false;
 
     public @NotBlank @Email String getEmail() {
         return email;

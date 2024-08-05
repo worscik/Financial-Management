@@ -88,18 +88,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             SignedJWT signedJWT = SignedJWT.parse(authToken);
 
-            // Weryfikacja podpisu
             JWSVerifier verifier = new MACVerifier(secretKey);
             if (!signedJWT.verify(verifier)) {
                 return false;
             }
 
-            // Weryfikacja czasu życia tokena
             Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             return expirationTime != null && expirationTime.after(new Date());
 
         } catch (JOSEException | ParseException ex) {
-            // Log error here
+            logger.error("error during validate token: ", ex);
         }
         return false;
     }
@@ -110,7 +108,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             return expirationTime != null && expirationTime.before(new Date());
         } catch (ParseException ex) {
-            // Log error here
+            logger.error("Error during check token expired time ", ex);
         }
         return true;
     }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.xml.sax.helpers.DefaultHandler;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.User.UserModel.UserRequest;
@@ -47,19 +49,20 @@ public class UserController extends DemoResolver<UserService> {
         return ResponseEntity.ok(resolveService(userRequest.isDemo()).updateUser(userRequest));
     }
 
-    @PatchMapping("/{id}")
-    ResponseEntity<UserResponse> upsertUser(@PathVariable Long id,
-                                            @RequestBody JsonMergePatch patch,
-                                            @RequestParam boolean isSample) {
-        if (AppTools.isBlank(String.valueOf(id))) {
-            return ResponseEntity.badRequest().body(new UserResponse("Id cannot be empty", false));
-        }
-        return ResponseEntity.ok(resolveService(isSample).updateUser(null));
-    }
+    //TODO
+//    @PatchMapping("/{id}")
+//    ResponseEntity<UserResponse> upsertUser(@PathVariable Long id,
+//                                            @RequestBody JsonMergePatch patch,
+//                                            @RequestBody boolean isSample) {
+//        if (AppTools.isBlank(String.valueOf(id))) {
+//            return ResponseEntity.badRequest().body(new UserResponse("Id cannot be empty", false));
+//        }
+//        return ResponseEntity.ok(resolveService(isSample).updateUser(null));
+//    }
 
     @GetMapping("/{userEmail}")
     ResponseEntity<UserResponse> isUserExist(@PathVariable String userEmail,
-                                             @RequestParam boolean isSample) {
+                                             @RequestBody boolean isSample) {
         if (AppTools.isBlank(userEmail)) {
             return ResponseEntity.badRequest().body(new UserResponse("Email cannot be empty", false));
         }
@@ -68,7 +71,7 @@ public class UserController extends DemoResolver<UserService> {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id,
-                                                    @RequestParam boolean isSample) {
+                                                    @RequestBody boolean isSample) {
         if (AppTools.isBlank(String.valueOf(id))) {
             return ResponseEntity.badRequest().body(new UserResponse("Id cannot be empty", false));
         }
@@ -78,7 +81,7 @@ public class UserController extends DemoResolver<UserService> {
     @DeleteMapping("/{id}/{email}")
     ResponseEntity<Boolean> deleteUser(@PathVariable long id,
                                        @PathVariable String email,
-                                       @RequestParam boolean isSample) {
+                                       @RequestBody boolean isSample) {
         if (AppTools.isBlank(String.valueOf(id))) {
             return ResponseEntity.created(URI.create("localhost:8080")).build();
         }

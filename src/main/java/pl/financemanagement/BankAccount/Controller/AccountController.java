@@ -13,12 +13,6 @@ import java.util.UUID;
 @RestController
 public class AccountController {
 
-    @GetMapping()
-    String cos(){
-        return "index.html";
-    }
-
-
     @PostMapping("/account/test")
     public String testEndpoint() {
         return "Token is valid. Message received: ";
