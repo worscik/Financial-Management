@@ -6,6 +6,9 @@ public class UserDto {
     private String email;
     private String name;
 
+    public UserDto() {
+    }
+
     public UserDto(long id, String email, String name) {
         this.id = id;
         this.email = email;

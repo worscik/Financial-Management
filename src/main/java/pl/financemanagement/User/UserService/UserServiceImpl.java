@@ -1,29 +1,42 @@
 package pl.financemanagement.User.UserService;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import pl.financemanagement.BankAccount.Repository.UsersRepository;
 import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
+import pl.financemanagement.User.UserModel.UserResponse;
+
+import java.util.Optional;
 
 @Service
+@Qualifier("normalUserService")
 public class UserServiceImpl implements UserService {
 
+    private final UsersRepository usersRepository;
+
+    public UserServiceImpl(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
+    }
+
     @Override
-    public UserDto createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) {
+        usersRepository.save()
+        return new UserResponse(false);
+    }
+
+    @Override
+    public UserResponse updateUser(UserRequest userRequest) {
         return null;
     }
 
     @Override
-    public UserDto updateUser(UserRequest userRequest) {
+    public UserResponse isUserExistByEmail(String email) {
         return null;
     }
 
     @Override
-    public boolean isUserExistByEmail(String email) {
-        return false;
-    }
-
-    @Override
-    public UserDto getUserById(long id) {
+    public UserResponse getUserById(long id) {
         return null;
     }
 

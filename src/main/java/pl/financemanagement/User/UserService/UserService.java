@@ -1,19 +1,23 @@
 package pl.financemanagement.User.UserService;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
+import pl.financemanagement.User.UserModel.UserResponse;
+
+import java.util.Optional;
 
 @Service("userService")
 public interface UserService {
 
-    UserDto createUser(UserRequest userRequest);
+    UserResponse createUser(UserRequest userRequest);
 
-    UserDto updateUser(UserRequest userRequest);
+    UserResponse updateUser(UserRequest userRequest);
 
-    boolean isUserExistByEmail(String email);
+    UserResponse isUserExistByEmail(String email);
 
-    UserDto getUserById(long id);
+    UserResponse getUserById(long id);
 
     boolean deleteUser(long id, String email);
 

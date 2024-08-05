@@ -28,12 +28,4 @@ public class UserResponseError extends UserResponse {
     public void setErrors(Map<String, String> errors) {
         this.errors = errors;
     }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 }
