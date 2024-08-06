@@ -44,14 +44,11 @@ public class SpringSecurity {
                            .requestMatchers("/auth").permitAll()
                            .anyRequest().authenticated()
                    );
-
-           http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-           return http.build();
        } catch (Exception e){
            log.error("Error during securityFilterChain", e);
        }
-       return null;
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+       return http.build();
     }
 
     @Bean
