@@ -1,8 +1,14 @@
 package pl.financemanagement.User.UserModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponse {
 
     private boolean success;
+    @JsonProperty("user")
     private UserDto userDto;
     private String error;
 

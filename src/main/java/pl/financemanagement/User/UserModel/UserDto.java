@@ -1,18 +1,22 @@
 package pl.financemanagement.User.UserModel;
 
+import java.util.UUID;
+
 public class UserDto {
 
     private long id;
     private String email;
     private String name;
+    private UUID externalId;
 
-    public UserDto() {
-    }
-
-    public UserDto(long id, String email, String name) {
+    public UserDto(long id, String email, String name, UUID externalId) {
         this.id = id;
         this.email = email;
         this.name = name;
+        this.externalId = externalId;
+    }
+
+    public UserDto() {
     }
 
     public long getId() {
@@ -37,5 +41,13 @@ public class UserDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(UUID externalId) {
+        this.externalId = externalId;
     }
 }

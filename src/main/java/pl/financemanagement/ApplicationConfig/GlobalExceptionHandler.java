@@ -27,8 +27,7 @@ public class GlobalExceptionHandler {
         BindingResult result = ex.getBindingResult();
         return new ResponseEntity<>(buildErrorResponse(result), HttpStatus.BAD_REQUEST);
     }
-
-
+    
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadableExceptionException() {
         return ResponseEntity.badRequest().build();

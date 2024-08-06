@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,19 +35,19 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-       try{
-           http
-                   .csrf(csrf -> csrf.disable())
-                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                   .authorizeHttpRequests(authorize -> authorize
-                           .requestMatchers("/auth").permitAll()
-                           .anyRequest().authenticated()
-                   );
-       } catch (Exception e){
-           log.error("Error during securityFilterChain", e);
-       }
+        try {
+            http
+                    .csrf(csrf -> csrf.disable())
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(authorize -> authorize
+                            .requestMatchers("/auth").permitAll()
+                            .anyRequest().authenticated()
+                    );
+        } catch (Exception e) {
+            log.error("Error during securityFilterChain ", e);
+        }
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-       return http.build();
+        return http.build();
     }
 
     @Bean

@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-public class User {
+public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,7 @@ public class User {
     private Instant modifyOn;
     private long version;
 
-    public User() {
+    public UserAccount() {
     }
 
     public long getId() {

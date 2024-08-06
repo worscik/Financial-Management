@@ -34,14 +34,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
+        if ("/auth".equals(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
-            String requestURI = request.getRequestURI();
-
-            if ("/auth".equals(requestURI)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt)) {
@@ -53,26 +54,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 } else {
                     if (isTokenExpired(jwt)) {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getWriter().write("Token has expired");
+                        return;
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getWriter().write("Invalid token");
+                        return;
                     }
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Missing token");
+                return;
             }
-
+            filterChain.doFilter(request, response);
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("An error occurred while processing the token " + ex);
+            response.getWriter().write("An error occurred while processing the token. Contact with admin! ");
         }
 
-        filterChain.doFilter(request, response);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
@@ -116,4 +120,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SignedJWT signedJWT = SignedJWT.parse(token);
         return signedJWT.getJWTClaimsSet().getSubject();
     }
+
 }
