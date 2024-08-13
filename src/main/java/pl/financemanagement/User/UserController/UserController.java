@@ -26,8 +26,8 @@ import java.util.Map;
 public class UserController extends DemoResolver<UserService> {
 
     @Autowired
-    public UserController(@Qualifier("normalUserService") UserService service,
-                          @Qualifier("demoUserService") UserService demoService) {
+    public UserController(@Qualifier("userServiceImpl") UserService service,
+                          @Qualifier("userServiceDemo") UserService demoService) {
         super(service, demoService);
     }
 

@@ -1,5 +1,6 @@
 package pl.financemanagement.User.UserService;
 
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +16,7 @@ import static pl.financemanagement.User.UserModel.UsersMapper.UserDtoMapper;
 import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
 
 @Service
-@Qualifier("normalUserService")
+@Qualifier("userServiceImpl")
 public class UserServiceImpl implements UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -81,7 +82,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUser(long id, String email) {
-        usersRepository.deleteById(id);
+        Optional<UserAccount> user = usersRepository.findById(id);
+        if(user.isPresent()) {
+            usersRepository.deleteById(id);
+        }
+        log.info("Cannot delete user. User with id {} was not found", id);
         return true;
     }
 }

@@ -9,7 +9,7 @@ import pl.financemanagement.User.UserModel.UserResponse;
 import java.util.UUID;
 
 @Service
-@Qualifier("demoUserService")
+@Qualifier("userServiceDemo")
 public class UserDemoServiceImpl implements UserService {
 
     private final static String USER_EMAIL = "exampleUserName";
