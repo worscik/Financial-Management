@@ -24,21 +24,19 @@ public class AccountController extends DemoResolver<AccountService> {
     @PostMapping()
     ResponseEntity<AccountResponse> create(@RequestBody @Valid AccountRequest accountRequest,
                                            Principal principal) {
-        AccountService accountService = resolveService(true);
-        return ResponseEntity.ok(accountService.createAccount(accountRequest));
+        return ResponseEntity.ok(resolveService(true).createAccount(accountRequest));
     }
 
     @PutMapping()
     ResponseEntity<AccountResponse> update(@RequestBody @Valid AccountRequest accountRequest,
                                            Principal principal) {
-        AccountService accountService = resolveService(true);
-        return ResponseEntity.ok(accountService.updateAccount(accountRequest));
+        return ResponseEntity.ok(resolveService(true).updateAccount(accountRequest));
     }
 
-    @GetMapping("/{externalId}")
-    ResponseEntity<AccountResponse> findAccountByExternalId(@RequestParam UUID externalId,
+    @GetMapping()
+    ResponseEntity<AccountResponse> findAccountByExternalId(@RequestBody String externalId,
                                                             Principal principal) {
-        AccountService accountService = resolveService(true);
+         AccountService accountService = resolveService(true);
         return ResponseEntity.ok(accountService.isExistingAccount(externalId));
     }
 

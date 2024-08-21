@@ -15,9 +15,9 @@ public interface AccountService {
 
     AccountResponse updateAccount(AccountRequest accountRequest);
 
-    AccountResponse isExistingAccount(UUID accountNumber);
+    AccountResponse isExistingAccount(String accountNumber);
 
-    AccountResponse getAccountByExternalId(long id);
+    AccountResponse getAccountByExternalId(String id);
 
     boolean deleteAccount(UUID externalId);
 

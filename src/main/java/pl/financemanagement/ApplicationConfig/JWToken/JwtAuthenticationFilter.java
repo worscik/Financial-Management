@@ -71,12 +71,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.getWriter().write("Missing token");
                 return;
             }
-            filterChain.doFilter(request, response);
+
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("An error occurred while processing the token. Contact with admin! ");
+            response.getWriter().close();
+            return;
         }
-
+        filterChain.doFilter(request, response);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
