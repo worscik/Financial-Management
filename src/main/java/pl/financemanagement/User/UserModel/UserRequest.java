@@ -13,22 +13,21 @@ public class UserRequest {
     @NotBlank
     @Size(max = 64)
     private String name;
-    @JsonProperty("isDemo")
     private boolean isDemo = false;
 
-    public @NotBlank @Email String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotBlank @Email String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public @NotBlank @Size(max = 64) String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotBlank @Size(max = 64) String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

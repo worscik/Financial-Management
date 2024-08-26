@@ -1,21 +1,24 @@
 package pl.financemanagement.BankAccount.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-
-import java.util.UUID;
 
 public class AccountRequest {
 
     private String externalId;
+    @NotBlank
     private String accountName;
-    private String accountNumber;
-    private boolean isSample;
+    @JsonProperty("isDemo")
+    private boolean isDemo = false;
 
-    public AccountRequest(String externalId, String accountName, String accountNumber, boolean isSample) {
+    public AccountRequest(String externalId, String accountName, boolean isDemo) {
         this.externalId = externalId;
         this.accountName = accountName;
-        this.accountNumber = accountNumber;
-        this.isSample = isSample;
+        this.isDemo = isDemo;
+    }
+
+    public AccountRequest(String accountName) {
+        this.accountName = accountName;
     }
 
     public AccountRequest() {
@@ -33,23 +36,12 @@ public class AccountRequest {
         return accountName;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+
+    public boolean isDemo() {
+        return isDemo;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public boolean isSample() {
-        return isSample;
-    }
-
-    public void setSample(boolean sample) {
-        isSample = sample;
+    public void setDemo(boolean demo) {
+        isDemo = demo;
     }
 }

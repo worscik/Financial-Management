@@ -19,6 +19,6 @@ public interface AccountService {
 
     AccountResponse getAccountByExternalId(String id);
 
-    boolean deleteAccount(UUID externalId);
+    AccountResponse deleteAccount(String externalId);
 
 }

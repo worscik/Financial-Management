@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public boolean deleteAccount(UUID externalId) {
-        return false;
+    public AccountResponse deleteAccount(String externalId) {
+        return new AccountResponse(true);
     }
 }

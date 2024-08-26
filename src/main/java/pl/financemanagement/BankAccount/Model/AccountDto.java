@@ -4,10 +4,9 @@ import java.util.UUID;
 
 public class AccountDto {
 
-
-    private UUID externalId;
-    private String accountName;
-    private String accountNumber;
+    private final UUID externalId;
+    private final String accountName;
+    private final String accountNumber;
 
     private AccountDto(AccountDtoBuilder builder) {
         this.externalId = builder.externalId;

@@ -1,22 +1,21 @@
 package pl.financemanagement.User.UserModel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.validation.ObjectError;
 
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserResponseError extends UserResponse {
+public class UserErrorResponse extends UserResponse {
 
     private Map<String, String> errors;
 
 
-    public UserResponseError(boolean success, UserDto userDto, Map<String, String> errors) {
+    public UserErrorResponse(boolean success, UserDto userDto, Map<String, String> errors) {
         super(success, userDto);
         this.errors = errors;
     }
 
-    public UserResponseError(boolean success, Map<String, String> errors) {
+    public UserErrorResponse(boolean success, Map<String, String> errors) {
         super(success);
         this.errors = errors;
     }

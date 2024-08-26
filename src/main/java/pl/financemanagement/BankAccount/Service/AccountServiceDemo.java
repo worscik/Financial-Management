@@ -6,6 +6,7 @@ import pl.financemanagement.BankAccount.Model.AccountDto;
 import pl.financemanagement.BankAccount.Model.AccountRequest;
 import pl.financemanagement.BankAccount.Model.AccountResponse;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -29,7 +30,7 @@ public class AccountServiceDemo implements AccountService {
         if(ACCOUNT_NUMBER.equals(accountNumber)){
             return new AccountResponse(true, buildDemoAccount());
         }
-        return new AccountResponse(false, "Account not found.");
+        return new AccountResponse(false, Map.of("Error", "Account not found."));
     }
 
     @Override
@@ -38,8 +39,8 @@ public class AccountServiceDemo implements AccountService {
     }
 
     @Override
-    public boolean deleteAccount(UUID externalId) {
-        return true;
+    public AccountResponse deleteAccount(String externalId) {
+        return new AccountResponse(true);
     }
 
     private AccountDto buildDemoAccount() {

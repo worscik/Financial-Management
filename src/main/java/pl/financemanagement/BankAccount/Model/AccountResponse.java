@@ -2,8 +2,8 @@ package pl.financemanagement.BankAccount.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import pl.financemanagement.User.UserModel.UserDto;
+
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountResponse {
@@ -11,12 +11,16 @@ public class AccountResponse {
     private boolean success;
     @JsonProperty("account")
     private AccountDto userDto;
-    private String error;
+    private Map<String,String> errors;
 
-    public AccountResponse(boolean success, AccountDto userDto, String error) {
+    public AccountResponse(boolean success, AccountDto userDto, Map<String,String> errors) {
         this.success = success;
         this.userDto = userDto;
-        this.error = error;
+        this.errors = errors;
+    }
+
+    public AccountResponse(boolean success) {
+        this.success = success;
     }
 
     public AccountResponse(boolean success, AccountDto userDto) {
@@ -24,9 +28,9 @@ public class AccountResponse {
         this.userDto = userDto;
     }
 
-    public AccountResponse(boolean success, String error) {
+    public AccountResponse(boolean success, Map<String,String> errors) {
         this.success = success;
-        this.error = error;
+        this.errors = errors;
     }
 
     public AccountResponse() {
@@ -48,11 +52,11 @@ public class AccountResponse {
         this.userDto = userDto;
     }
 
-    public String getError() {
-        return error;
+    public Map<String,String> getError() {
+        return errors;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setError(Map<String,String> errors) {
+        this.errors = errors;
     }
 }
