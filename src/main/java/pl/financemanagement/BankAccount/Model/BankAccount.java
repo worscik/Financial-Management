@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class BankAccount {
     private long accountVersion;
     private String accountName;
     private String accountNumber;
+    private BigDecimal amount;
 
     public BankAccount() {
     }
@@ -31,6 +33,14 @@ public class BankAccount {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public UUID getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(UUID externalId) {
+        this.externalId = externalId;
     }
 
     public long getUserId() {
@@ -81,11 +91,11 @@ public class BankAccount {
         this.accountNumber = accountNumber;
     }
 
-    public UUID getExternalId() {
-        return externalId;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setExternalId(UUID externalId) {
-        this.externalId = externalId;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
