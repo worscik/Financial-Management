@@ -1,6 +1,5 @@
 package pl.financemanagement.User.UserService;
 
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +27,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
+        Optional<UserAccount> userExistByEmail = usersRepository.isUserExistByEmail(userRequest.getEmail());
+        if (userExistByEmail.isPresent()) {
+            log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
+            return new UserResponse("User does exist", false);
+        }
         try {
             UserAccount userToSave = userMapper(userRequest);
             UserAccount savedUser = usersRepository.save(userToSave);
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
                 UserAccount savedUser = usersRepository.save(userToSave);
                 return new UserResponse(true, UserDtoMapper(savedUser));
             }
-            return new UserResponse("User Not found: " + userRequest.getEmail(), false);
+            return new UserResponse("User not found: " + userRequest.getEmail(), false);
         } catch (Exception e) {
             log.error("Error when user be updated with email: {}", userRequest.getEmail(), e);
             return new UserResponse("Error when user be updated", false);
@@ -60,7 +64,7 @@ public class UserServiceImpl implements UserService {
             Optional<UserAccount> user = usersRepository.findUserByEmail(email);
             return user
                     .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
-                    .orElseGet(() -> new UserResponse("User " + email + " do not exists.", false));
+                    .orElseGet(() -> new UserResponse("User " + email + " does not exists.", false));
         } catch (Exception e) {
             log.error("Error when trying find user by email: {}", email, e);
             return new UserResponse("Error when user be updated", false);
@@ -83,7 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(long id, String email) {
         Optional<UserAccount> user = usersRepository.findById(id);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             usersRepository.deleteById(id);
         }
         log.info("Cannot delete user. User with id {} was not found", id);

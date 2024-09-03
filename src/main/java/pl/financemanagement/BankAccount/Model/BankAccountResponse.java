@@ -6,34 +6,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountResponse {
+public class BankAccountResponse {
 
     private boolean success;
     @JsonProperty("account")
-    private AccountDto userDto;
+    private BankAccountDto userDto;
     private Map<String,String> errors;
 
-    public AccountResponse(boolean success, AccountDto userDto, Map<String,String> errors) {
+    public BankAccountResponse(boolean success, BankAccountDto userDto, Map<String,String> errors) {
         this.success = success;
         this.userDto = userDto;
         this.errors = errors;
     }
 
-    public AccountResponse(boolean success) {
+    public BankAccountResponse(boolean success) {
         this.success = success;
     }
 
-    public AccountResponse(boolean success, AccountDto userDto) {
+    public BankAccountResponse(boolean success, BankAccountDto userDto) {
         this.success = success;
         this.userDto = userDto;
     }
 
-    public AccountResponse(boolean success, Map<String,String> errors) {
+    public BankAccountResponse(boolean success, Map<String,String> errors) {
         this.success = success;
         this.errors = errors;
     }
 
-    public AccountResponse() {
+    public BankAccountResponse() {
     }
 
     public boolean isSuccess() {
@@ -44,11 +44,11 @@ public class AccountResponse {
         this.success = success;
     }
 
-    public AccountDto getUserDto() {
+    public BankAccountDto getUserDto() {
         return userDto;
     }
 
-    public void setUserDto(AccountDto userDto) {
+    public void setUserDto(BankAccountDto userDto) {
         this.userDto = userDto;
     }
 

@@ -48,7 +48,7 @@
     document.getElementById('test-button').addEventListener('click', function() {
         const token = localStorage.getItem('jwtToken');
 
-        fetch('http://localhost:8080/account/test', {
+        fetch('http://localhost:8080/bankAccount/test', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

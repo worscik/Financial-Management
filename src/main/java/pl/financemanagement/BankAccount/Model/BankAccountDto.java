@@ -2,13 +2,13 @@ package pl.financemanagement.BankAccount.Model;
 
 import java.util.UUID;
 
-public class AccountDto {
+public class BankAccountDto {
 
     private final UUID externalId;
     private final String accountName;
     private final String accountNumber;
 
-    private AccountDto(AccountDtoBuilder builder) {
+    private BankAccountDto(AccountDtoBuilder builder) {
         this.externalId = builder.externalId;
         this.accountName = builder.accountName;
         this.accountNumber = builder.accountNumber;
@@ -53,8 +53,8 @@ public class AccountDto {
             return this;
         }
 
-        public AccountDto build() {
-            return new AccountDto(this);
+        public BankAccountDto build() {
+            return new BankAccountDto(this);
         }
     }
 }

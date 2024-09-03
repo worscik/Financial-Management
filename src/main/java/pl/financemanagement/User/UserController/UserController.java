@@ -8,9 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
+import pl.financemanagement.User.UserModel.UserErrorResponse;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
-import pl.financemanagement.User.UserModel.UserErrorResponse;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.net.URI;

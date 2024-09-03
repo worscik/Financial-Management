@@ -6,19 +6,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
-public class Account {
+public class BankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private UUID externalId;
     private long userId;
     private Instant createdOn;
     private Instant modifyOn;
     private long accountVersion;
     private String accountName;
     private String accountNumber;
+
+    public BankAccount() {
+    }
 
     public long getId() {
         return id;
@@ -74,5 +79,13 @@ public class Account {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public UUID getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(UUID externalId) {
+        this.externalId = externalId;
     }
 }

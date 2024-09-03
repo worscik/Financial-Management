@@ -2,13 +2,13 @@ package pl.financemanagement.BankAccount.Model;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class AccountFindRequest {
+public class BankAccountFindRequest {
 
    @NotBlank
    private String externalId;
    private boolean isDemo = false;
 
-    public AccountFindRequest(String externalId, boolean isDemo) {
+    public BankAccountFindRequest(String externalId, boolean isDemo) {
         this.externalId = externalId;
         this.isDemo = isDemo;
     }
