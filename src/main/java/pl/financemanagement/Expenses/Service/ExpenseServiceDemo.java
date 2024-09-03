@@ -28,7 +28,7 @@ public class ExpenseServiceDemo implements ExpenseService{
     }
 
     @Override
-    public List<ExpenseResponse> findExpenseByUserId(String externalId) {
+    public List<ExpenseDto> findExpenseByUserId(String externalId) {
         return List.of(buildExpenseDto(), buildUpsertedExpenseDto());
     }
 

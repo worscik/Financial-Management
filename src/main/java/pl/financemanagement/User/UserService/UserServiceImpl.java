@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        Optional<UserAccount> userExistByEmail = usersRepository.isUserExistByEmail(userRequest.getEmail());
+        Optional<UserAccount> userExistByEmail = usersRepository.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
             return new UserResponse("User does exist", false);

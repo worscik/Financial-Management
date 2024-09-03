@@ -55,7 +55,7 @@ public class UserController extends DemoResolver<UserService> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id,
+    public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
                                                     @RequestBody boolean isSample) {
         if (AppTools.isBlank(String.valueOf(id))) {
             return ResponseEntity.badRequest().body(new UserResponse("Id cannot be empty", false));
