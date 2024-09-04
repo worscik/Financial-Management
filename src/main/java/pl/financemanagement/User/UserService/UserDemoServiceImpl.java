@@ -6,6 +6,7 @@ import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -17,9 +18,9 @@ public class UserDemoServiceImpl implements UserService {
     private final static UUID EXTERNAL_ID = UUID.randomUUID();
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public Optional<UserResponse> createUser(UserRequest userRequest) {
         UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
-        return new UserResponse(true, userDto);
+        return Optional.of(new UserResponse(true, userDto));
     }
 
     @Override

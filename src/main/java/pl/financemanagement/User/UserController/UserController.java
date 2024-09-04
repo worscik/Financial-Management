@@ -1,6 +1,7 @@
 package pl.financemanagement.User.UserController;
 
 import jakarta.validation.Valid;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController extends DemoResolver<UserService> {
 
-    @Autowired
     public UserController(@Qualifier("userServiceImpl") UserService service,
                           @Qualifier("userServiceDemo") UserService demoService) {
         super(service, demoService);
@@ -34,7 +34,9 @@ public class UserController extends DemoResolver<UserService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
         UserService userService = resolveService(userRequest.isDemo());
-        return ResponseEntity.ok(userService.createUser(userRequest));
+        return userService.createUser(userRequest)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().body(new UserResponse("User creation failed", false)));
     }
 
     @PutMapping

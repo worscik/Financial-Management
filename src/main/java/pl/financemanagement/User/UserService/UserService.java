@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service("userService")
 public interface UserService {
 
-    <Optional>UserResponse createUser(UserRequest userRequest);
+    Optional<UserResponse> createUser(UserRequest userRequest);
 
     UserResponse updateUser(UserRequest userRequest);
 

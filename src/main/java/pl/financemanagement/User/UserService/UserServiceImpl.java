@@ -26,19 +26,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public Optional<UserResponse> createUser(UserRequest userRequest) {
         Optional<UserAccount> userExistByEmail = usersRepository.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
-            return new UserResponse("User does exist", false);
+            return Optional.empty();
         }
         try {
             UserAccount userToSave = userMapper(userRequest);
             UserAccount savedUser = usersRepository.save(userToSave);
-            return new UserResponse(true, UserDtoMapper(savedUser));
+            return Optional.of(new UserResponse(true, UserDtoMapper(savedUser)));
         } catch (Exception e) {
             log.error("Error while user was adding with email: {}", userRequest.getEmail(), e);
-            return new UserResponse("Error while user was adding", false);
+            return Optional.of(new UserResponse("Error while user was adding", false));
         }
     }
 
@@ -60,28 +60,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse isUserExistByEmail(String email) {
-        try {
+
             Optional<UserAccount> user = usersRepository.findUserByEmail(email);
             return user
                     .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
                     .orElseGet(() -> new UserResponse("User " + email + " does not exists.", false));
-        } catch (Exception e) {
-            log.error("Error when trying find user by email: {}", email, e);
-            return new UserResponse("Error when user be updated", false);
-        }
     }
 
     @Override
     public UserResponse getUserById(long id) {
-        try {
             Optional<UserAccount> user = usersRepository.findById(id);
             return user
                     .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
                     .orElseGet(() -> new UserResponse("User do not exists.", false));
-        } catch (Exception e) {
-            log.error("Error when trying find user by id: {} ", id, e);
-            return new UserResponse("Error during finding user with id: " + id, false);
-        }
     }
 
     @Override
@@ -89,8 +80,9 @@ public class UserServiceImpl implements UserService {
         Optional<UserAccount> user = usersRepository.findById(id);
         if (user.isPresent()) {
             usersRepository.deleteById(id);
+            return true;
         }
         log.info("Cannot delete user. User with id {} was not found", id);
-        return true;
+        return false;
     }
 }
