@@ -5,15 +5,16 @@ import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 
 import java.util.Optional;
 
 @Service("userService")
 public interface UserService {
 
-    Optional<UserResponse> createUser(UserRequest userRequest);
+    UserResponse createUser(UserRequest userRequest);
 
-    UserResponse updateUser(UserRequest userRequest);
+    UserResponse updateUser(UserUpdateRequest userRequest);
 
     UserResponse isUserExistByEmail(String email);
 

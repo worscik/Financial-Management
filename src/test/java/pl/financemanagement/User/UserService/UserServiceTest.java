@@ -7,10 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.UserDto;
-import pl.financemanagement.User.UserModel.UserRequest;
-import pl.financemanagement.User.UserModel.UserResponse;
+import org.springframework.security.core.userdetails.User;
+import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UsersRepository;
 
 import java.time.Instant;
@@ -34,14 +32,9 @@ class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    @BeforeEach
-    void setUp() {
-        Instant now = Instant.now();
-    }
-
     @Test
     void createUserWhenNotExist() {
-        Optional<UserResponse> expected = Optional.of(new UserResponse(true, UserDtoMapper(buildUserAccount())));
+        UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
         when(usersRepository.findUserByEmail(any())).thenReturn(Optional.empty());
         when(usersRepository.save(any())).thenReturn(buildUserAccount());
         assertThat(userService.createUser(buildUserRequest()))
@@ -52,11 +45,12 @@ class UserServiceTest {
 
     @Test
     void createUserWhenExist() {
+        UserResponse expected = new UserResponse("User does exist", false);
         when(usersRepository.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.createUser(buildUserRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(Optional.empty());
+                .isEqualTo(expected);
     }
 
     @Test
@@ -67,11 +61,10 @@ class UserServiceTest {
         when(usersRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
         when(usersRepository.save(any(UserAccount.class))).thenThrow(new RuntimeException("Database error"));
 
-        Optional<UserResponse> response = userService.createUser(userRequest);
+        UserResponse response = userService.createUser(userRequest);
 
-        assertTrue(response.isPresent());
-        assertFalse(response.get().isSuccess());
-        assertEquals("Error while user was adding", response.get().getError()  );
+        assertFalse(response.isSuccess());
+        assertEquals("Error while user was adding", response.getError()  );
     }
 
     @Test
@@ -79,7 +72,7 @@ class UserServiceTest {
         UserResponse expected = new UserResponse(true, buildUserDto());
         when(usersRepository.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         when(usersRepository.save(any())).thenReturn(buildUserAccount());
-        assertThat(userService.updateUser(buildUserRequest()))
+        assertThat(userService.updateUser(buildUserUpdateRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -89,7 +82,7 @@ class UserServiceTest {
     void updateUserWhenNotExists() {
         UserResponse expected = new UserResponse("User not found: " + "example1@user.pl", false);
         when(usersRepository.findUserByEmail(any())).thenReturn(Optional.empty());
-        assertThat(userService.updateUser(buildUserRequest()))
+        assertThat(userService.updateUser(buildUserUpdateRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -98,7 +91,7 @@ class UserServiceTest {
     @Test
     void updateUserException() {
         when(usersRepository.findUserByEmail(anyString())).thenThrow(new NullPointerException("Mocked Exception"));
-        UserResponse response = userService.updateUser(buildUserRequest());
+        UserResponse response = userService.updateUser(buildUserUpdateRequest());
         assertEquals("Error when user be updated", response.getError());
         assertFalse(response.isSuccess());
 
@@ -175,6 +168,15 @@ class UserServiceTest {
     private UserRequest buildUserRequest() {
         UserRequest userRequest = new UserRequest();
         userRequest.setName("Test User");
+        userRequest.setEmail("example1@user.pl");
+        userRequest.setDemo(false);
+        return userRequest;
+    }
+
+    private UserUpdateRequest buildUserUpdateRequest() {
+        UserUpdateRequest userRequest = new UserUpdateRequest();
+        userRequest.setNewName("Test User1");
+        userRequest.setNewEmail("example123@user.pl");
         userRequest.setEmail("example1@user.pl");
         userRequest.setDemo(false);
         return userRequest;

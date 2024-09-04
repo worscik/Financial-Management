@@ -1,4 +1,4 @@
-package pl.financemanagement.User.UserController;
+package pl.financemanagement.User.UserModel;
 
 public record UserCredentialsRequest(String login, String password) {
 

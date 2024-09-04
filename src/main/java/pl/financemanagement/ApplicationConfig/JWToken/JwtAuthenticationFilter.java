@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        if ("/auth".equals(requestURI)) {
+        if ("/auth".equals(requestURI) || requestURI.matches("^/h2-console.*")) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -38,13 +38,14 @@ public class SpringSecurity {
         try {
             http
                     .csrf(csrf -> csrf.disable())
+                    .headers(headers -> headers.frameOptions().disable())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/auth").permitAll()
+                            .requestMatchers("/auth", "/h2-console/**").permitAll()
                             .anyRequest().authenticated()
                     );
         } catch (Exception e) {
-            log.error("Error during securityFilterChain ", e);
+            log.error("Error during securityFilterChain", e);
         }
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

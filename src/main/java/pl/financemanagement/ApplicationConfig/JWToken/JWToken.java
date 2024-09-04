@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.financemanagement.User.UserController.UserCredentialsRequest;
+import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 
 import java.util.Date;
 

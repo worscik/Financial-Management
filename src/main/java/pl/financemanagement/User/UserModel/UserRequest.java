@@ -1,6 +1,5 @@
 package pl.financemanagement.User.UserModel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,6 +13,17 @@ public class UserRequest {
     @Size(max = 64)
     private String name;
     private boolean isDemo = false;
+
+    public UserRequest() {
+    }
+
+    public UserRequest(String email, String name, boolean isDemo) {
+        this.email = email;
+        this.name = name;
+        this.isDemo = isDemo;
+    }
+
+
 
     public String getEmail() {
         return email;

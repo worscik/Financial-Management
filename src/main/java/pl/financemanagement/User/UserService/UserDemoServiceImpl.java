@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -18,13 +19,13 @@ public class UserDemoServiceImpl implements UserService {
     private final static UUID EXTERNAL_ID = UUID.randomUUID();
 
     @Override
-    public Optional<UserResponse> createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) {
         UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
-        return Optional.of(new UserResponse(true, userDto));
+        return new UserResponse(true, userDto);
     }
 
     @Override
-    public UserResponse updateUser(UserRequest userRequest) {
+    public UserResponse updateUser(UserUpdateRequest userRequest) {
         UserDto userDto = new UserDto("example@domain.com", UPDATED_USER_EMAIL, EXTERNAL_ID);
         return new UserResponse(true, userDto);
     }

@@ -1,9 +1,6 @@
 package pl.financemanagement.User.UserModel;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -15,10 +12,12 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private UUID externalId;
+    @Column(nullable = false, unique = true)
     private String email;
     private String name;
     private Instant createdOn;
     private Instant modifyOn;
+    @Version
     private long version;
 
     public UserAccount() {

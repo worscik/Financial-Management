@@ -1,8 +1,6 @@
 package pl.financemanagement.User.UserController;
 
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,6 +10,7 @@ import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.User.UserModel.UserErrorResponse;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.net.URI;
@@ -34,13 +33,15 @@ public class UserController extends DemoResolver<UserService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
         UserService userService = resolveService(userRequest.isDemo());
-        return userService.createUser(userRequest)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.badRequest().body(new UserResponse("User creation failed", false)));
+        UserResponse response = userService.createUser(userRequest);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok().body(response);
+        }
+        return ResponseEntity.badRequest().body(response);
     }
 
     @PutMapping
-    ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserRequest userRequest, BindingResult result) {
+    ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }

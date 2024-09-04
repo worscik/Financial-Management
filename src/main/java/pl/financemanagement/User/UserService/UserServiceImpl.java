@@ -7,9 +7,13 @@ import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 import pl.financemanagement.User.UserRepository.UsersRepository;
 
+import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static pl.financemanagement.User.UserModel.UsersMapper.UserDtoMapper;
 import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
@@ -26,32 +30,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserResponse> createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) {
         Optional<UserAccount> userExistByEmail = usersRepository.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
-            return Optional.empty();
+            return new UserResponse("User does exist", false);
         }
         try {
             UserAccount userToSave = userMapper(userRequest);
+            userToSave.setCreatedOn(Instant.now());
+            userToSave.setExternalId(UUID.randomUUID());
             UserAccount savedUser = usersRepository.save(userToSave);
-            return Optional.of(new UserResponse(true, UserDtoMapper(savedUser)));
+            return new UserResponse(true, UserDtoMapper(savedUser));
         } catch (Exception e) {
             log.error("Error while user was adding with email: {}", userRequest.getEmail(), e);
-            return Optional.of(new UserResponse("Error while user was adding", false));
+            return new UserResponse("Error while user was adding", false);
         }
     }
 
     @Override
-    public UserResponse updateUser(UserRequest userRequest) {
+    public UserResponse updateUser(UserUpdateRequest userRequest) {
         try {
-            Optional<UserAccount> userAccount = usersRepository.findUserByEmail(userRequest.getEmail());
-            if (userAccount.isPresent()) {
-                UserAccount userToSave = userMapper(userRequest);
+            Optional<UserAccount> userAccountOptional = usersRepository.findUserByEmail(userRequest.getEmail());
+
+            if (userAccountOptional.isPresent()) {
+                UserAccount userToSave = userAccountOptional.get();
+
+                if (Objects.nonNull(userRequest.getNewEmail()) && !userRequest.getNewEmail().isBlank()) {
+                    userToSave.setEmail(userRequest.getNewEmail());
+                }
+
+                if (Objects.nonNull(userRequest.getNewName()) && !userRequest.getNewName().isBlank()) {
+                    userToSave.setName(userRequest.getNewName());
+                }
+
                 UserAccount savedUser = usersRepository.save(userToSave);
                 return new UserResponse(true, UserDtoMapper(savedUser));
+            } else {
+                return new UserResponse("User not found: " + userRequest.getEmail(), false);
             }
-            return new UserResponse("User not found: " + userRequest.getEmail(), false);
         } catch (Exception e) {
             log.error("Error when user be updated with email: {}", userRequest.getEmail(), e);
             return new UserResponse("Error when user be updated", false);

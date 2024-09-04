@@ -9,9 +9,6 @@ public class UsersMapper {
         UserAccount userAccount = new UserAccount();
         userAccount.setEmail(userRequest.getEmail());
         userAccount.setName(userRequest.getName());
-        userAccount.setExternalId(UUID.randomUUID());
-        userAccount.setVersion(1L);
-        userAccount.setModifyOn(Instant.now());
         return userAccount;
     }
 
