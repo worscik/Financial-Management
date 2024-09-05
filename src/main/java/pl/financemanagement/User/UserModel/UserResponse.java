@@ -10,7 +10,6 @@ public class UserResponse {
     private boolean success;
     @JsonProperty("user")
     private UserDto userDto;
-    private String error;
 
     public UserResponse(boolean success, UserDto userDto) {
         this.success = success;
@@ -18,11 +17,6 @@ public class UserResponse {
     }
 
     public UserResponse(boolean success) {
-        this.success = success;
-    }
-
-    public UserResponse(String error, boolean success) {
-        this.error = error;
         this.success = success;
     }
 
@@ -42,11 +36,4 @@ public class UserResponse {
         this.userDto = userDto;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 }

@@ -30,7 +30,9 @@ public class UserController extends DemoResolver<UserService> {
     ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest,
                                             BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(new UserErrorResponse(false,errors));
         }
         UserService userService = resolveService(userRequest.isDemo());
         UserResponse response = userService.createUser(userRequest);
@@ -52,7 +54,7 @@ public class UserController extends DemoResolver<UserService> {
     ResponseEntity<UserResponse> isUserExist(@PathVariable String userEmail,
                                              @RequestBody boolean isSample) {
         if (AppTools.isBlank(userEmail)) {
-            return ResponseEntity.badRequest().body(new UserResponse("Email cannot be empty", false));
+            return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Email cannot be empty"));
         }
         return ResponseEntity.ok(resolveService(isSample).isUserExistByEmail(userEmail));
     }
@@ -61,7 +63,7 @@ public class UserController extends DemoResolver<UserService> {
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
                                                     @RequestBody boolean isSample) {
         if (AppTools.isBlank(String.valueOf(id))) {
-            return ResponseEntity.badRequest().body(new UserResponse("Id cannot be empty", false));
+            return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Id cannot be empty"));
         }
         return ResponseEntity.ok(resolveService(isSample).getUserById(id));
     }
@@ -80,7 +82,7 @@ public class UserController extends DemoResolver<UserService> {
     static UserErrorResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new UserErrorResponse(false, null, errors);
+        return new UserErrorResponse(false, errors);
     }
 
 }

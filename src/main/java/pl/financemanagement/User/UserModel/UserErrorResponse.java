@@ -4,27 +4,35 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class UserErrorResponse extends UserResponse {
 
     private Map<String, String> errors;
-
-
-    public UserErrorResponse(boolean success, UserDto userDto, Map<String, String> errors) {
-        super(success, userDto);
-        this.errors = errors;
-    }
+    private String error;
 
     public UserErrorResponse(boolean success, Map<String, String> errors) {
         super(success);
         this.errors = errors;
     }
 
-    public Map<String, String> getErrors(boolean success) {
+    public UserErrorResponse(boolean success, String error) {
+        super(success);
+        this.error = error;
+    }
+
+    public Map<String, String> getErrors() {
         return errors;
     }
 
     public void setErrors(Map<String, String> errors) {
         this.errors = errors;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

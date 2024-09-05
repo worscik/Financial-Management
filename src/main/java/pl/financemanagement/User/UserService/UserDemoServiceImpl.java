@@ -2,10 +2,7 @@ package pl.financemanagement.User.UserService;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.financemanagement.User.UserModel.UserDto;
-import pl.financemanagement.User.UserModel.UserRequest;
-import pl.financemanagement.User.UserModel.UserResponse;
-import pl.financemanagement.User.UserModel.UserUpdateRequest;
+import pl.financemanagement.User.UserModel.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +33,7 @@ public class UserDemoServiceImpl implements UserService {
             UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
-        return new UserResponse("User not found", false);
+        return new UserErrorResponse(false, "User not found");
     }
 
     @Override
@@ -45,7 +42,7 @@ public class UserDemoServiceImpl implements UserService {
             UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
-        return new UserResponse("User not found", false);
+        return new UserErrorResponse(false, "User not found");
     }
 
     @Override

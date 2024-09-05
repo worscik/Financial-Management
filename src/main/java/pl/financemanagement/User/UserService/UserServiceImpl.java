@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.UserRequest;
-import pl.financemanagement.User.UserModel.UserResponse;
-import pl.financemanagement.User.UserModel.UserUpdateRequest;
+import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UsersRepository;
 
 import java.time.Instant;
@@ -34,7 +31,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserAccount> userExistByEmail = usersRepository.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
-            return new UserResponse("User does exist", false);
+            return new UserErrorResponse(false, "User does exist");
         }
         try {
             UserAccount userToSave = userMapper(userRequest);
@@ -44,7 +41,7 @@ public class UserServiceImpl implements UserService {
             return new UserResponse(true, UserDtoMapper(savedUser));
         } catch (Exception e) {
             log.error("Error while user was adding with email: {}", userRequest.getEmail(), e);
-            return new UserResponse("Error while user was adding", false);
+            return new UserErrorResponse(false, "Error while user was adding");
         }
     }
 
@@ -67,29 +64,29 @@ public class UserServiceImpl implements UserService {
                 UserAccount savedUser = usersRepository.save(userToSave);
                 return new UserResponse(true, UserDtoMapper(savedUser));
             } else {
-                return new UserResponse("User not found: " + userRequest.getEmail(), false);
+                return new UserErrorResponse(false, "User not found: " + userRequest.getEmail());
             }
         } catch (Exception e) {
             log.error("Error when user be updated with email: {}", userRequest.getEmail(), e);
-            return new UserResponse("Error when user be updated", false);
+            return new UserErrorResponse(false, "Error when user be updated");
         }
     }
 
     @Override
     public UserResponse isUserExistByEmail(String email) {
 
-            Optional<UserAccount> user = usersRepository.findUserByEmail(email);
-            return user
-                    .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
-                    .orElseGet(() -> new UserResponse("User " + email + " does not exists.", false));
+        Optional<UserAccount> user = usersRepository.findUserByEmail(email);
+        return user
+                .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
+                .orElseGet(() -> new UserErrorResponse(false, "User " + email + " does not exists."));
     }
 
     @Override
     public UserResponse getUserById(long id) {
-            Optional<UserAccount> user = usersRepository.findById(id);
-            return user
-                    .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
-                    .orElseGet(() -> new UserResponse("User do not exists.", false));
+        Optional<UserAccount> user = usersRepository.findById(id);
+        return user
+                .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
+                .orElseGet(() -> new UserErrorResponse(false, "User do not exists."));
     }
 
     @Override
