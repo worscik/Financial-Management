@@ -1,15 +1,12 @@
 package pl.financemanagement.User.UserService;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.core.userdetails.User;
 import pl.financemanagement.User.UserModel.*;
-import pl.financemanagement.User.UserRepository.UsersRepository;
+import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -28,15 +25,15 @@ class UserServiceTest {
     private final static Instant NOW = Instant.now();
 
     @Mock
-    private UsersRepository usersRepository;
+    private UserDao userDao;
     @InjectMocks
     private UserServiceImpl userService;
 
     @Test
     void createUserWhenNotExist() {
         UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
-        when(usersRepository.findUserByEmail(any())).thenReturn(Optional.empty());
-        when(usersRepository.save(any())).thenReturn(buildUserAccount());
+        when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
+        when(userDao.save(any())).thenReturn(buildUserAccount());
         assertThat(userService.createUser(buildUserRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -45,8 +42,8 @@ class UserServiceTest {
 
     @Test
     void createUserWhenExist() {
-        UserResponse expected = new UserResponse("User does exist", false);
-        when(usersRepository.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
+        UserResponse expected = new UserErrorResponse(false ,"User does exist");
+        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.createUser(buildUserRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -58,10 +55,10 @@ class UserServiceTest {
         UserRequest userRequest = new UserRequest();
         userRequest.setEmail("test@example.com");
 
-        when(usersRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-        when(usersRepository.save(any(UserAccount.class))).thenThrow(new RuntimeException("Database error"));
+        when(userDao.findUserByEmail(anyString())).thenReturn(Optional.empty());
+        when(userDao.save(any(UserAccount.class))).thenThrow(new RuntimeException("Database error"));
 
-        UserResponse response = userService.createUser(userRequest);
+        UserErrorResponse response = (UserErrorResponse) userService.createUser(userRequest);
 
         assertFalse(response.isSuccess());
         assertEquals("Error while user was adding", response.getError()  );
@@ -70,8 +67,8 @@ class UserServiceTest {
     @Test
     void updateUserWhenExists() {
         UserResponse expected = new UserResponse(true, buildUserDto());
-        when(usersRepository.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
-        when(usersRepository.save(any())).thenReturn(buildUserAccount());
+        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
+        when(userDao.save(any())).thenReturn(buildUserAccount());
         assertThat(userService.updateUser(buildUserUpdateRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -80,8 +77,8 @@ class UserServiceTest {
 
     @Test
     void updateUserWhenNotExists() {
-        UserResponse expected = new UserResponse("User not found: " + "example1@user.pl", false);
-        when(usersRepository.findUserByEmail(any())).thenReturn(Optional.empty());
+        UserErrorResponse expected = new UserErrorResponse(false, "User not found: " + "example1@user.pl");
+        when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
         assertThat(userService.updateUser(buildUserUpdateRequest()))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -90,8 +87,8 @@ class UserServiceTest {
 
     @Test
     void updateUserException() {
-        when(usersRepository.findUserByEmail(anyString())).thenThrow(new NullPointerException("Mocked Exception"));
-        UserResponse response = userService.updateUser(buildUserUpdateRequest());
+        when(userDao.findUserByEmail(anyString())).thenThrow(new NullPointerException("Mocked Exception"));
+        UserErrorResponse response = (UserErrorResponse) userService.updateUser(buildUserUpdateRequest());
         assertEquals("Error when user be updated", response.getError());
         assertFalse(response.isSuccess());
 
@@ -100,7 +97,7 @@ class UserServiceTest {
     @Test
     void isUserExistByEmailWhenIsExists() {
         UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
-        when(usersRepository.findUserByEmail("test email")).thenReturn(Optional.of(buildUserAccount()));
+        when(userDao.findUserByEmail("test email")).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.isUserExistByEmail("test email"))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -109,8 +106,8 @@ class UserServiceTest {
 
     @Test
     void isUserExistByEmailWhenNotExists() {
-        UserResponse expected = new UserResponse("User " + "test email" + " does not exists.", false);
-        when(usersRepository.findUserByEmail("test email")).thenReturn(Optional.empty());
+        UserErrorResponse expected = new UserErrorResponse(false ,"User " + "test email" + " does not exists.");
+        when(userDao.findUserByEmail("test email")).thenReturn(Optional.empty());
         assertThat(userService.isUserExistByEmail("test email"))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -120,7 +117,7 @@ class UserServiceTest {
     @Test
     void getUserByIdWhenExists() {
         UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
-        when(usersRepository.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.getUserById(1L))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -129,8 +126,8 @@ class UserServiceTest {
 
     @Test
     void getUserByIdWhenNotExists() {
-        UserResponse expected = new UserResponse("User do not exists.", false);
-        when(usersRepository.findById(anyLong())).thenReturn(Optional.empty());
+        UserErrorResponse expected = new UserErrorResponse(false, "User do not exists.");
+        when(userDao.findById(anyLong())).thenReturn(Optional.empty());
         assertThat(userService.getUserById(1L))
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -139,7 +136,7 @@ class UserServiceTest {
 
     @Test
     void deleteUserWhenExists() {
-        when(usersRepository.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.deleteUser(1L, "example@email.com"))
                 .isNotNull()
                 .isTrue();
@@ -147,7 +144,7 @@ class UserServiceTest {
 
     @Test
     void deleteUserWhenNotExists() {
-        when(usersRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userDao.findById(anyLong())).thenReturn(Optional.empty());
         assertThat(userService.deleteUser(1L, "example@email.com"))
                 .isNotNull()
                 .isFalse();

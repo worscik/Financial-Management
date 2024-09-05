@@ -1,13 +1,9 @@
 package pl.financemanagement.User.UserService;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import pl.financemanagement.User.UserModel.UserDto;
 import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
 import pl.financemanagement.User.UserModel.UserUpdateRequest;
-
-import java.util.Optional;
 
 @Service("userService")
 public interface UserService {

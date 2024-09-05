@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
-import pl.financemanagement.User.UserRepository.UsersRepository;
+import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -20,15 +20,15 @@ import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
 public class UserServiceImpl implements UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-    private final UsersRepository usersRepository;
+    private final UserDao userDao;
 
-    public UserServiceImpl(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        Optional<UserAccount> userExistByEmail = usersRepository.findUserByEmail(userRequest.getEmail());
+        Optional<UserAccount> userExistByEmail = userDao.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
             return new UserErrorResponse(false, "User does exist");
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
             UserAccount userToSave = userMapper(userRequest);
             userToSave.setCreatedOn(Instant.now());
             userToSave.setExternalId(UUID.randomUUID());
-            UserAccount savedUser = usersRepository.save(userToSave);
+            UserAccount savedUser = userDao.save(userToSave);
             return new UserResponse(true, UserDtoMapper(savedUser));
         } catch (Exception e) {
             log.error("Error while user was adding with email: {}", userRequest.getEmail(), e);
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUser(UserUpdateRequest userRequest) {
         try {
-            Optional<UserAccount> userAccountOptional = usersRepository.findUserByEmail(userRequest.getEmail());
+            Optional<UserAccount> userAccountOptional = userDao.findUserByEmail(userRequest.getEmail());
 
             if (userAccountOptional.isPresent()) {
                 UserAccount userToSave = userAccountOptional.get();
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
                     userToSave.setName(userRequest.getNewName());
                 }
 
-                UserAccount savedUser = usersRepository.save(userToSave);
+                UserAccount savedUser = userDao.save(userToSave);
                 return new UserResponse(true, UserDtoMapper(savedUser));
             } else {
                 return new UserErrorResponse(false, "User not found: " + userRequest.getEmail());
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse isUserExistByEmail(String email) {
 
-        Optional<UserAccount> user = usersRepository.findUserByEmail(email);
+        Optional<UserAccount> user = userDao.findUserByEmail(email);
         return user
                 .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
                 .orElseGet(() -> new UserErrorResponse(false, "User " + email + " does not exists."));
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(long id) {
-        Optional<UserAccount> user = usersRepository.findById(id);
+        Optional<UserAccount> user = userDao.findById(id);
         return user
                 .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))
                 .orElseGet(() -> new UserErrorResponse(false, "User do not exists."));
@@ -91,9 +91,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUser(long id, String email) {
-        Optional<UserAccount> user = usersRepository.findById(id);
+        Optional<UserAccount> user = userDao.findById(id);
         if (user.isPresent()) {
-            usersRepository.deleteById(id);
+            userDao.deleteById(id);
             return true;
         }
         log.info("Cannot delete user. User with id {} was not found", id);

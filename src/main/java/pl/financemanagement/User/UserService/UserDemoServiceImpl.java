@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

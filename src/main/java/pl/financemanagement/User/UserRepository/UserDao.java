@@ -5,7 +5,7 @@ import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.util.Optional;
 
-public interface UsersRepository extends CrudRepository<UserAccount, Long> {
+public interface UserDao extends CrudRepository<UserAccount, Long> {
 
     Optional<UserAccount> findUserByEmail(String email);
 
