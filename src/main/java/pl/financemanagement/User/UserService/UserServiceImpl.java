@@ -8,7 +8,6 @@ import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +18,9 @@ import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
 @Qualifier("userServiceImpl")
 public class UserServiceImpl implements UserService {
 
+    private static final int ONE = 1;
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserDao userDao;
 
     public UserServiceImpl(UserDao userDao) {
@@ -31,50 +32,35 @@ public class UserServiceImpl implements UserService {
         Optional<UserAccount> userExistByEmail = userDao.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
-            return new UserErrorResponse(false, "User does exist");
+            return new UserErrorResponse(false, "User " + userRequest.getEmail() + " does exists.");
         }
-        try {
-            UserAccount userToSave = userMapper(userRequest);
-            userToSave.setCreatedOn(Instant.now());
-            userToSave.setExternalId(UUID.randomUUID());
-            UserAccount savedUser = userDao.save(userToSave);
-            return new UserResponse(true, UserDtoMapper(savedUser));
-        } catch (Exception e) {
-            log.error("Error while user was adding with email: {}", userRequest.getEmail(), e);
-            return new UserErrorResponse(false, "Error while user was adding");
-        }
+        UserAccount userToSave = userMapper(userRequest);
+        userToSave.setCreatedOn(Instant.now());
+        userToSave.setExternalId(UUID.randomUUID());
+        UserAccount savedUser = userDao.save(userToSave);
+        return new UserResponse(true, UserDtoMapper(savedUser));
     }
 
     @Override
     public UserResponse updateUser(UserUpdateRequest userRequest) {
-        try {
-            Optional<UserAccount> userAccountOptional = userDao.findUserByEmail(userRequest.getEmail());
-
-            if (userAccountOptional.isPresent()) {
-                UserAccount userToSave = userAccountOptional.get();
-
-                if (Objects.nonNull(userRequest.getNewEmail()) && !userRequest.getNewEmail().isBlank()) {
-                    userToSave.setEmail(userRequest.getNewEmail());
-                }
-
-                if (Objects.nonNull(userRequest.getNewName()) && !userRequest.getNewName().isBlank()) {
-                    userToSave.setName(userRequest.getNewName());
-                }
-
-                UserAccount savedUser = userDao.save(userToSave);
-                return new UserResponse(true, UserDtoMapper(savedUser));
-            } else {
-                return new UserErrorResponse(false, "User not found: " + userRequest.getEmail());
+        Optional<UserAccount> userAccount = userDao.findUserByEmail(userRequest.getEmail());
+        if (userAccount.isPresent()) {
+            UserAccount userToSave = userMapper(userRequest);
+            userToSave.setVersion(userToSave.getVersion() + ONE);
+            if (!userRequest.getNewEmail().isBlank()) {
+                userToSave.setEmail(userRequest.getNewEmail());
             }
-        } catch (Exception e) {
-            log.error("Error when user be updated with email: {}", userRequest.getEmail(), e);
-            return new UserErrorResponse(false, "Error when user be updated");
+            if (!userRequest.getNewName().isBlank()) {
+                userToSave.setName(userRequest.getNewName());
+            }
+            UserAccount savedUser = userDao.save(userToSave);
+            return new UserResponse(true, UserDtoMapper(savedUser));
         }
+        return new UserErrorResponse(false, "User not found: " + userRequest.getEmail());
     }
 
     @Override
     public UserResponse isUserExistByEmail(String email) {
-
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         return user
                 .map(userAccount -> new UserResponse(true, UserDtoMapper(userAccount)))

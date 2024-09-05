@@ -51,20 +51,6 @@ class UserServiceTest {
     }
 
     @Test
-    void createUserException() {
-        UserRequest userRequest = new UserRequest();
-        userRequest.setEmail("test@example.com");
-
-        when(userDao.findUserByEmail(anyString())).thenReturn(Optional.empty());
-        when(userDao.save(any(UserAccount.class))).thenThrow(new RuntimeException("Database error"));
-
-        UserErrorResponse response = (UserErrorResponse) userService.createUser(userRequest);
-
-        assertFalse(response.isSuccess());
-        assertEquals("Error while user was adding", response.getError()  );
-    }
-
-    @Test
     void updateUserWhenExists() {
         UserResponse expected = new UserResponse(true, buildUserDto());
         when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
@@ -83,15 +69,6 @@ class UserServiceTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
-    }
-
-    @Test
-    void updateUserException() {
-        when(userDao.findUserByEmail(anyString())).thenThrow(new NullPointerException("Mocked Exception"));
-        UserErrorResponse response = (UserErrorResponse) userService.updateUser(buildUserUpdateRequest());
-        assertEquals("Error when user be updated", response.getError());
-        assertFalse(response.isSuccess());
-
     }
 
     @Test
