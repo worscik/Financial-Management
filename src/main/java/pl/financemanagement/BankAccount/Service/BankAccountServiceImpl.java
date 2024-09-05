@@ -4,11 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.financemanagement.BankAccount.Model.BankAccount;
-import pl.financemanagement.BankAccount.Model.BankAccountMapper;
-import pl.financemanagement.BankAccount.Model.BankAccountRequest;
-import pl.financemanagement.BankAccount.Model.BankAccountResponse;
-import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
+import pl.financemanagement.BankAccount.Model.*;
+import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.User.UserService.UserServiceImpl;
 
 import java.time.Instant;
@@ -21,28 +18,30 @@ import java.util.UUID;
 @Qualifier("bankAccountServiceImpl")
 public class BankAccountServiceImpl implements BankAccountService {
 
+    private static final long ONE = 1;
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-    private final BankAccountRepository bankAccountRepository;
+
+    private final BankAccountDao bankAccountDao;
     private final BankAccountMapper bankAccountMapper;
 
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, BankAccountMapper bankAccountMapper) {
-        this.bankAccountRepository = bankAccountRepository;
+    public BankAccountServiceImpl(BankAccountDao bankAccountDao, BankAccountMapper bankAccountMapper) {
+        this.bankAccountDao = bankAccountDao;
         this.bankAccountMapper = bankAccountMapper;
     }
 
     @Override
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest) {
         if (!Objects.isNull(bankAccountRequest.getExternalId())) {
-            Optional<BankAccount> existingAccount = bankAccountRepository.findAccountByExternalId(
+            Optional<BankAccount> existingAccount = bankAccountDao.findAccountByExternalId(
                     UUID.fromString(bankAccountRequest.getExternalId()));
             if (existingAccount.isPresent()) {
                 log.info("Account with ID {} exists", bankAccountRequest.getExternalId());
-                return new BankAccountResponse(false, Map.of("account", "Account with id "
-                        + existingAccount.get().getExternalId() + " exists"));
+                return new BankAccountErrorResponse(false, "Account with id "
+                        + existingAccount.get().getExternalId() + " exists");
             }
         }
         BankAccount bankAccount = prepareAccount(bankAccountRequest);
-        BankAccount savedBankAccount = bankAccountRepository.save(bankAccount);
+        BankAccount savedBankAccount = bankAccountDao.save(bankAccount);
         log.info("Add account with externalId {} and userId {}", bankAccount.getExternalId(), bankAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
     }
@@ -69,7 +68,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private BankAccount prepareAccount(BankAccountRequest bankAccountRequest) {
         BankAccount bankAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
-        bankAccount.setAccountVersion(1L);
+        bankAccount.setAccountVersion(ONE);
         bankAccount.setCreatedOn(Instant.now());
         bankAccount.setAccountNumber(UUID.randomUUID().toString());
         bankAccount.setExternalId(UUID.randomUUID());

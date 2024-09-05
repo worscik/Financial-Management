@@ -1,9 +1,6 @@
 package pl.financemanagement.BankAccount.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -19,6 +16,7 @@ public class BankAccount {
     private long userId;
     private Instant createdOn;
     private Instant modifyOn;
+    @Version
     private long accountVersion;
     private String accountName;
     private String accountNumber;

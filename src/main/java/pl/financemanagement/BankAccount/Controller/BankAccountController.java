@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
+import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Service.BankAccountService;
@@ -50,8 +51,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
                                                                 @RequestParam(defaultValue = "false") boolean isDemo,
                                                                 Principal principal) {
         if (AppTools.isBlank(externalId)) {
-            return ResponseEntity.badRequest().body(new BankAccountResponse(false,
-                    Map.of("externalId", "Cannot be blank")));
+            return ResponseEntity.badRequest().body(new BankAccountErrorResponse(false,
+                    Map.of("externalId", "Can not be empty")));
         }
 
         BankAccountService bankAccountService = resolveService(isDemo);
@@ -73,7 +74,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     static BankAccountResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new BankAccountResponse(false, errors);
+        return new BankAccountErrorResponse(false, errors);
     }
 
 }

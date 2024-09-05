@@ -11,26 +11,14 @@ public class BankAccountResponse {
     private boolean success;
     @JsonProperty("account")
     private BankAccountDto userDto;
-    private Map<String,String> errors;
-
-    public BankAccountResponse(boolean success, BankAccountDto userDto, Map<String,String> errors) {
-        this.success = success;
-        this.userDto = userDto;
-        this.errors = errors;
-    }
-
-    public BankAccountResponse(boolean success) {
-        this.success = success;
-    }
 
     public BankAccountResponse(boolean success, BankAccountDto userDto) {
         this.success = success;
         this.userDto = userDto;
     }
 
-    public BankAccountResponse(boolean success, Map<String,String> errors) {
+    public BankAccountResponse(boolean success) {
         this.success = success;
-        this.errors = errors;
     }
 
     public BankAccountResponse() {
@@ -52,11 +40,4 @@ public class BankAccountResponse {
         this.userDto = userDto;
     }
 
-    public Map<String,String> getError() {
-        return errors;
-    }
-
-    public void setError(Map<String,String> errors) {
-        this.errors = errors;
-    }
 }

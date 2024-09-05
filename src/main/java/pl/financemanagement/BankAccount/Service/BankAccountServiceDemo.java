@@ -3,6 +3,7 @@ package pl.financemanagement.BankAccount.Service;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.BankAccountDto;
+import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 
@@ -30,7 +31,7 @@ public class BankAccountServiceDemo implements BankAccountService {
         if(ACCOUNT_NUMBER.equals(accountNumber)){
             return new BankAccountResponse(true, buildDemoAccount());
         }
-        return new BankAccountResponse(false, Map.of("Error", "Account not found."));
+        return new BankAccountErrorResponse(false, "Account not found.");
     }
 
     @Override
@@ -47,7 +48,7 @@ public class BankAccountServiceDemo implements BankAccountService {
         return new BankAccountDto.AccountDtoBuilder()
                 .withExternalId(UUID.randomUUID())
                 .withAccountName("Test account")
-                .withAccountNumber("NL61ABNA4405427607")
+                .withAccountNumber(ACCOUNT_NUMBER)
                 .build();
     }
 }
