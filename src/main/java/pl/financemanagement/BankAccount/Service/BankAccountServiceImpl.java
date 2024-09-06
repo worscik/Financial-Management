@@ -31,24 +31,51 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest) {
-        if (!Objects.isNull(bankAccountRequest.getExternalId())) {
-            Optional<BankAccount> existingAccount = bankAccountDao.findAccountByExternalId(
-                    UUID.fromString(bankAccountRequest.getExternalId()));
+        if (Objects.nonNull(bankAccountRequest.getExternalId())) {
+            UUID externalId;
+            try {
+                externalId = UUID.fromString(bankAccountRequest.getExternalId());
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid UUID format for externalId: {}", bankAccountRequest.getExternalId());
+                throw new IllegalArgumentException("Invalid UUID format for externalId");
+            } 
+
+            Optional<BankAccount> existingAccount = bankAccountDao.findAccountByExternalId(externalId);
             if (existingAccount.isPresent()) {
-                log.info("Account with ID {} exists", bankAccountRequest.getExternalId());
-                return new BankAccountErrorResponse(false, "Account with id "
-                        + existingAccount.get().getExternalId() + " exists");
+                log.info("Account with ID {} already exists", bankAccountRequest.getExternalId());
+                return new BankAccountErrorResponse(false, "Account with id " + externalId + " already exists");
             }
         }
+
         BankAccount bankAccount = prepareAccount(bankAccountRequest);
         BankAccount savedBankAccount = bankAccountDao.save(bankAccount);
-        log.info("Add account with externalId {} and userId {}", bankAccount.getExternalId(), bankAccount.getUserId());
+        log.info("Added account with externalId {} for userId {}", savedBankAccount.getExternalId(), savedBankAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
     }
 
     @Override
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest) {
-        return null;
+        UUID externalId;
+        try {
+            externalId = UUID.fromString(bankAccountRequest.getExternalId());
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid UUID format for externalId: {}", bankAccountRequest.getExternalId());
+            throw new IllegalArgumentException("Invalid UUID format for externalId");
+        }
+
+        Optional<BankAccount> accountOptional = bankAccountDao.findAccountByExternalId(externalId);
+        if (accountOptional.isPresent()) {
+            BankAccount existingAccount = accountOptional.get();
+            BankAccount updatedAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
+            updatedAccount.setId(existingAccount.getId());
+
+            BankAccount savedAccount = bankAccountDao.save(updatedAccount);
+            log.info("Updated account with externalId {} for userId {}", savedAccount.getExternalId(), savedAccount.getUserId());
+            return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
+        }
+
+        log.info("Account with externalId {} not found", bankAccountRequest.getExternalId());
+        return new BankAccountErrorResponse(false, "Bank account not found");
     }
 
     @Override

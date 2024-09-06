@@ -53,6 +53,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Data integrity error: " + ex.getMessage());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(DataIntegrityViolationException ex) {
+        return ResponseEntity.badRequest().body(ex);
+    }
+
+
+
     private Map<String, String> buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
