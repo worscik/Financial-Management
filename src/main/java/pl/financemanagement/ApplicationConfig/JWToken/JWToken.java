@@ -9,14 +9,20 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 
 import java.util.Date;
 
+import static pl.financemanagement.ApplicationConfig.JWToken.JWTokenStatus.*;
+
 @RestController
+@CrossOrigin(value = "*")
 public class JWToken {
 
     private static final String USER = "user";
@@ -24,13 +30,15 @@ public class JWToken {
     private String secretKey;
 
 
-
-    @GetMapping("/auth")
-    public String getToken(@RequestBody UserCredentialsRequest userCredentialsRequest) throws JOSEException {
-        if(USER.equals(userCredentialsRequest.login())){
-            return createToken(userCredentialsRequest.login());
+    @PostMapping("/auth")
+    public ResponseEntity<JWTokenResponse> getToken(@RequestBody UserCredentialsRequest userCredentialsRequest)
+            throws JOSEException {
+        if (USER.equals(userCredentialsRequest.login())) {
+            return ResponseEntity.ok().body(new JWTokenResponse(
+                    createToken(userCredentialsRequest.login()), "", SUCCESS.getStatus()));
         }
-            return "User with login " + userCredentialsRequest.login() + " not found!";
+        return ResponseEntity.status(403).body(new JWTokenResponse("",
+                "Incorrect login information sent", ERROR.getStatus()));
     }
 
     private String createToken(String login) throws JOSEException {
@@ -49,6 +57,21 @@ public class JWToken {
         signedJWT.sign(signer);
 
         return signedJWT.serialize();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedMethods(CorsConfiguration.ALL)
+                        .allowedHeaders(CorsConfiguration.ALL)
+                        .allowedOriginPatterns(CorsConfiguration.ALL);
+            }
+        };
     }
 
 
