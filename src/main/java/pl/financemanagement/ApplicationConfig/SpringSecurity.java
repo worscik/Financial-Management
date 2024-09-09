@@ -41,7 +41,7 @@ public class SpringSecurity {
                     .headers(headers -> headers.frameOptions().disable())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/auth", "/h2-console/**").permitAll()
+                            .requestMatchers("/auth", "/h2-console/**", "/createUser").permitAll()
                             .anyRequest().authenticated()
                     );
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class SpringSecurity {
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withDefaultPasswordEncoder()
                 .username("user")
-                .password("user")
+                .password("user123!")
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(userDetails);

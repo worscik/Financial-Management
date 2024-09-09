@@ -14,6 +14,7 @@ import pl.financemanagement.User.UserModel.UserUpdateRequest;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,10 +33,9 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(new UserErrorResponse(false,errors));
+            return ResponseEntity.badRequest().body(new UserErrorResponse(false, errors));
         }
-        UserService userService = resolveService(userRequest.isDemo());
-        UserResponse response = userService.createUser(userRequest);
+        UserResponse response = resolveService(userRequest.isDemo()).createUser(userRequest);
         if (response.isSuccess()) {
             return ResponseEntity.ok().body(response);
         }
@@ -50,32 +50,33 @@ public class UserController extends DemoResolver<UserService> {
         return ResponseEntity.ok(resolveService(userRequest.isDemo()).updateUser(userRequest));
     }
 
-    @GetMapping("/{userEmail}")
+    @GetMapping("/email/{userEmail}")
     ResponseEntity<UserResponse> isUserExist(@PathVariable String userEmail,
-                                             @RequestBody boolean isSample) {
+                                             @RequestParam(required = false, defaultValue = "false") boolean isDemo) {
         if (AppTools.isBlank(userEmail)) {
             return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Email cannot be empty"));
         }
-        return ResponseEntity.ok(resolveService(isSample).isUserExistByEmail(userEmail));
+        return ResponseEntity.ok(resolveService(isDemo).isUserExistByEmail(userEmail));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
-                                                    @RequestBody boolean isSample) {
+                                                    @RequestParam(required = false, defaultValue = "false") boolean isDemo,
+                                                    Principal principal) {
         if (AppTools.isBlank(String.valueOf(id))) {
             return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Id cannot be empty"));
         }
-        return ResponseEntity.ok(resolveService(isSample).getUserById(id));
+        return ResponseEntity.ok(resolveService(isDemo).getUserById(id));
     }
 
     @DeleteMapping("/{id}/{email}")
     ResponseEntity<Boolean> deleteUser(@PathVariable long id,
                                        @PathVariable String email,
-                                       @RequestBody boolean isSample) {
+                                       @RequestParam(required = false, defaultValue = "false") boolean isDemo) {
         if (AppTools.isBlank(String.valueOf(id))) {
             return ResponseEntity.created(URI.create("localhost:8080")).build();
         }
-        UserService userService = resolveService(isSample);
+        UserService userService = resolveService(isDemo);
         return ResponseEntity.ok(userService.deleteUser(id, email));
     }
 

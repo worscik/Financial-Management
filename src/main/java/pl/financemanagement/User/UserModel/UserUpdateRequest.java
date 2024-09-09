@@ -4,12 +4,17 @@ import jakarta.validation.constraints.Email;
 
 public class UserUpdateRequest extends UserRequest {
 
-    @Email
+    @Email(message = "Email is not correct")
     private String newEmail;
     private String newName;
 
-    public UserUpdateRequest(String email, String name, boolean isDemo, String newEmail, String newName) {
-        super(email, name, isDemo);
+    public UserUpdateRequest(String newEmail, String newName) {
+        this.newEmail = newEmail;
+        this.newName = newName;
+    }
+
+    public UserUpdateRequest(String email, String name, String password, boolean isDemo, String newEmail, String newName) {
+        super(email, name, password, isDemo);
         this.newEmail = newEmail;
         this.newName = newName;
     }

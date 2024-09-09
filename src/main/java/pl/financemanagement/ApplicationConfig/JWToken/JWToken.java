@@ -11,7 +11,10 @@ import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,7 +22,8 @@ import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 
 import java.util.Date;
 
-import static pl.financemanagement.ApplicationConfig.JWToken.JWTokenStatus.*;
+import static pl.financemanagement.ApplicationConfig.JWToken.JWTokenStatus.ERROR;
+import static pl.financemanagement.ApplicationConfig.JWToken.JWTokenStatus.SUCCESS;
 
 @RestController
 @CrossOrigin(value = "*")
@@ -60,7 +64,7 @@ public class JWToken {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    public WebMvcConfigurer corsConfiguration() {
 
         return new WebMvcConfigurer() {
             @Override

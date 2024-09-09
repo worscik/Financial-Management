@@ -11,7 +11,7 @@ public class DemoResolver<T> {
         this.demoService = demoService;
     }
 
-    public T resolveService(boolean isSample) {
-        return isSample ? demoService : service;
+    public T resolveService(boolean isDemo) {
+        return isDemo ? demoService : service;
     }
 }

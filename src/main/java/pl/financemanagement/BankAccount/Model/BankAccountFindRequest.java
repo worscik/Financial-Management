@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public class BankAccountFindRequest {
 
-   @NotBlank
-   private String externalId;
-   private boolean isDemo = false;
+    @NotBlank
+    private String externalId;
+    private boolean isDemo = false;
 
     public BankAccountFindRequest(String externalId, boolean isDemo) {
         this.externalId = externalId;

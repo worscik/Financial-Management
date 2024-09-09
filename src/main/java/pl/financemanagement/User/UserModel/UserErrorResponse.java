@@ -1,7 +1,5 @@
 package pl.financemanagement.User.UserModel;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.Map;
 
 

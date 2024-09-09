@@ -54,9 +54,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
             return ResponseEntity.badRequest().body(new BankAccountErrorResponse(false,
                     Map.of("externalId", "Can not be empty")));
         }
-
-        BankAccountService bankAccountService = resolveService(isDemo);
-        return ResponseEntity.ok(bankAccountService.isExistingAccount(externalId));
+        return ResponseEntity.ok(resolveService(isDemo).isExistingAccount(externalId));
     }
 
     @DeleteMapping()
@@ -67,8 +65,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
 
-        BankAccountService bankAccountService = resolveService(bankAccountRequest.isDemo());
-        return ResponseEntity.ok().body(bankAccountService.deleteAccount(bankAccountRequest.getExternalId()));
+        return ResponseEntity.ok().body(resolveService
+                (bankAccountRequest.isDemo()).deleteAccount(bankAccountRequest.getExternalId()));
     }
 
     static BankAccountResponse buildErrorResponse(BindingResult result) {

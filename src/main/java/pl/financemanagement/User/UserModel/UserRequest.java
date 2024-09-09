@@ -6,39 +6,49 @@ import jakarta.validation.constraints.Size;
 
 public class UserRequest {
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email cannot be blank or empty")
+    @Email(message = "Email is not correct")
     private String email;
     @NotBlank
     @Size(max = 64)
     private String name;
+    @NotBlank(message = "Password cannot be blank or empty")
+    @Size(min = 1)
+    private String password;
     private boolean isDemo = false;
 
     public UserRequest() {
     }
 
-    public UserRequest(String email, String name, boolean isDemo) {
+    public UserRequest(String email, String name, String password, boolean isDemo) {
         this.email = email;
         this.name = name;
+        this.password = password;
         this.isDemo = isDemo;
     }
 
-
-
-    public String getEmail() {
+    public @NotBlank @Email String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@NotBlank @Email String email) {
         this.email = email;
     }
 
-    public String getName() {
+    public @NotBlank @Size(max = 64) String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotBlank @Size(max = 64) String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isDemo() {
