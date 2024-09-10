@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "USER_ACCOUNT")
 public class UserAccount {
 
     @Id
@@ -19,6 +20,7 @@ public class UserAccount {
     private Instant modifyOn;
     @Version
     private long version;
+    private String role;
 
     public UserAccount() {
     }
@@ -77,5 +79,13 @@ public class UserAccount {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

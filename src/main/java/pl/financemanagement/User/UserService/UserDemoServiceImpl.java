@@ -10,9 +10,9 @@ import java.util.UUID;
 @Qualifier("userServiceDemo")
 public class UserDemoServiceImpl implements UserService {
 
-    private final static String USER_EMAIL = "exampleUserName";
-    private final static String UPDATED_USER_EMAIL = "exampleUserNameUpdated";
-    private final static UUID EXTERNAL_ID = UUID.randomUUID();
+    private final static String USER_EMAIL = "demo@example.com";
+    private final static String UPDATED_USER_EMAIL = "demo1@example.com";
+    private final static UUID EXTERNAL_ID = UUID.fromString("f9969a5d-55d2-4e31-83e1-5759500a1e6d");
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {

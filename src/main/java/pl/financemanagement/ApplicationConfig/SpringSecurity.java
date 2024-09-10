@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.financemanagement.ApplicationConfig.JWToken.JwtAuthenticationFilter;
 
 
@@ -41,7 +44,7 @@ public class SpringSecurity {
                     .headers(headers -> headers.frameOptions().disable())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/auth", "/h2-console/**", "/createUser").permitAll()
+                            .requestMatchers("/login", "/h2-console/**", "users/register").permitAll()
                             .anyRequest().authenticated()
                     );
         } catch (Exception e) {
@@ -59,5 +62,20 @@ public class SpringSecurity {
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfiguration() {
+
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedMethods(CorsConfiguration.ALL)
+                        .allowedHeaders(CorsConfiguration.ALL)
+                        .allowedOriginPatterns(CorsConfiguration.ALL);
+            }
+        };
     }
 }

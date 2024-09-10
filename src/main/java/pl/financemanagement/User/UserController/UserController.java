@@ -1,35 +1,43 @@
 package pl.financemanagement.User.UserController;
 
+import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Role;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
-import pl.financemanagement.User.UserModel.UserErrorResponse;
-import pl.financemanagement.User.UserModel.UserRequest;
-import pl.financemanagement.User.UserModel.UserResponse;
-import pl.financemanagement.User.UserModel.UserUpdateRequest;
+import pl.financemanagement.ApplicationConfig.JWToken.JwtService;
+import pl.financemanagement.User.UserModel.*;
+import pl.financemanagement.User.UserRepository.UserDao;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.net.URI;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController extends DemoResolver<UserService> {
 
+    private final JwtService jwtService;
+    private final UserDao userDao;
+
     public UserController(@Qualifier("userServiceImpl") UserService service,
-                          @Qualifier("userServiceDemo") UserService demoService) {
+                          @Qualifier("userServiceDemo") UserService demoService, JwtService jwtService, UserDao userDao) {
         super(service, demoService);
+        this.jwtService = jwtService;
+        this.userDao = userDao;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest,
-                                            BindingResult result) {
+                                            BindingResult result) throws JOSEException {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
@@ -37,9 +45,10 @@ public class UserController extends DemoResolver<UserService> {
         }
         UserResponse response = resolveService(userRequest.isDemo()).createUser(userRequest);
         if (response.isSuccess()) {
+            response.setToken(jwtService.generateUserToken(userRequest.getEmail()));
             return ResponseEntity.ok().body(response);
         }
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @PutMapping
@@ -63,10 +72,11 @@ public class UserController extends DemoResolver<UserService> {
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
                                                     @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                     Principal principal) {
-        if (AppTools.isBlank(String.valueOf(id))) {
-            return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Id cannot be empty"));
-        }
-        return ResponseEntity.ok(resolveService(isDemo).getUserById(id));
+        Optional<UserAccount> user = userDao.findUserByEmail(principal.getName());
+        return user
+                .map(userAccount -> ResponseEntity.ok(resolveService(isDemo).getUserById(userAccount.getId())))
+                .orElseGet(() -> ResponseEntity.badRequest()
+                        .body(new UserErrorResponse(false, "User not found")));
     }
 
     @DeleteMapping("/{id}/{email}")

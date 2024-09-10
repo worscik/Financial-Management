@@ -9,6 +9,13 @@ public class UserResponse {
     private boolean success;
     @JsonProperty("user")
     private UserDto userDto;
+    private String token;
+
+    public UserResponse(boolean success, UserDto userDto, String token) {
+        this.success = success;
+        this.userDto = userDto;
+        this.token = token;
+    }
 
     public UserResponse(boolean success, UserDto userDto) {
         this.success = success;
@@ -35,4 +42,11 @@ public class UserResponse {
         this.userDto = userDto;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }
