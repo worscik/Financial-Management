@@ -76,13 +76,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(long id, String email) {
-        Optional<UserAccount> user = userDao.findById(id);
-        if (user.isPresent()) {
+    public UserDeleteResponse deleteUser(long id, String email) {
             userDao.deleteById(id);
-            return true;
-        }
-        log.info("Cannot delete user. User with id {} was not found", id);
-        return false;
+            return new UserDeleteResponse(true, "User deleted.");
     }
 }

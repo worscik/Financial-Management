@@ -22,7 +22,6 @@ import static pl.financemanagement.ApplicationConfig.JWToken.JWTokenStatus.SUCCE
 @CrossOrigin(value = "*")
 public class JwtController {
 
-    private static final String USER = "user";
     private final JwtServiceImpl jwtService;
     private final UserDao userDao;
 

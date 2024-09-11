@@ -2,8 +2,8 @@ package pl.financemanagement.User.UserController;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,7 +15,6 @@ import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
 import pl.financemanagement.User.UserService.UserService;
 
-import java.net.URI;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,15 +78,13 @@ public class UserController extends DemoResolver<UserService> {
                         .body(new UserErrorResponse(false, "User not found")));
     }
 
-    @DeleteMapping("/{id}/{email}")
-    ResponseEntity<Boolean> deleteUser(@PathVariable long id,
-                                       @PathVariable String email,
-                                       @RequestParam(required = false, defaultValue = "false") boolean isDemo) {
-        if (AppTools.isBlank(String.valueOf(id))) {
-            return ResponseEntity.created(URI.create("localhost:8080")).build();
-        }
-        UserService userService = resolveService(isDemo);
-        return ResponseEntity.ok(userService.deleteUser(id, email));
+    @DeleteMapping("")
+    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
+                                                  Principal principal) {
+        Optional<UserAccount> user = userDao.findUserByEmail(principal.getName());
+        return  user
+                .map(result -> ResponseEntity.ok(resolveService(isDemo).deleteUser(user.get().getId(),principal.getName())))
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     static UserErrorResponse buildErrorResponse(BindingResult result) {

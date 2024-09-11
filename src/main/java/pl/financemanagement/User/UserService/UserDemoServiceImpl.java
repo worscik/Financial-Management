@@ -45,7 +45,7 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(long id, String email) {
-        return true;
+    public UserDeleteResponse deleteUser(long id, String email) {
+        return new UserDeleteResponse(true, "User deleted.");
     }
 }
