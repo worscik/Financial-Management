@@ -18,7 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pl.financemanagement.ApplicationConfig.JWToken.JwtAuthenticationFilter;
+import pl.financemanagement.JWToken.Service.JwtAuthenticationFilter;
 
 
 @Configuration

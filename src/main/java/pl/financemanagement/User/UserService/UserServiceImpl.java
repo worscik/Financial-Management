@@ -3,6 +3,7 @@ package pl.financemanagement.User.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
@@ -41,8 +42,10 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(true, UserDtoMapper(savedUser));
     }
 
+    @PreAuthorize("USER")
     @Override
     public UserResponse updateUser(UserUpdateRequest userRequest) {
+        //TODO: Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.USER_ACCOUNT(EMAIL NULLS FIRST) VALUES ( /* 2 */ 'demo1@example.com' )"; SQL statement:
         Optional<UserAccount> userAccount = userDao.findUserByEmail(userRequest.getEmail());
         if (userAccount.isPresent()) {
             UserAccount userToSave = userMapper(userRequest);

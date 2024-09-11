@@ -2,7 +2,6 @@ package pl.financemanagement.User.UserController;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
-import pl.financemanagement.ApplicationConfig.JWToken.JwtService;
+import pl.financemanagement.JWToken.Service.JwtService;
 import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
 import pl.financemanagement.User.UserService.UserService;
@@ -19,6 +18,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static pl.financemanagement.User.UserModel.UserRole.USER;
 
 @RestController
 @RequestMapping("/users")
@@ -44,7 +45,7 @@ public class UserController extends DemoResolver<UserService> {
         }
         UserResponse response = resolveService(userRequest.isDemo()).createUser(userRequest);
         if (response.isSuccess()) {
-            response.setToken(jwtService.generateUserToken(userRequest.getEmail()));
+            response.setToken(jwtService.generateUserToken(userRequest.getEmail(), USER.getRole()));
             return ResponseEntity.ok().body(response);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
@@ -74,16 +75,16 @@ public class UserController extends DemoResolver<UserService> {
         Optional<UserAccount> user = userDao.findUserByEmail(principal.getName());
         return user
                 .map(userAccount -> ResponseEntity.ok(resolveService(isDemo).getUserById(userAccount.getId())))
-                .orElseGet(() -> ResponseEntity.badRequest()
-                        .body(new UserErrorResponse(false, "User not found")));
+                .orElseGet(() ->
+                        ResponseEntity.badRequest().body(new UserErrorResponse(false, "User not found")));
     }
 
     @DeleteMapping("")
     ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                   Principal principal) {
         Optional<UserAccount> user = userDao.findUserByEmail(principal.getName());
-        return  user
-                .map(result -> ResponseEntity.ok(resolveService(isDemo).deleteUser(user.get().getId(),principal.getName())))
+        return user
+                .map(result -> ResponseEntity.ok(resolveService(isDemo).deleteUser(user.get().getId(), principal.getName())))
                 .orElse(ResponseEntity.badRequest().build());
     }
 

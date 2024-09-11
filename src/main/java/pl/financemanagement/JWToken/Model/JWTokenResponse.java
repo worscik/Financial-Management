@@ -1,4 +1,4 @@
-package pl.financemanagement.ApplicationConfig.JWToken;
+package pl.financemanagement.JWToken.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

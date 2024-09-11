@@ -21,6 +21,7 @@ public class UserAccount {
     @Version
     private long version;
     private String role;
+    private String password;
 
     public UserAccount() {
     }
@@ -87,5 +88,13 @@ public class UserAccount {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

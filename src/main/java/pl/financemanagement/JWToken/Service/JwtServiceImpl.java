@@ -1,4 +1,4 @@
-package pl.financemanagement.ApplicationConfig.JWToken;
+package pl.financemanagement.JWToken.Service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -16,7 +16,7 @@ public class JwtServiceImpl implements JwtService{
     private String secretKey;
 
     @Override
-    public String generateUserToken(String login) throws JOSEException {
+    public String generateUserToken(String login, String role) throws JOSEException {
         JWSAlgorithm algorithm = JWSAlgorithm.HS256;
         Date now = new Date();
         Date expirationTime = new Date(now.getTime() + 3600 * 1000);
@@ -24,7 +24,7 @@ public class JwtServiceImpl implements JwtService{
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(login)
                 .issueTime(now)
-                .claim("role", "USER")
+                .claim("role", role)
                 .expirationTime(expirationTime)
                 .build();
 

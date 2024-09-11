@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS USER_ACCOUNT (
     created_on TIMESTAMP,
     modify_on TIMESTAMP,
     version LONG,
-    external_id UUID
+    external_id UUID,
+    password VARCHAR(50)
 );
 
-INSERT INTO USER_ACCOUNT (email, name, role, created_on, modify_on, external_id, version)
-VALUES ('demo@example.com', 'Demo User', 'DEMO', NOW(), NOW(), 'f9969a5d-55d2-4e31-83e1-5759500a1e6d', 1);
+INSERT INTO USER_ACCOUNT (email, name, role, created_on, modify_on, external_id, version, password)
+VALUES ('demo@example.com', 'user', 'DEMO', NOW(), NOW(), 'f9969a5d-55d2-4e31-83e1-5759500a1e6d', 1, 'user');
 

@@ -1,4 +1,4 @@
-package pl.financemanagement.ApplicationConfig.JWToken;
+package pl.financemanagement.JWToken.Service;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
@@ -39,9 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        // Pominięcie filtrów dla loginu i rejestracji
         if (requestURI.matches("^/h2-console.*")
-                || "/users/register".equals(requestURI)) {
+                || requestURI.equals("/users/register")
+                || requestURI.equals("/login")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,16 +54,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String username = getUsernameFromJWT(jwt);
                     String role = getRoleFromJWT(jwt);
 
-                    // Tworzenie listy ról (Authorities)
                     SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
-                    // Tworzenie obiektu Authentication z loginem i rolami
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList(authority));
 
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Ustawienie obiektu Authentication w SecurityContextHolder
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 } else {
@@ -93,7 +90,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // Metoda do pobierania JWT z nagłówka
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -102,7 +98,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    // Walidacja tokenu JWT
     private boolean validateToken(String authToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(authToken);
@@ -118,7 +113,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return false;
     }
 
-    // Sprawdzenie, czy token wygasł
     private boolean isTokenExpired(String authToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(authToken);
@@ -130,13 +124,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return true;
     }
 
-    // Pobieranie loginu (username) z JWT
     private String getUsernameFromJWT(String token) throws ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         return signedJWT.getJWTClaimsSet().getSubject();
     }
 
-    // Pobieranie roli z JWT
     private String getRoleFromJWT(String token) throws ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         return signedJWT.getJWTClaimsSet().getStringClaim("role");
