@@ -16,20 +16,20 @@ public class UserDemoServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
+        UserDto userDto = new UserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
         return new UserResponse(true, userDto);
     }
 
     @Override
-    public UserResponse updateUser(UserUpdateRequest userRequest) {
-        UserDto userDto = new UserDto("example@domain.com", UPDATED_USER_EMAIL, EXTERNAL_ID);
+    public UserResponse updateUser(UserUpdateRequest userRequest, String email) {
+        UserDto userDto = new UserDto("demo@example.com", UPDATED_USER_EMAIL, EXTERNAL_ID);
         return new UserResponse(true, userDto);
     }
 
     @Override
     public UserResponse isUserExistByEmail(String email) {
         if(USER_EMAIL.equals(email)){
-            UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
+            UserDto userDto = new UserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
         return new UserErrorResponse(false, "User not found");
@@ -38,7 +38,7 @@ public class UserDemoServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(long id) {
         if (id == 1) {
-            UserDto userDto = new UserDto("example@domain.com", USER_EMAIL, EXTERNAL_ID);
+            UserDto userDto = new UserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
         return new UserErrorResponse(false, "User not found");

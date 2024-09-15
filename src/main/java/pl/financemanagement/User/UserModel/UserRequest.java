@@ -20,6 +20,11 @@ public class UserRequest {
     public UserRequest() {
     }
 
+    public UserRequest(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
+
     public UserRequest(String email, String name, String password, boolean isDemo) {
         this.email = email;
         this.name = name;

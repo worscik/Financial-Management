@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
-import pl.financemanagement.JWToken.Service.JwtService;
 import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
 import pl.financemanagement.User.UserService.UserService;
@@ -19,19 +17,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static pl.financemanagement.User.UserModel.UserRole.USER;
-
 @RestController
 @RequestMapping("/users")
 public class UserController extends DemoResolver<UserService> {
 
-    private final JwtService jwtService;
     private final UserDao userDao;
 
     public UserController(@Qualifier("userServiceImpl") UserService service,
-                          @Qualifier("userServiceDemo") UserService demoService, JwtService jwtService, UserDao userDao) {
+                          @Qualifier("userServiceDemo") UserService demoService,
+                          UserDao userDao) {
         super(service, demoService);
-        this.jwtService = jwtService;
         this.userDao = userDao;
     }
 
@@ -45,27 +40,25 @@ public class UserController extends DemoResolver<UserService> {
         }
         UserResponse response = resolveService(userRequest.isDemo()).createUser(userRequest);
         if (response.isSuccess()) {
-            response.setToken(jwtService.generateUserToken(userRequest.getEmail(), USER.getRole()));
             return ResponseEntity.ok().body(response);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @PutMapping
-    ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest, BindingResult result) {
+    ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest,
+                                            BindingResult result,
+                                            Principal principal) throws JOSEException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(resolveService(userRequest.isDemo()).updateUser(userRequest));
+        return ResponseEntity.ok(resolveService(userRequest.isDemo()).updateUser(userRequest, principal.getName()));
     }
 
-    @GetMapping("/email/{userEmail}")
-    ResponseEntity<UserResponse> isUserExist(@PathVariable String userEmail,
-                                             @RequestParam(required = false, defaultValue = "false") boolean isDemo) {
-        if (AppTools.isBlank(userEmail)) {
-            return ResponseEntity.badRequest().body(new UserErrorResponse(false, "Email cannot be empty"));
-        }
-        return ResponseEntity.ok(resolveService(isDemo).isUserExistByEmail(userEmail));
+    @GetMapping("/email")
+    ResponseEntity<UserResponse> checkIfUserExists(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
+                                                   Principal principal) {
+        return ResponseEntity.ok(resolveService(isDemo).isUserExistByEmail(principal.getName()));
     }
 
     @GetMapping("/id/{id}")

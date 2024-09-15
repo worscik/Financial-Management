@@ -1,17 +1,21 @@
 package pl.financemanagement.User.UserService;
 
+import com.nimbusds.jose.JOSEException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import pl.financemanagement.AppTools.AppTools;
+import pl.financemanagement.JWToken.Service.JwtService;
 import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static pl.financemanagement.User.UserModel.UserRole.USER;
 import static pl.financemanagement.User.UserModel.UsersMapper.UserDtoMapper;
 import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
 
@@ -19,17 +23,19 @@ import static pl.financemanagement.User.UserModel.UsersMapper.userMapper;
 @Qualifier("userServiceImpl")
 public class UserServiceImpl implements UserService {
 
-    private static final int ONE = 1;
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final String USER_ROLE = "USER";
 
+    private final JwtService jwtService;
     private final UserDao userDao;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(JwtService jwtService, UserDao userDao) {
+        this.jwtService = jwtService;
         this.userDao = userDao;
     }
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) throws JOSEException {
         Optional<UserAccount> userExistByEmail = userDao.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
@@ -39,27 +45,32 @@ public class UserServiceImpl implements UserService {
         userToSave.setCreatedOn(Instant.now());
         userToSave.setExternalId(UUID.randomUUID());
         UserAccount savedUser = userDao.save(userToSave);
-        return new UserResponse(true, UserDtoMapper(savedUser));
+        String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
+        return new UserResponse(true, UserDtoMapper(savedUser), token);
     }
 
-    @PreAuthorize("USER")
     @Override
-    public UserResponse updateUser(UserUpdateRequest userRequest) {
-        //TODO: Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.USER_ACCOUNT(EMAIL NULLS FIRST) VALUES ( /* 2 */ 'demo1@example.com' )"; SQL statement:
-        Optional<UserAccount> userAccount = userDao.findUserByEmail(userRequest.getEmail());
-        if (userAccount.isPresent()) {
-            UserAccount userToSave = userMapper(userRequest);
-            userToSave.setVersion(userToSave.getVersion() + ONE);
-            if (!userRequest.getNewEmail().isBlank()) {
-                userToSave.setEmail(userRequest.getNewEmail());
+    public UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException {
+        Optional<UserAccount> user = userDao.findUserByEmail(email);
+        if (user.isPresent()) {
+            UserAccount userToUpdate = user.get();
+
+            if (Objects.nonNull(userRequest.getNewEmail())) {
+                if (userDao.findUserByEmail(userRequest.getNewEmail()).isPresent()) {
+                    return new UserErrorResponse(false, "Email already in use: " + userRequest.getNewEmail());
+                }
+                userToUpdate.setEmail(userRequest.getNewEmail());
             }
-            if (!userRequest.getNewName().isBlank()) {
-                userToSave.setName(userRequest.getNewName());
+            if (Objects.nonNull(userRequest.getNewName())) {
+                userToUpdate.setName(userRequest.getNewName());
             }
-            UserAccount savedUser = userDao.save(userToSave);
-            return new UserResponse(true, UserDtoMapper(savedUser));
+            userToUpdate.setModifyOn(Instant.now());
+            userToUpdate.setVersion(userToUpdate.getVersion() + 1);
+            UserAccount savedUser = userDao.save(userToUpdate);
+            String token = jwtService.generateUserToken(savedUser.getEmail(), USER_ROLE);
+            return new UserResponse(true, UserDtoMapper(savedUser), token);
         }
-        return new UserErrorResponse(false, "User not found: " + userRequest.getEmail());
+        return new UserErrorResponse(false, "User not found: " + email);
     }
 
     @Override
@@ -80,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDeleteResponse deleteUser(long id, String email) {
-            userDao.deleteById(id);
-            return new UserDeleteResponse(true, "User deleted.");
+        userDao.deleteById(id);
+        return new UserDeleteResponse(true, "User deleted.");
     }
 }

@@ -1,5 +1,6 @@
 package pl.financemanagement.User.UserService;
 
+import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ class UserServiceTest {
 
     private final static UUID RANDOM_UUID = UUID.randomUUID();
     private final static Instant NOW = Instant.now();
+    private final static String EMAIL = "EXAMPLE@EMAIL.COM";
 
     @Mock
     private UserDao userDao;
@@ -30,7 +32,7 @@ class UserServiceTest {
     private UserServiceImpl userService;
 
     @Test
-    void createUserWhenNotExist() {
+    void createUserWhenNotExist() throws JOSEException {
         UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
         when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
         when(userDao.save(any())).thenReturn(buildUserAccount());
@@ -41,7 +43,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createUserWhenExist() {
+    void createUserWhenExist() throws JOSEException {
         UserResponse expected = new UserErrorResponse(false ,"User does exist");
         when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.createUser(buildUserRequest()))
@@ -51,21 +53,21 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserWhenExists() {
+    void updateUserWhenExists() throws JOSEException {
         UserResponse expected = new UserResponse(true, buildUserDto());
         when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         when(userDao.save(any())).thenReturn(buildUserAccount());
-        assertThat(userService.updateUser(buildUserUpdateRequest()))
+        assertThat(userService.updateUser(buildUserUpdateRequest(), EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
 
     @Test
-    void updateUserWhenNotExists() {
+    void updateUserWhenNotExists() throws JOSEException {
         UserErrorResponse expected = new UserErrorResponse(false, "User not found: " + "example1@user.pl");
         when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
-        assertThat(userService.updateUser(buildUserUpdateRequest()))
+        assertThat(userService.updateUser(buildUserUpdateRequest(), EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -115,16 +117,14 @@ class UserServiceTest {
     void deleteUserWhenExists() {
         when(userDao.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.deleteUser(1L, "example@email.com"))
-                .isNotNull()
-                .isTrue();
+                .isNotNull();
     }
 
     @Test
     void deleteUserWhenNotExists() {
         when(userDao.findById(anyLong())).thenReturn(Optional.empty());
         assertThat(userService.deleteUser(1L, "example@email.com"))
-                .isNotNull()
-                .isFalse();
+                .isNotNull();
     }
 
     private UserAccount buildUserAccount() {
@@ -151,7 +151,6 @@ class UserServiceTest {
         UserUpdateRequest userRequest = new UserUpdateRequest();
         userRequest.setNewName("Test User1");
         userRequest.setNewEmail("example123@user.pl");
-        userRequest.setEmail("example1@user.pl");
         userRequest.setDemo(false);
         return userRequest;
     }

@@ -6,6 +6,7 @@ public class UsersMapper {
         UserAccount userAccount = new UserAccount();
         userAccount.setEmail(userRequest.getEmail());
         userAccount.setName(userRequest.getName());
+        userAccount.setRole("USER");
         return userAccount;
     }
 

@@ -2,22 +2,12 @@ package pl.financemanagement.User.UserModel;
 
 import jakarta.validation.constraints.Email;
 
-public class UserUpdateRequest extends UserRequest {
+public class UserUpdateRequest {
 
     @Email(message = "Email is not correct")
     private String newEmail;
     private String newName;
-
-    public UserUpdateRequest(String newEmail, String newName) {
-        this.newEmail = newEmail;
-        this.newName = newName;
-    }
-
-    public UserUpdateRequest(String email, String name, String password, boolean isDemo, String newEmail, String newName) {
-        super(email, name, password, isDemo);
-        this.newEmail = newEmail;
-        this.newName = newName;
-    }
+    private boolean isDemo;
 
     public UserUpdateRequest() {
     }
@@ -26,7 +16,7 @@ public class UserUpdateRequest extends UserRequest {
         return newEmail;
     }
 
-    public void setNewEmail(String newEmail) {
+    public void setNewEmail(@Email(message = "Email is not correct") String newEmail) {
         this.newEmail = newEmail;
     }
 
@@ -36,5 +26,13 @@ public class UserUpdateRequest extends UserRequest {
 
     public void setNewName(String newName) {
         this.newName = newName;
+    }
+
+    public boolean isDemo() {
+        return isDemo;
+    }
+
+    public void setDemo(boolean demo) {
+        isDemo = demo;
     }
 }
