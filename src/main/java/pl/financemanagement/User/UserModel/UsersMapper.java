@@ -10,7 +10,7 @@ public class UsersMapper {
         return userAccount;
     }
 
-    public static UserDto UserDtoMapper(UserAccount userAccount) {
+    public static UserDto userDtoMapper(UserAccount userAccount) {
         UserDto userDto = new UserDto();
         userDto.setEmail(userAccount.getEmail());
         userDto.setName(userAccount.getName());

@@ -14,10 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static pl.financemanagement.User.UserModel.UsersMapper.UserDtoMapper;
+import static pl.financemanagement.User.UserModel.UsersMapper.userDtoMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -33,7 +32,7 @@ class UserServiceTest {
 
     @Test
     void createUserWhenNotExist() throws JOSEException {
-        UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
+        UserResponse expected = new UserResponse(true, userDtoMapper(buildUserAccount()));
         when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
         when(userDao.save(any())).thenReturn(buildUserAccount());
         assertThat(userService.createUser(buildUserRequest()))
@@ -53,7 +52,7 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserWhenExists() throws JOSEException {
+    void updateUserWhenExists() throws JOSEException, UserNotFoundException, EmailAlreadyInUseException {
         UserResponse expected = new UserResponse(true, buildUserDto());
         when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
         when(userDao.save(any())).thenReturn(buildUserAccount());
@@ -64,7 +63,7 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserWhenNotExists() throws JOSEException {
+    void updateUserWhenNotExists() throws JOSEException, UserNotFoundException, EmailAlreadyInUseException {
         UserErrorResponse expected = new UserErrorResponse(false, "User not found: " + "example1@user.pl");
         when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
         assertThat(userService.updateUser(buildUserUpdateRequest(), EMAIL))
@@ -75,7 +74,7 @@ class UserServiceTest {
 
     @Test
     void isUserExistByEmailWhenIsExists() {
-        UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
+        UserResponse expected = new UserResponse(true, userDtoMapper(buildUserAccount()));
         when(userDao.findUserByEmail("test email")).thenReturn(Optional.of(buildUserAccount()));
         assertThat(userService.isUserExistByEmail("test email"))
                 .isNotNull()
@@ -94,36 +93,36 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserByIdWhenExists() {
-        UserResponse expected = new UserResponse(true, UserDtoMapper(buildUserAccount()));
+    void getUserByIdWhenExists() throws UserNotFoundException {
+        UserResponse expected = new UserResponse(true, userDtoMapper(buildUserAccount()));
         when(userDao.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
-        assertThat(userService.getUserById(1L))
+        assertThat(userService.getUserById(1L, EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
 
     @Test
-    void getUserByIdWhenNotExists() {
+    void getUserByIdWhenNotExists() throws UserNotFoundException {
         UserErrorResponse expected = new UserErrorResponse(false, "User do not exists.");
         when(userDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThat(userService.getUserById(1L))
+        assertThat(userService.getUserById(1L, EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
 
     @Test
-    void deleteUserWhenExists() {
+    void deleteUserWhenExists() throws UserNotFoundException {
         when(userDao.findById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
-        assertThat(userService.deleteUser(1L, "example@email.com"))
+        assertThat(userService.deleteUser(String.valueOf(RANDOM_UUID), "example@email.com"))
                 .isNotNull();
     }
 
     @Test
-    void deleteUserWhenNotExists() {
+    void deleteUserWhenNotExists() throws UserNotFoundException {
         when(userDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThat(userService.deleteUser(1L, "example@email.com"))
+        assertThat(userService.deleteUser(String.valueOf(RANDOM_UUID), "example@email.com"))
                 .isNotNull();
     }
 

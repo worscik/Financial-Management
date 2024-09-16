@@ -14,6 +14,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import pl.financemanagement.User.UserModel.UserErrorResponse;
+import pl.financemanagement.User.UserModel.UserExistsException;
+import pl.financemanagement.User.UserModel.UserNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +61,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ex);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<UserErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserErrorResponse(false, ex.getMessage()));
+    }
 
+    @ExceptionHandler(UserExistsException.class)
+    public ResponseEntity<UserErrorResponse> handleUserExistsException(UserExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new UserErrorResponse(false, ex.getMessage()));
+    }
 
     private Map<String, String> buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

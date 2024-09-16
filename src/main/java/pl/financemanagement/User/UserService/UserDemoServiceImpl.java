@@ -36,7 +36,7 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserById(long id) {
+    public UserResponse getUserById(long id, String email) {
         if (id == 1) {
             UserDto userDto = new UserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
             return new UserResponse(true, userDto);
@@ -45,7 +45,7 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public UserDeleteResponse deleteUser(long id, String email) {
+    public UserDeleteResponse deleteUser(String externalId, String email) {
         return new UserDeleteResponse(true, "User deleted.");
     }
 }
