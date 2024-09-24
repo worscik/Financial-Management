@@ -9,7 +9,6 @@ import java.util.UUID;
 public interface UserDao extends CrudRepository<UserAccount, Long> {
 
     Optional<UserAccount> findUserByEmail(String email);
-    UserAccount findUserByEmails(String email);
     Optional<UserAccount> findUserByEmailAndExternalId(String email, UUID externalId);
 
 }

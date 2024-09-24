@@ -31,7 +31,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @PostMapping()
     ResponseEntity<BankAccountResponse> create(@RequestBody BankAccountRequest bankAccountRequest,
                                                BindingResult result,
-                                               Principal principal) throws BankAccountExistsException {
+                                               Principal principal)
+            throws BankAccountExistsException, UserNotFoundException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
@@ -42,7 +43,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @PutMapping()
     ResponseEntity<BankAccountResponse> update(@RequestBody @Valid BankAccountRequest bankAccountRequest,
                                                BindingResult result,
-                                               Principal principal) {
+                                               Principal principal)
+            throws UserNotFoundException, BankAccountNotFoundException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
@@ -65,7 +67,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @DeleteMapping()
     ResponseEntity<BankAccountResponse> deleteAccount(@RequestBody @Valid BankAccountRequest bankAccountRequest,
                                                       BindingResult result,
-                                                      Principal principal) {
+                                                      Principal principal)
+            throws UserNotFoundException, BankAccountNotFoundException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }

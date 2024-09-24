@@ -66,7 +66,7 @@ public class UserController extends DemoResolver<UserService> {
         return ResponseEntity.ok(resolveService(isDemo).deleteUser(externalId, principal.getName()));
     }
 
-    static UserErrorResponse buildErrorResponse(BindingResult result) {
+    private UserErrorResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new UserErrorResponse(false, errors);
