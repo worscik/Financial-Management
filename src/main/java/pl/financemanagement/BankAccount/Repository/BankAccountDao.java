@@ -10,6 +10,6 @@ import java.util.UUID;
 @Repository
 public interface BankAccountDao extends CrudRepository<BankAccount, Long> {
 
-    Optional<BankAccount> findAccountByExternalId(UUID externalId);
+    Optional<BankAccount> findAccountByExternalIdAndUserId(UUID externalId, long id);
 
 }

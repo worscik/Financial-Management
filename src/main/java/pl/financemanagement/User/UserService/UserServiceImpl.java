@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
-        Optional<UserAccount> user = userDao.findUserByEmailAndExternalId(email, externalId);
+        Optional<UserAccount> user = userDao.findUserByEmailAndExternalId(email, UUID.fromString(externalId));
         if(user.isPresent()) {
             userDao.deleteById(user.get().getId());
             return new UserDeleteResponse(true, "User deleted.");

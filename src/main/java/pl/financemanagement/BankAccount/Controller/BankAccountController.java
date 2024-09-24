@@ -10,7 +10,10 @@ import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
+import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
+import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Service.BankAccountService;
+import pl.financemanagement.User.UserModel.UserNotFoundException;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -28,11 +31,12 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @PostMapping()
     ResponseEntity<BankAccountResponse> create(@RequestBody BankAccountRequest bankAccountRequest,
                                                BindingResult result,
-                                               Principal principal) {
+                                               Principal principal) throws BankAccountExistsException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(resolveService(bankAccountRequest.isDemo()).createAccount(bankAccountRequest));
+        return ResponseEntity.ok(
+                resolveService(bankAccountRequest.isDemo()).createAccount(bankAccountRequest, principal.getName()));
     }
 
     @PutMapping()
@@ -42,19 +46,20 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return ResponseEntity.ok(resolveService(bankAccountRequest.isDemo()).updateAccount(bankAccountRequest));
+        return ResponseEntity.ok(
+                resolveService(bankAccountRequest.isDemo()).updateAccount(bankAccountRequest, principal.getName()));
     }
 
     @GetMapping()
     ResponseEntity<BankAccountResponse> findAccountByExternalId(@RequestParam(defaultValue = "") String externalId,
                                                                 @RequestParam(defaultValue = "false") boolean isDemo,
-                                                                Principal principal) {
+                                                                Principal principal)
+            throws BankAccountNotFoundException, UserNotFoundException {
         if (AppTools.isBlank(externalId)) {
-            return ResponseEntity.badRequest().body(new BankAccountErrorResponse(false,
-                    Map.of("externalId", "Can not be empty")));
+            return ResponseEntity.badRequest().body(new BankAccountErrorResponse(
+                    false, "externalId cannot be empty"));
         }
-        return ResponseEntity.ok(resolveService(isDemo).isExistingAccount(externalId));
+        return ResponseEntity.ok(resolveService(isDemo).findAccountByNumber(externalId, principal.getName()));
     }
 
     @DeleteMapping()
@@ -64,9 +69,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
         return ResponseEntity.ok().body(resolveService
-                (bankAccountRequest.isDemo()).deleteAccount(bankAccountRequest.getExternalId()));
+                (bankAccountRequest.isDemo()).deleteAccount(bankAccountRequest.getExternalId(), principal.getName()));
     }
 
     static BankAccountResponse buildErrorResponse(BindingResult result) {

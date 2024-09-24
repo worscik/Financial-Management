@@ -17,17 +17,17 @@ public class BankAccountServiceDemo implements BankAccountService {
     private static final String ACCOUNT_NUMBER = "NL61ABNA4405427607";
 
     @Override
-    public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest) {
+    public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
         return new BankAccountResponse(true, buildDemoAccount());
     }
 
     @Override
-    public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest) {
+    public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
         return new BankAccountResponse(true, buildDemoAccount());
     }
 
     @Override
-    public BankAccountResponse isExistingAccount(String accountNumber) {
+    public BankAccountResponse findAccountByNumber(String accountNumber, String email) {
         if(ACCOUNT_NUMBER.equals(accountNumber)){
             return new BankAccountResponse(true, buildDemoAccount());
         }
@@ -35,12 +35,7 @@ public class BankAccountServiceDemo implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse getAccountByExternalId(String id) {
-        return new BankAccountResponse(true, buildDemoAccount());
-    }
-
-    @Override
-    public BankAccountResponse deleteAccount(String externalId) {
+    public BankAccountResponse deleteAccount(String externalId, String email) {
         return new BankAccountResponse(true);
     }
 
