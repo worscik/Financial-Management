@@ -2,13 +2,13 @@ package pl.financemanagement.Expenses.Model;
 
 public class ExpenseRequest {
 
-    private boolean isSample = false;
+    private boolean isDemo = false;
 
-    public boolean isSample() {
-        return isSample;
+    public boolean isDemo() {
+        return isDemo;
     }
 
-    public void setSample(boolean sample) {
-        isSample = sample;
+    public void setDemo(boolean demo) {
+        isDemo = demo;
     }
 }

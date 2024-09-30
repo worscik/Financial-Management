@@ -42,7 +42,7 @@ public class UserController extends DemoResolver<UserService> {
     @PutMapping
     ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest,
                                             BindingResult result,
-                                            Principal principal) {
+                                            Principal principal) throws JOSEException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }

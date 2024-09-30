@@ -14,14 +14,12 @@ import java.util.Optional;
 public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
-    public Optional<ExpenseResponse> createExpense(ExpenseRequest expenseRequest) {
-        return Optional.empty();
-    }
+    public ExpenseResponse createExpense(ExpenseRequest expenseRequest) {
+        return null;    }
 
     @Override
-    public Optional<ExpenseResponse> updateExpense(ExpenseRequest expenseRequest) {
-        return Optional.empty();
-    }
+    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest) {
+        return null;    }
 
     @Override
     public List<ExpenseDto> findExpenseByUserId(String externalId) {
@@ -29,8 +27,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Optional<ExpenseResponse> findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
-        return Optional.empty();
+    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
+        return null;
     }
 
     @Override

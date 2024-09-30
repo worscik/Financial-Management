@@ -55,16 +55,6 @@ public class SpringSecurity {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("user123!")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(userDetails);
-    }
-
-    @Bean
     public WebMvcConfigurer corsConfiguration() {
 
         return new WebMvcConfigurer() {

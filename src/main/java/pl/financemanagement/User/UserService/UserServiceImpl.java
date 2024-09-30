@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest userRequest){
+    public UserResponse createUser(UserRequest userRequest) throws JOSEException {
         Optional<UserAccount> userExistByEmail = userDao.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponse updateUser(UserUpdateRequest userRequest, String email) {
+    public UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
             throw new UserNotFoundException("User with email " + email + " not found.");

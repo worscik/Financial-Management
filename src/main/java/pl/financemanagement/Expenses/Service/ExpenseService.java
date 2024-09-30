@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public interface ExpenseService {
 
-    Optional<ExpenseResponse> createExpense(ExpenseRequest expenseRequest);
+    ExpenseResponse createExpense(ExpenseRequest expenseRequest);
 
-    Optional<ExpenseResponse> updateExpense(ExpenseRequest expenseRequest);
+    ExpenseResponse updateExpense(ExpenseRequest expenseRequest);
 
     List<ExpenseDto> findExpenseByUserId(String externalId);
 
-    Optional<ExpenseResponse> findExpenseByIdAndUserId(String expenseExternalId, String userExternalId);
+    ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String userExternalId);
 
     boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId);
 

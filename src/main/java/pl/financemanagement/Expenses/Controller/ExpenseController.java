@@ -11,7 +11,6 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
-import pl.financemanagement.Expenses.Service.ExpenseServiceDemo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +31,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return resolveService(true).createExpense(request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok().body(resolveService(request.isDemo()).createExpense(request));
     }
 
     @PutMapping("/")
@@ -44,17 +40,17 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
 
-        return resolveService(true).updateExpense(request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok().body(resolveService(request.isDemo()).updateExpense(request));
     }
 
+    //TODO DUPLICATE WITH findExpenses
     @GetMapping("/{userExternalId}")
-    List<ExpenseDto> findExpenses(@PathVariable String userExternalId) {
-        if(AppTools.isBlank(userExternalId)) {
-            return null;
+    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable String userExternalId,
+                                                  @RequestParam boolean isDemo) {
+        if (AppTools.isBlank(userExternalId)) {
+            throw new IllegalArgumentException("ExternalId can not be empty");
         }
-        return resolveService(true).findExpenseByUserId(userExternalId);
+        return ResponseEntity.ok().body(resolveService(isDemo).findExpenseByUserId(userExternalId));
     }
 
     @GetMapping("/{externalId}")
@@ -62,10 +58,8 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return resolveService(true).findExpenseByIdAndUserId(null, null)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok().body(
+                resolveService(request.isDemo()).findExpenseByIdAndUserId(null, null));
     }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {

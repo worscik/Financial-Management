@@ -9,9 +9,9 @@ import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 @Service("userService")
 public interface UserService {
 
-    UserResponse createUser(UserRequest userRequest);
+    UserResponse createUser(UserRequest userRequest) throws JOSEException;
 
-    UserResponse updateUser(UserUpdateRequest userRequest, String email);
+    UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException;
 
     UserResponse isUserExistByEmail(String email);
 
