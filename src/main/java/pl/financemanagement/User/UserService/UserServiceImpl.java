@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.JWToken.Service.JwtService;
 import pl.financemanagement.User.UserModel.*;
+import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) throws JOSEException {
+    public UserResponse createUser(UserRequest userRequest){
         Optional<UserAccount> userExistByEmail = userDao.findUserByEmail(userRequest.getEmail());
         if (userExistByEmail.isPresent()) {
             log.info("Cannot add user with email: {} because user exists", userRequest.getEmail());
@@ -50,8 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponse updateUser(UserUpdateRequest userRequest, String email)
-            throws JOSEException, UserNotFoundException, EmailAlreadyInUseException {
+    public UserResponse updateUser(UserUpdateRequest userRequest, String email) {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
             throw new UserNotFoundException("User with email " + email + " not found.");
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmailAndExternalId(email, UUID.fromString(externalId));
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             userDao.deleteById(user.get().getId());
             return new UserDeleteResponse(true, "User deleted.");
         }

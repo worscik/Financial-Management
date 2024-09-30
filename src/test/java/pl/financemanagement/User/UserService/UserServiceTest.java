@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.financemanagement.User.UserModel.*;
+import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;

@@ -12,7 +12,7 @@ import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsExcept
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 import pl.financemanagement.User.UserService.UserServiceImpl;
 
@@ -44,7 +44,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             throws BankAccountExistsException, UserNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
+            LOGGER.info("User with email {} not found", email);
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
@@ -67,7 +67,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             throws BankAccountNotFoundException, UserNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
+            LOGGER.info("User with email: {} not found", email );
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
@@ -109,7 +109,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             throws UserNotFoundException, BankAccountNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
+            LOGGER.info("User not found with email: {}", email);
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         Optional<BankAccount> account =

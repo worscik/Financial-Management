@@ -13,7 +13,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Service.BankAccountService;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 
 import java.security.Principal;
 import java.util.HashMap;

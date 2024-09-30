@@ -16,12 +16,12 @@ import java.util.Map;
 public class BankAccountHandlerExceptions {
 
     @ExceptionHandler(BankAccountNotFoundException.class)
-    public ResponseEntity<BankAccountErrorResponse> handleBankAccountNotFoundException(BankAccountNotFoundException ex) {
+    public ResponseEntity<Object> handleBankAccountNotFoundException(BankAccountNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BankAccountErrorResponse(false, ex.getMessage()));
     }
 
     @ExceptionHandler(BankAccountExistsException.class)
-    public ResponseEntity<BankAccountErrorResponse> handleBankAccountExistsException(BankAccountExistsException ex) {
+    public ResponseEntity<Object> handleBankAccountExistsException(BankAccountExistsException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BankAccountErrorResponse(false, ex.getMessage()));
     }
 
