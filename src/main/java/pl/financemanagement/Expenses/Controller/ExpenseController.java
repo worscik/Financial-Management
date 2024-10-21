@@ -11,8 +11,9 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
-import pl.financemanagement.Expenses.Service.ExpenseServiceDemo;
+import pl.financemanagement.User.UserModel.UserNotFoundException;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,44 +29,44 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
     }
 
     @PostMapping("/")
-    ResponseEntity<ExpenseResponse> createExpense(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    ResponseEntity<ExpenseResponse> createExpense(@RequestBody @Valid ExpenseRequest request,
+                                                  BindingResult result,
+                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return resolveService(true).createExpense(request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(resolveService(request.isDemo()).createExpense(request, principal.getName()));
     }
 
     @PutMapping("/")
-    ResponseEntity<ExpenseResponse> updateExpense(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    ResponseEntity<ExpenseResponse> updateExpense(@RequestBody @Valid ExpenseRequest request,
+                                                  BindingResult result,
+                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return resolveService(true).updateExpense(request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(resolveService(request.isDemo()).updateExpense(request, principal.getName()));
     }
 
     @GetMapping("/{userExternalId}")
-    List<ExpenseDto> findExpenses(@PathVariable String userExternalId) {
-        if(AppTools.isBlank(userExternalId)) {
-            return null;
+    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable String userExternalId,
+                                                  @RequestParam(required = false, defaultValue = "false") boolean isDemo,
+                                                  Principal principal) {
+        if (AppTools.isBlank(userExternalId)) {
+            throw new UserNotFoundException("User with id " + userExternalId + " not found");
         }
-        return resolveService(true).findExpenseByUserId(userExternalId);
+        return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserId(userExternalId, principal.getName()));
     }
 
     @GetMapping("/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody @Valid ExpenseRequest request,
+                                                 @PathVariable String externalId,
+                                                 BindingResult result,
+                                                 Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return resolveService(true).findExpenseByIdAndUserId(null, null)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(resolveService(request.isDemo()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {

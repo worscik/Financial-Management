@@ -18,13 +18,13 @@ public class ExpenseServiceDemo implements ExpenseService{
     private final static long USER_ID = 999L;
 
     @Override
-    public Optional<ExpenseResponse> createExpense(ExpenseRequest expenseRequest) {
-        return Optional.of(new ExpenseResponse(buildExpenseDto(), true));
+    public ExpenseResponse createExpense(ExpenseRequest expenseRequest) {
+        return new ExpenseResponse(buildExpenseDto(), true);
     }
 
     @Override
-    public Optional<ExpenseResponse> updateExpense(ExpenseRequest expenseRequest) {
-        return Optional.of(new ExpenseResponse(buildUpsertedExpenseDto(), true));
+    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest) {
+        return new ExpenseResponse(buildUpsertedExpenseDto(), true);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class ExpenseServiceDemo implements ExpenseService{
 
 
     @Override
-    public Optional<ExpenseResponse> findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
-        return Optional.of(new ExpenseResponse(buildUpsertedExpenseDto(), true));
+    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
+        return new ExpenseResponse(buildUpsertedExpenseDto(), true);
     }
 
     @Override

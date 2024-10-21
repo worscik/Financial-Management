@@ -5,18 +5,17 @@ import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ExpenseService {
 
-    Optional<ExpenseResponse> createExpense(ExpenseRequest expenseRequest);
+    ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email);
 
-    Optional<ExpenseResponse> updateExpense(ExpenseRequest expenseRequest);
+    ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email);
 
-    List<ExpenseDto> findExpenseByUserId(String externalId);
+    List<ExpenseDto> findExpenseByUserId(String externalId, String email);
 
-    Optional<ExpenseResponse> findExpenseByIdAndUserId(String expenseExternalId, String userExternalId);
+    ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email);
 
-    boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId);
+    boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId, String email);
 
 }
