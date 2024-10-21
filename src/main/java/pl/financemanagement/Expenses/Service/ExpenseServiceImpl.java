@@ -13,28 +13,29 @@ import java.util.Optional;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
 
+
     @Override
-    public ExpenseResponse createExpense(ExpenseRequest expenseRequest) {
+    public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
         return null;
     }
 
     @Override
-    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest) {
+    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email) {
         return null;
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserId(String externalId) {
+    public List<ExpenseDto> findExpenseByUserId(String externalId, String email) {
         return List.of();
     }
 
     @Override
-    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
+    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email) {
         return null;
     }
 
     @Override
-    public boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId) {
+    public boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId, String email) {
         return false;
     }
 }

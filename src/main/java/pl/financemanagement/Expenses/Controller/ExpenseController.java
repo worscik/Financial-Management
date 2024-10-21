@@ -48,7 +48,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(request.isDemo()).updateExpense(request, principal.getName()));
     }
 
-    @GetMapping("/{userExternalId}")
+    @GetMapping("/user/{userExternalId}")
     ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable String userExternalId,
                                                   @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                   Principal principal) {
@@ -59,13 +59,14 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
     }
 
     @GetMapping("/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody @Valid ExpenseRequest request,
+    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody ExpenseRequest request,
                                                  @PathVariable String externalId,
                                                  BindingResult result,
                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
+
         return ResponseEntity.ok(resolveService(request.isDemo()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 

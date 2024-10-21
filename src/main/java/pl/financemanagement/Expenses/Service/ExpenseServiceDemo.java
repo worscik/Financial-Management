@@ -7,28 +7,27 @@ import pl.financemanagement.Expenses.Model.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Qualifier("expenseServiceDemo")
 @Service
-public class ExpenseServiceDemo implements ExpenseService{
+public class ExpenseServiceDemo implements ExpenseService {
 
     private final static UUID UUID_NUMBER = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2945");
     private final static long USER_ID = 999L;
 
     @Override
-    public ExpenseResponse createExpense(ExpenseRequest expenseRequest) {
+    public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
         return new ExpenseResponse(buildExpenseDto(), true);
     }
 
     @Override
-    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest) {
+    public ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email) {
         return new ExpenseResponse(buildUpsertedExpenseDto(), true);
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserId(String externalId) {
+    public List<ExpenseDto> findExpenseByUserId(String externalId, String email) {
         return List.of(buildExpenseDto(), buildUpsertedExpenseDto());
     }
 
@@ -39,7 +38,9 @@ public class ExpenseServiceDemo implements ExpenseService{
     }
 
     @Override
-    public boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId) {
+    public boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
+                                                                     String userExternalId,
+                                                                     String email) {
         return true;
     }
 
