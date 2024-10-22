@@ -40,11 +40,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email)
-            throws BankAccountExistsException, UserNotFoundException {
+    public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
@@ -63,11 +61,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email)
-            throws BankAccountNotFoundException, UserNotFoundException {
+    public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
@@ -92,7 +88,6 @@ public class BankAccountServiceImpl implements BankAccountService {
             throws BankAccountNotFoundException, UserNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmail(email);
         if (user.isEmpty()) {
-            LOGGER.info("User with email not found: {}", email);
             throw new UserNotFoundException("User with email " + email + " not found");
         }
         Optional<BankAccount> account =

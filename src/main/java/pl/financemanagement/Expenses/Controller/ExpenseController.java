@@ -28,8 +28,8 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         super(service, demoService);
     }
 
-    @PostMapping("/")
-    ResponseEntity<ExpenseResponse> createExpense(@RequestBody @Valid ExpenseRequest request,
+    @PostMapping()
+    ResponseEntity<ExpenseResponse> createExpense(@RequestBody ExpenseRequest request,
                                                   BindingResult result,
                                                   Principal principal) {
         if (result.hasErrors()) {
@@ -38,7 +38,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(request.isDemo()).createExpense(request, principal.getName()));
     }
 
-    @PutMapping("/")
+    @PutMapping()
     ResponseEntity<ExpenseResponse> updateExpense(@RequestBody @Valid ExpenseRequest request,
                                                   BindingResult result,
                                                   Principal principal) {
@@ -74,6 +74,11 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ExpenseResponse(false, errors);
+    }
+
+    @PostMapping("/amount")
+    public ResponseEntity<Long> bankAccountBalance() {
+        return null;
     }
 
 }

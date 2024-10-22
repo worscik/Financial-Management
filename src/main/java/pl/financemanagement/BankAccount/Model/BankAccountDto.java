@@ -1,5 +1,6 @@
 package pl.financemanagement.BankAccount.Model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class BankAccountDto {
@@ -7,11 +8,13 @@ public class BankAccountDto {
     private final UUID externalId;
     private final String accountName;
     private final String accountNumber;
+    private final BigDecimal accountBalance;
 
     private BankAccountDto(AccountDtoBuilder builder) {
         this.externalId = builder.externalId;
         this.accountName = builder.accountName;
         this.accountNumber = builder.accountNumber;
+        this.accountBalance = builder.accountBalance;
     }
 
     public UUID getExternalId() {
@@ -26,10 +29,15 @@ public class BankAccountDto {
         return accountNumber;
     }
 
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
+    }
+
     public static final class AccountDtoBuilder {
         private UUID externalId;
         private String accountName;
         private String accountNumber;
+        private BigDecimal accountBalance;
 
         public AccountDtoBuilder() {
         }
@@ -50,6 +58,11 @@ public class BankAccountDto {
 
         public AccountDtoBuilder withAccountNumber(String accountNumber) {
             this.accountNumber = accountNumber;
+            return this;
+        }
+
+        public AccountDtoBuilder withAccountBalance(BigDecimal accountBalance) {
+            this.accountBalance = accountBalance;
             return this;
         }
 

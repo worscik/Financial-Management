@@ -16,6 +16,7 @@ public interface ExpenseService {
 
     ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email);
 
-    boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId, String email);
+    ExpenseResponse deleteExpenseByUserExternalIdAndExpenseExternalId(
+            String expenseExternalId, String userExternalId, String email);
 
 }

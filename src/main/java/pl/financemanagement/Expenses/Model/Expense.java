@@ -1,9 +1,7 @@
 package pl.financemanagement.Expenses.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -21,8 +19,80 @@ public class Expense {
     private Instant modifyOn;
     private ExpenseCategory expenseCategory;
     private ExpenseType expenseType;
-    private long userId;
     private BigDecimal amount;
+    @ManyToOne(fetch = FetchType.LAZY)  // Wiele wydatków może należeć do jednego użytkownika
+    @JoinColumn(name = "user_id", nullable = false)  // Używamy klucza obcego do powiązania z tabelą User
+    private UserAccount user;
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public UUID getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(UUID externalId) {
+        this.externalId = externalId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public Instant getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Instant createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public Instant getModifyOn() {
+        return modifyOn;
+    }
+
+    public void setModifyOn(Instant modifyOn) {
+        this.modifyOn = modifyOn;
+    }
+
+    public ExpenseCategory getExpenseCategory() {
+        return expenseCategory;
+    }
+
+    public void setExpenseCategory(ExpenseCategory expenseCategory) {
+        this.expenseCategory = expenseCategory;
+    }
+
+    public ExpenseType getExpenseType() {
+        return expenseType;
+    }
+
+    public void setExpenseType(ExpenseType expenseType) {
+        this.expenseType = expenseType;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public UserAccount getUser() {
+        return user;
+    }
+
+    public void setUser(UserAccount user) {
+        this.user = user;
+    }
 }

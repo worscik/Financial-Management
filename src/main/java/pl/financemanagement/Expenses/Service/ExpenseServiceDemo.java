@@ -38,10 +38,10 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public boolean deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
+    public ExpenseResponse deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
                                                                      String userExternalId,
                                                                      String email) {
-        return true;
+        return new ExpenseResponse(true, null);
     }
 
     private ExpenseDto buildExpenseDto() {

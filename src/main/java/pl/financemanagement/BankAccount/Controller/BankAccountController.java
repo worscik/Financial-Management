@@ -10,7 +10,6 @@ import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
-import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Service.BankAccountService;
 import pl.financemanagement.User.UserModel.UserNotFoundException;
@@ -31,8 +30,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @PostMapping()
     ResponseEntity<BankAccountResponse> create(@RequestBody BankAccountRequest bankAccountRequest,
                                                BindingResult result,
-                                               Principal principal)
-            throws BankAccountExistsException, UserNotFoundException {
+                                               Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
@@ -43,8 +41,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     @PutMapping()
     ResponseEntity<BankAccountResponse> update(@RequestBody @Valid BankAccountRequest bankAccountRequest,
                                                BindingResult result,
-                                               Principal principal)
-            throws UserNotFoundException, BankAccountNotFoundException {
+                                               Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }

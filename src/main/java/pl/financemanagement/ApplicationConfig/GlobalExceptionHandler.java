@@ -1,8 +1,8 @@
 package pl.financemanagement.ApplicationConfig;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
         BindingResult result = ex.getBindingResult();
@@ -35,10 +37,11 @@ public class GlobalExceptionHandler {
         BindingResult result = ex.getBindingResult();
         return new ResponseEntity<>(buildErrorResponse(result), HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleHttpMessageNotReadableExceptionException() {
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> handleInvalidInput(HttpMessageNotReadableException e) {
+        log.error("Error during processes request: ", e);
+        return ResponseEntity.badRequest().body("Invalid request payload.");
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -76,7 +79,6 @@ public class GlobalExceptionHandler {
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return errors;
     }
-
 
 
 }

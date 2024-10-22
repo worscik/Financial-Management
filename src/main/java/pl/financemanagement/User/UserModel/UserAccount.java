@@ -1,8 +1,11 @@
 package pl.financemanagement.User.UserModel;
 
 import jakarta.persistence.*;
+import pl.financemanagement.Expenses.Model.Expense;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +25,9 @@ public class UserAccount {
     private long version;
     private String role;
     private String password;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Expense> expenses = new ArrayList<>();
+
 
     public UserAccount() {
     }
@@ -96,5 +102,13 @@ public class UserAccount {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
     }
 }
