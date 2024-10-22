@@ -1,25 +1,28 @@
 package pl.financemanagement.BankAccount.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import pl.financemanagement.Expenses.Model.BasicRequest;
 
-public class BankAccountRequest {
+import java.math.BigDecimal;
+
+public class BankAccountRequest extends BasicRequest {
 
     private String externalId;
     @NotBlank
     private String accountName;
     private long userId;
-    @JsonProperty("isDemo")
-    private boolean isDemo = false;
+    private BigDecimal accountBalance;
 
-    public BankAccountRequest(String externalId, String accountName, long userId, boolean isDemo) {
-        this.externalId = externalId;
-        this.accountName = accountName;
+    public BankAccountRequest(boolean isDemo, BigDecimal accountBalance, long userId, String accountName, String externalId) {
+        super(isDemo);
+        this.accountBalance = accountBalance;
         this.userId = userId;
-        this.isDemo = isDemo;
+        this.accountName = accountName;
+        this.externalId = externalId;
     }
 
-    public BankAccountRequest(String accountName, long userId) {
+    public BankAccountRequest(boolean isDemo, String accountName, long userId) {
+        super(isDemo);
         this.accountName = accountName;
         this.userId = userId;
     }
@@ -52,11 +55,11 @@ public class BankAccountRequest {
         this.userId = userId;
     }
 
-    public boolean isDemo() {
-        return isDemo;
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
     }
 
-    public void setDemo(boolean demo) {
-        isDemo = demo;
+    public void setAccountBalance(BigDecimal accountBalance) {
+        this.accountBalance = accountBalance;
     }
 }

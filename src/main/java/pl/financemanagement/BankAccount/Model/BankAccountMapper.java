@@ -9,6 +9,7 @@ public class BankAccountMapper {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName(bankAccount.getAccountName());
         bankAccount.setUserId(bankAccount.getUserId());
+        bankAccount.setAccountBalance(bankAccountRequest.getAccountBalance());
         return bankAccount;
     }
 
@@ -17,6 +18,7 @@ public class BankAccountMapper {
                 .withExternalId(bankAccount.getExternalId())
                 .withAccountName(bankAccount.getAccountName())
                 .withAccountNumber(bankAccount.getAccountNumber())
+                .withAccountBalance(bankAccount.getAccountBalance())
                 .build();
     }
 

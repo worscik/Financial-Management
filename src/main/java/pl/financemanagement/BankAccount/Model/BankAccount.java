@@ -20,7 +20,7 @@ public class BankAccount {
     private long accountVersion;
     private String accountName;
     private String accountNumber;
-    private BigDecimal amount;
+    private BigDecimal accountBalance;
 
     public BankAccount() {
     }
@@ -89,11 +89,11 @@ public class BankAccount {
         this.accountNumber = accountNumber;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAccountBalance(BigDecimal accountBalance) {
+        this.accountBalance = accountBalance;
     }
 }

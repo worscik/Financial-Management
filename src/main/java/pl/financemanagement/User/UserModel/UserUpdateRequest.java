@@ -7,7 +7,7 @@ public class UserUpdateRequest {
     @Email(message = "Email is not correct")
     private String newEmail;
     private String newName;
-    private boolean isDemo;
+    private boolean demo;
 
     public UserUpdateRequest() {
     }
@@ -29,10 +29,10 @@ public class UserUpdateRequest {
     }
 
     public boolean isDemo() {
-        return isDemo;
+        return demo;
     }
 
     public void setDemo(boolean demo) {
-        isDemo = demo;
+        this.demo = demo;
     }
 }

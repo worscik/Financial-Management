@@ -11,7 +11,9 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
+import pl.financemanagement.User.UserModel.UserNotFoundException;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,46 +28,58 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         super(service, demoService);
     }
 
-    @PostMapping("/")
-    ResponseEntity<ExpenseResponse> createExpense(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    @PostMapping()
+    ResponseEntity<ExpenseResponse> createExpense(@RequestBody ExpenseRequest request,
+                                                  BindingResult result,
+                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok().body(resolveService(request.isDemo()).createExpense(request));
+        return ResponseEntity.ok(resolveService(request.isDemo()).createExpense(request, principal.getName()));
     }
 
-    @PutMapping("/")
-    ResponseEntity<ExpenseResponse> updateExpense(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    @PutMapping()
+    ResponseEntity<ExpenseResponse> updateExpense(@RequestBody @Valid ExpenseRequest request,
+                                                  BindingResult result,
+                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return ResponseEntity.ok().body(resolveService(request.isDemo()).updateExpense(request));
+        return ResponseEntity.ok(resolveService(request.isDemo()).updateExpense(request, principal.getName()));
     }
 
-    //TODO DUPLICATE WITH findExpenses
-    @GetMapping("/{userExternalId}")
+    @GetMapping("/user/{userExternalId}")
     ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable String userExternalId,
-                                                  @RequestParam boolean isDemo) {
+                                                  @RequestParam(required = false, defaultValue = "false") boolean isDemo,
+                                                  Principal principal) {
         if (AppTools.isBlank(userExternalId)) {
-            throw new IllegalArgumentException("ExternalId can not be empty");
+            throw new UserNotFoundException("User with id " + userExternalId + " not found");
         }
-        return ResponseEntity.ok().body(resolveService(isDemo).findExpenseByUserId(userExternalId));
+        return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserId(userExternalId, principal.getName()));
     }
 
     @GetMapping("/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody @Valid ExpenseRequest request, BindingResult result) {
+    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody ExpenseRequest request,
+                                                 @PathVariable String externalId,
+                                                 BindingResult result,
+                                                 Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok().body(
-                resolveService(request.isDemo()).findExpenseByIdAndUserId(null, null));
+
+        return ResponseEntity.ok(resolveService(request.isDemo()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ExpenseResponse(false, errors);
+    }
+
+    //TODO operation on bank account
+    @PostMapping("/bankBalance")
+    public ResponseEntity<Long> bankAccountBalance(@RequestBody @Valid ExpenseRequest request) {
+        return null;
     }
 
 }

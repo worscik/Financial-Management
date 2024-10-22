@@ -12,4 +12,5 @@ public interface BankAccountDao extends CrudRepository<BankAccount, Long> {
 
     Optional<BankAccount> findAccountByExternalIdAndUserId(UUID externalId, long id);
 
+    BankAccount findAccountById(long id);
 }
