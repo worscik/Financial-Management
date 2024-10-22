@@ -76,8 +76,9 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return new ExpenseResponse(false, errors);
     }
 
-    @PostMapping("/amount")
-    public ResponseEntity<Long> bankAccountBalance() {
+    //TODO operation on bank account
+    @PostMapping("/bankBalance")
+    public ResponseEntity<Long> bankAccountBalance(@RequestBody @Valid ExpenseRequest request) {
         return null;
     }
 

@@ -8,7 +8,7 @@ public class ExpenseMapper {
         return new ExpenseDto.Builder()
                 .externalId(expense.getExternalId())
                 .expenseCategory(expense.getExpenseCategory())
-                .amount(expense.getAmount())
+                .amount(expense.getExpense())
                 .userId(expense.getUser().getId())
                 .expenseType(expense.getExpenseType())
                 .createdOn(expense.getCreatedOn())

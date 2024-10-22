@@ -1,15 +1,19 @@
 package pl.financemanagement.Expenses.Model;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ExpenseRequest {
 
     private UUID externalId;
+    @NotBlank
     private ExpenseCategory expenseCategory;
+    @NotBlank
     private ExpenseType expenseType;
+    @NotBlank
     private BigDecimal amount;
-    private long userId;
     private boolean demo;
 
 
@@ -43,14 +47,6 @@ public class ExpenseRequest {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public boolean isDemo() {
