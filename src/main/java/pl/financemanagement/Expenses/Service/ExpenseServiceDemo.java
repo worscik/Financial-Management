@@ -14,6 +14,7 @@ import java.util.UUID;
 public class ExpenseServiceDemo implements ExpenseService {
 
     private final static UUID UUID_NUMBER = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2945");
+    private final static UUID USER_EXTERNAL_ID = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2942");
     private final static long USER_ID = 999L;
 
     @Override
@@ -27,8 +28,8 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserId(String externalId, String email) {
-        return List.of(buildExpenseDto(), buildUpsertedExpenseDto());
+    public List<ExpenseDto> findExpenseByUserName(String email) {
+        return List.of(buildExpenseDto());
     }
 
 
@@ -38,31 +39,29 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public ExpenseResponse deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
-                                                                     String userExternalId,
+    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
                                                                      String email) {
-        return new ExpenseResponse(true, null);
     }
 
     private ExpenseDto buildExpenseDto() {
         return new ExpenseDto.Builder()
-                .userId(USER_ID)
+                .userId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.INCOME)
                 .createdOn(Instant.now())
                 .externalId(UUID_NUMBER)
                 .expenseCategory(ExpenseCategory.FOOD)
-                .amount(BigDecimal.valueOf(10000))
+                .bankBalance(BigDecimal.valueOf(10000))
                 .build();
     }
 
     private ExpenseDto buildUpsertedExpenseDto() {
         return new ExpenseDto.Builder()
-                .userId(USER_ID)
+                .userId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.EXPENSE)
                 .createdOn(Instant.now())
                 .externalId(UUID_NUMBER)
                 .expenseCategory(ExpenseCategory.WORK)
-                .amount(BigDecimal.valueOf(1200))
+                .bankBalance(BigDecimal.valueOf(1200))
                 .build();
     }
 

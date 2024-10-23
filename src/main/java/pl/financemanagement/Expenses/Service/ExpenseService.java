@@ -12,11 +12,11 @@ public interface ExpenseService {
 
     ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email);
 
-    List<ExpenseDto> findExpenseByUserId(String externalId, String email);
+    List<ExpenseDto> findExpenseByUserName(String email);
 
     ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email);
 
-    ExpenseResponse deleteExpenseByUserExternalIdAndExpenseExternalId(
-            String expenseExternalId, String userExternalId, String email);
+    void deleteExpenseByUserExternalIdAndExpenseExternalId(
+            String expenseExternalId, String email);
 
 }

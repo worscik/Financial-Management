@@ -7,6 +7,7 @@ import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.Expenses.Model.*;
+import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Model.exceptions.NotEnoughMoneyForTransaction;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
@@ -14,12 +15,12 @@ import pl.financemanagement.User.UserModel.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static pl.financemanagement.Expenses.Model.ExpenseMapper.mapToDto;
-import static pl.financemanagement.Expenses.Model.ExpenseMapper.mapToExpense;
-import static pl.financemanagement.Expenses.Model.ExpenseType.EXPENSE;
+import static pl.financemanagement.Expenses.Model.ExpenseMapper.*;
 
 @Qualifier("expenseServiceImpl")
 @Service
@@ -38,15 +39,12 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     @Transactional
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
-        Optional<UserAccount> userAccount = userDao.findUserByEmail("demo@example.com");
-        if (userAccount.isEmpty()) {
-            throw new UserNotFoundException("User with email " + email + " not found");
-        }
+        UserAccount userAccount = getUserAccount(email);
 
-        Expense expense = createExpenseFromRequest(expenseRequest, userAccount.get());
-        BankAccount bankAccount = findBankAccount(userAccount.get().getId());
+        Expense expense = createExpenseFromRequest(expenseRequest, userAccount);
+        BankAccount bankAccount = findBankAccount(userAccount.getId());
 
-        if (Boolean.FALSE.equals(hasSufficientBalance(bankAccount.getAccountBalance(), expense.getExpense()))) {
+        if (hasNoSufficientBalance(bankAccount.getAccountBalance(), expense.getExpense())) {
             throw new NotEnoughMoneyForTransaction("Not Enough money for transaction ");
         }
 
@@ -54,53 +52,85 @@ public class ExpenseServiceImpl implements ExpenseService {
         bankAccount.setAccountBalance(newBalance);
         expenseDao.save(expense);
         bankAccountDao.save(bankAccount);
-        return new ExpenseResponse(mapToDto(expense), true);
+        return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
+                expense, newBalance, userAccount.getExternalId()), true);
     }
 
     @Override
     public ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email) {
-        return null;
+        UserAccount userAccount = getUserAccount(email);
+
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(
+                        expenseRequest.getExternalId(), userAccount.getId())
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
+
+        BankAccount bankAccount = findBankAccount(userAccount.getId());
+
+        BigDecimal newBalance = resolveOperationOnAccount(expenseRequest.getExpenseType(), bankAccount, expenseRequest);
+        bankAccount.setAccountBalance(newBalance);
+
+        Expense expenseToUpdate = mapToExpense(expenseRequest);
+        expenseToUpdate.setModifyOn(Instant.now());
+        expenseDao.save(expenseToUpdate);
+        return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
+                expense, bankAccount.getAccountBalance(), userAccount.getExternalId()), true);
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserId(String externalId, String email) {
-        return List.of();
+    public List<ExpenseDto> findExpenseByUserName(String email) {
+        UserAccount userAccount = getUserAccount(email);
+        BankAccount bankAccount = findBankAccount(userAccount.getId());
+
+        return expenseDao.findAllExpensesByUserId(userAccount.getId()).stream()
+                .map(expense -> mapToDtoWithBankBalanceAndUserExternalId(
+                        expense, bankAccount.getAccountBalance(), userAccount.getExternalId()))
+                .toList();
     }
 
     @Override
     public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email) {
-        return null;
+        UserAccount userAccount = getUserAccount(email);
+        //TODO secure cast uuid
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
+        return new ExpenseResponse(mapToDto(expense), true);
     }
 
     @Override
-    public ExpenseResponse deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String userExternalId, String email) {
-        return null;
+    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String email) {
+        UserAccount userAccount = getUserAccount(email);
+
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
+        expenseDao.delete(expense);
     }
 
     private BigDecimal resolveOperationOnAccount(ExpenseType expenseType, BankAccount account, ExpenseRequest request) {
-        if (expenseType.equals(EXPENSE)) {
-            return account.getAccountBalance().subtract(request.getAmount());
-        }
-        return account.getAccountBalance().add(request.getAmount());
+        return switch (expenseType) {
+            case EXPENSE -> account.getAccountBalance().subtract(request.getExpense());
+            case INCOME -> account.getAccountBalance().add(request.getExpense());
+            default -> throw new IllegalArgumentException("Unsupported expense type: " + expenseType);
+        };
     }
 
     private Expense createExpenseFromRequest(ExpenseRequest expenseRequest, UserAccount userAccount) {
         Expense expense = mapToExpense(expenseRequest);
         expense.setUser(userAccount);
-        expense.setVersion(1);
         return expense;
     }
 
     private BankAccount findBankAccount(long userId) {
-        Optional<BankAccount> bankAccount = Optional.ofNullable(bankAccountDao.findAccountById(userId));
-        if (bankAccount.isEmpty()) {
-            throw new BankAccountNotFoundException("Account for user " + userId + " not found");
-        }
-        return bankAccount.get();
+        return Optional.ofNullable(bankAccountDao.findAccountById(userId))
+                .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
-    private boolean hasSufficientBalance(BigDecimal bankBalance, BigDecimal expenseAmount) {
-        return bankBalance.compareTo(expenseAmount) >= 0;
+    private boolean hasNoSufficientBalance(BigDecimal bankBalance, BigDecimal expenseAmount) {
+        return bankBalance.compareTo(expenseAmount) <= 0;
+    }
+
+    private UserAccount getUserAccount(String email) {
+        return userDao.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
     }
 
 }
