@@ -1,9 +1,5 @@
 package pl.financemanagement.Expenses.Model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -14,16 +10,16 @@ public class ExpenseDto {
     private final Instant createdOn;
     private final ExpenseCategory expenseCategory;
     private final ExpenseType expenseType;
-    private final long userId;
-    private final BigDecimal amount;
+    private final UUID userExternalId;
+    private final BigDecimal bankBalance;
 
     private ExpenseDto(Builder builder) {
         this.externalId = builder.externalId;
         this.createdOn = builder.createdOn;
         this.expenseCategory = builder.expenseCategory;
         this.expenseType = builder.expenseType;
-        this.userId = builder.userId;
-        this.amount = builder.amount;
+        this.userExternalId = builder.userExternalId;
+        this.bankBalance = builder.bankBalance;
     }
 
     public static class Builder {
@@ -31,8 +27,8 @@ public class ExpenseDto {
         private Instant createdOn;
         private ExpenseCategory expenseCategory;
         private ExpenseType expenseType;
-        private long userId;
-        private BigDecimal amount;
+        private UUID userExternalId;
+        private BigDecimal bankBalance;
 
         public Builder externalId(UUID externalId) {
             this.externalId = externalId;
@@ -54,13 +50,13 @@ public class ExpenseDto {
             return this;
         }
 
-        public Builder userId(long userId) {
-            this.userId = userId;
+        public Builder userId(UUID userExternalId) {
+            this.userExternalId = userExternalId;
             return this;
         }
 
-        public Builder amount(BigDecimal amount) {
-            this.amount = amount;
+        public Builder bankBalance(BigDecimal bankBalance) {
+            this.bankBalance = bankBalance;
             return this;
         }
 
@@ -85,12 +81,12 @@ public class ExpenseDto {
         return expenseType;
     }
 
-    public long getUserId() {
-        return userId;
+    public UUID getUserExternalId() {
+        return userExternalId;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getBankBalance() {
+        return bankBalance;
     }
 
 

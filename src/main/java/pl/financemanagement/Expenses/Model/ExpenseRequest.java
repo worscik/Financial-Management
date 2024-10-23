@@ -13,7 +13,8 @@ public class ExpenseRequest {
     @NotBlank
     private ExpenseType expenseType;
     @NotBlank
-    private BigDecimal amount;
+    private BigDecimal bankBalance;
+    private BigDecimal expense;
     private boolean demo;
 
 
@@ -41,12 +42,12 @@ public class ExpenseRequest {
         this.expenseType = expenseType;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getBankBalance() {
+        return bankBalance;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setBankBalance(BigDecimal bankBalance) {
+        this.bankBalance = bankBalance;
     }
 
     public boolean isDemo() {
@@ -55,5 +56,13 @@ public class ExpenseRequest {
 
     public void setDemo(boolean demo) {
         this.demo = demo;
+    }
+
+    public BigDecimal getExpense() {
+        return expense;
+    }
+
+    public void setExpense(BigDecimal expense) {
+        this.expense = expense;
     }
 }

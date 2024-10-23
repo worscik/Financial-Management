@@ -14,6 +14,7 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private UUID externalId;
+    @Version
     private int version;
     private Instant createdOn;
     private Instant modifyOn;

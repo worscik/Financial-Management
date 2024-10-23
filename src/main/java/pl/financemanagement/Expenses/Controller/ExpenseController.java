@@ -48,14 +48,10 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(request.isDemo()).updateExpense(request, principal.getName()));
     }
 
-    @GetMapping("/user/{userExternalId}")
-    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable String userExternalId,
-                                                  @RequestParam(required = false, defaultValue = "false") boolean isDemo,
+    @GetMapping("/list")
+    ResponseEntity<List<ExpenseDto>> findExpenses(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                   Principal principal) {
-        if (AppTools.isBlank(userExternalId)) {
-            throw new UserNotFoundException("User with id " + userExternalId + " not found");
-        }
-        return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserId(userExternalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserName(principal.getName()));
     }
 
     @GetMapping("/{externalId}")
