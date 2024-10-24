@@ -14,8 +14,8 @@ import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
-import pl.financemanagement.User.UserService.UserServiceImpl;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +27,7 @@ import static pl.financemanagement.AppTools.AppTools.validUUIDFromString;
 public class BankAccountServiceImpl implements BankAccountService {
 
     private static final long ONE = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BankAccountServiceImpl.class);
 
     private final BankAccountDao bankAccountDao;
     private final BankAccountMapper bankAccountMapper;
@@ -41,13 +41,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
-        Optional<UserAccount> user = userDao.findUserByEmail(email);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User with email " + email + " not found");
-        }
+        UserAccount user = findUserAccount(email);
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
         Optional<BankAccount> existingAccount = bankAccountDao.findAccountByExternalIdAndUserId(
-                externalId, user.get().getId());
+                externalId, user.getId());
         if (existingAccount.isPresent()) {
             LOGGER.info("Account with ID {} already exists", bankAccountRequest.getExternalId());
             throw new BankAccountExistsException("Account with externalId" + externalId + " is exists");
@@ -62,13 +59,11 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
-        Optional<UserAccount> user = userDao.findUserByEmail(email);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User with email " + email + " not found");
-        }
+        UserAccount user = findUserAccount(email);
+        //TODO private method
         UUID externalId = validUUIDFromString(bankAccountRequest.getExternalId());
         Optional<BankAccount> accountOptional =
-                bankAccountDao.findAccountByExternalIdAndUserId(externalId, user.get().getId());
+                bankAccountDao.findAccountByExternalIdAndUserId(externalId, user.getId());
         if (accountOptional.isEmpty()) {
             LOGGER.info("Account with externalId {} not found", bankAccountRequest.getExternalId());
             throw new BankAccountNotFoundException("Account not found");
@@ -86,12 +81,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public BankAccountResponse findAccountByNumber(String accountNumber, String email)
             throws BankAccountNotFoundException, UserNotFoundException {
-        Optional<UserAccount> user = userDao.findUserByEmail(email);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User with email " + email + " not found");
-        }
+        UserAccount user = findUserAccount(email);
         Optional<BankAccount> account =
-                bankAccountDao.findAccountByExternalIdAndUserId(UUID.fromString(accountNumber), user.get().getId());
+                bankAccountDao.findAccountByExternalIdAndUserId(UUID.fromString(accountNumber), user.getId());
         if (account.isPresent()) {
             return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(account.get()));
         }
@@ -116,6 +108,13 @@ public class BankAccountServiceImpl implements BankAccountService {
         throw new BankAccountNotFoundException("Account with ID " + externalId + " not found");
     }
 
+    @Override
+    public BigDecimal getBankAccountBalance(String email) {
+        UserAccount user = findUserAccount(email);
+        BankAccount bankAccount = findBankAccount(user.getId());
+        return bankAccount.getAccountBalance();
+    }
+
     private BankAccount prepareAccount(BankAccountRequest bankAccountRequest) {
         BankAccount bankAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
         bankAccount.setAccountVersion(ONE);
@@ -123,5 +122,15 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccount.setAccountNumber(UUID.randomUUID().toString());
         bankAccount.setExternalId(UUID.randomUUID());
         return bankAccount;
+    }
+
+    private BankAccount findBankAccount(long userId) {
+        return Optional.ofNullable(bankAccountDao.findAccountById(userId))
+                .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
+    }
+
+    private UserAccount findUserAccount(String email) {
+        return userDao.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
     }
 }

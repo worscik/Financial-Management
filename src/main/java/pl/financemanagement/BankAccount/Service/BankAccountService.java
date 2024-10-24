@@ -7,16 +7,23 @@ import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsExcept
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.User.UserModel.UserNotFoundException;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 
 @Service
 public interface BankAccountService {
 
-    BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) throws BankAccountExistsException, UserNotFoundException;
+    BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email);
 
-    BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) throws BankAccountNotFoundException, UserNotFoundException;
+    BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email);
 
-    BankAccountResponse findAccountByNumber(String accountNumber, String email) throws BankAccountNotFoundException, UserNotFoundException;
+    BankAccountResponse findAccountByNumber(String accountNumber, String email);
 
-    BankAccountResponse deleteAccount(String externalId, String email) throws UserNotFoundException, BankAccountNotFoundException;
+    BankAccountResponse deleteAccount(String externalId, String email);
+
+    BigDecimal getBankAccountBalance(String email);
+
+
 
 }

@@ -54,28 +54,22 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserName(principal.getName()));
     }
 
-    @GetMapping("/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@RequestBody ExpenseRequest request,
-                                                 @PathVariable String externalId,
+    @GetMapping("externalId/{externalId}")
+    ResponseEntity<ExpenseResponse> findExpenses(@PathVariable String externalId,
+                                                 @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                  BindingResult result,
                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
 
-        return ResponseEntity.ok(resolveService(request.isDemo()).findExpenseByIdAndUserId(externalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(isDemo).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ExpenseResponse(false, errors);
-    }
-
-    //TODO operation on bank account
-    @PostMapping("/bankBalance")
-    public ResponseEntity<Long> bankAccountBalance(@RequestBody @Valid ExpenseRequest request) {
-        return null;
     }
 
 }
