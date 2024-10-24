@@ -36,7 +36,7 @@ public class BankAccountServiceDemo implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse deleteAccount(String externalId, String email) {
+    public BankAccountResponse deleteAccount( String email) {
         return new BankAccountResponse(true);
     }
 

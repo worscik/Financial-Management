@@ -20,7 +20,7 @@ public interface BankAccountService {
 
     BankAccountResponse findAccountByNumber(String accountNumber, String email);
 
-    BankAccountResponse deleteAccount(String externalId, String email);
+    BankAccountResponse deleteAccount(String email);
 
     BigDecimal getBankAccountBalance(String email);
 

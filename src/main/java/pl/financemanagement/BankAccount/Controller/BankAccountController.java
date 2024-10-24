@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
@@ -64,15 +63,8 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     }
 
     @DeleteMapping()
-    ResponseEntity<BankAccountResponse> deleteAccount(@RequestBody @Valid BankAccountRequest bankAccountRequest,
-                                                      BindingResult result,
-                                                      Principal principal)
-            throws UserNotFoundException, BankAccountNotFoundException {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
-        }
-        return ResponseEntity.ok().body(resolveService
-                (bankAccountRequest.isDemo()).deleteAccount(bankAccountRequest.getExternalId(), principal.getName()));
+    ResponseEntity<BankAccountResponse> deleteAccount(Principal principal) {
+        return ResponseEntity.ok().body(resolveService(false).deleteAccount(principal.getName()));
     }
 
     @GetMapping("/bankBalance")
