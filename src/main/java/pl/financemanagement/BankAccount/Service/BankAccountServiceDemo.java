@@ -7,6 +7,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,8 +36,13 @@ public class BankAccountServiceDemo implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse deleteAccount(String externalId, String email) {
+    public BankAccountResponse deleteAccount( String email) {
         return new BankAccountResponse(true);
+    }
+
+    @Override
+    public BigDecimal getBankAccountBalance(String email) {
+        return BigDecimal.valueOf(10_000);
     }
 
     private BankAccountDto buildDemoAccount() {

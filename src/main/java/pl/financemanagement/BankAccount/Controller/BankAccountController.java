@@ -14,6 +14,7 @@ import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundExce
 import pl.financemanagement.BankAccount.Service.BankAccountService;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,15 +63,15 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     }
 
     @DeleteMapping()
-    ResponseEntity<BankAccountResponse> deleteAccount(@RequestBody @Valid BankAccountRequest bankAccountRequest,
-                                                      BindingResult result,
-                                                      Principal principal)
-            throws UserNotFoundException, BankAccountNotFoundException {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
-        }
-        return ResponseEntity.ok().body(resolveService
-                (bankAccountRequest.isDemo()).deleteAccount(bankAccountRequest.getExternalId(), principal.getName()));
+    ResponseEntity<BankAccountResponse> deleteAccount(Principal principal) {
+        return ResponseEntity.ok().body(resolveService(false).deleteAccount(principal.getName()));
+    }
+
+    @GetMapping("/bankBalance")
+    public ResponseEntity<BigDecimal> bankAccountBalance(@RequestParam(defaultValue = "false") boolean isDemo,
+                                                         Principal principal) {
+        return ResponseEntity.ok(resolveService(isDemo).getBankAccountBalance(
+                principal.getName()));
     }
 
     static BankAccountResponse buildErrorResponse(BindingResult result) {

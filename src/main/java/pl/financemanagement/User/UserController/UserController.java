@@ -8,7 +8,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.User.UserModel.*;
-import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
 import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserService.UserService;

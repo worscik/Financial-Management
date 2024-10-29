@@ -4,6 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import pl.financemanagement.BankAccount.Model.BankAccount;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,5 @@ public interface BankAccountDao extends CrudRepository<BankAccount, Long> {
     Optional<BankAccount> findAccountByExternalIdAndUserId(UUID externalId, long id);
 
     BankAccount findAccountById(long id);
+
 }

@@ -3,8 +3,8 @@ package pl.financemanagement.User.UserService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
-import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
-import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
+
+import java.security.Principal;
 
 @Service("userService")
 public interface UserService {
@@ -15,7 +15,7 @@ public interface UserService {
 
     UserResponse isUserExistByEmail(String email);
 
-    UserResponse getUserById(long id, String email);
+    UserResponse getUserById(long id, String email) ;
 
     UserDeleteResponse deleteUser(String externalId, String email);
 

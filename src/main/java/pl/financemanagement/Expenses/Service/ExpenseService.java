@@ -4,6 +4,7 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ExpenseService {
