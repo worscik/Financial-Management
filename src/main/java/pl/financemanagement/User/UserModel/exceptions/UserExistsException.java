@@ -1,4 +1,4 @@
-package pl.financemanagement.User.UserModel;
+package pl.financemanagement.User.UserModel.exceptions;
 
 public class UserExistsException extends RuntimeException {
 

@@ -12,7 +12,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Service.BankAccountService;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 
 import java.math.BigDecimal;
 import java.security.Principal;

@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.User.UserModel.*;
+import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.security.Principal;
@@ -39,7 +41,7 @@ public class UserController extends DemoResolver<UserService> {
     @PutMapping
     ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest,
                                             BindingResult result,
-                                            Principal principal) throws JOSEException, UserNotFoundException, EmailAlreadyInUseException {
+                                            Principal principal) throws JOSEException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }

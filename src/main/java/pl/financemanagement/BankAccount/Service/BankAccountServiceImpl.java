@@ -14,7 +14,7 @@ import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.Expenses.Model.Expense;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.math.BigDecimal;
@@ -44,6 +44,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
+    @Transactional
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
         UserAccount user = findUserAccount(email);
@@ -56,6 +57,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
+    @Transactional
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
         UserAccount user = findUserAccount(email);

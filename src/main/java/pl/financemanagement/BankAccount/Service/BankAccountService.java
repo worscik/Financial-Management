@@ -3,12 +3,8 @@ package pl.financemanagement.BankAccount.Service;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
-import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
-import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 
 @Service

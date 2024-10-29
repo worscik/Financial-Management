@@ -6,8 +6,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.financemanagement.User.UserModel.UserErrorResponse;
-import pl.financemanagement.User.UserModel.UserExistsException;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;

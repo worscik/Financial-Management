@@ -11,7 +11,7 @@ import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Model.exceptions.NotEnoughMoneyForTransaction;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
+import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.math.BigDecimal;

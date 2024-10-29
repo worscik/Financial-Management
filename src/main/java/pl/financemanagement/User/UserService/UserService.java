@@ -11,12 +11,12 @@ public interface UserService {
 
     UserResponse createUser(UserRequest userRequest) throws JOSEException;
 
-    UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException, UserNotFoundException, EmailAlreadyInUseException;
+    UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException;
 
     UserResponse isUserExistByEmail(String email);
 
-    UserResponse getUserById(long id, String email) throws UserNotFoundException;
+    UserResponse getUserById(long id, String email) ;
 
-    UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException;
+    UserDeleteResponse deleteUser(String externalId, String email);
 
 }

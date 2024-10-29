@@ -5,13 +5,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
 import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
-import pl.financemanagement.User.UserModel.UserNotFoundException;
 
 import java.security.Principal;
 import java.util.HashMap;

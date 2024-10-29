@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.financemanagement.JWToken.Model.JWTokenResponse;
+import pl.financemanagement.JWToken.Model.exceptions.ForbiddenAccessException;
 import pl.financemanagement.JWToken.Service.JwtServiceImpl;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
@@ -39,8 +40,7 @@ public class JwtController {
             return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(
                             userCredentialsRequest.getLogin(), user.get().getRole()), null, SUCCESS.getStatus()));
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JWTokenResponse(null,
-                "Incorrect login information sent", ERROR.getStatus()));
+        throw new ForbiddenAccessException("Cannot authorize credentials");
     }
 
 }
