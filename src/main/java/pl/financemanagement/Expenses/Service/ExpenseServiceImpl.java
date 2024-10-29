@@ -16,6 +16,7 @@ import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -103,6 +104,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
         expenseDao.delete(expense);
+    }
+
+    @Override
+    public List<ExpenseCategory> getExpensesCategories() {
+        return Arrays.stream(ExpenseCategory.values()).toList();
     }
 
     private BigDecimal resolveOperationOnAccount(ExpenseType expenseType, BankAccount account, ExpenseRequest request) {

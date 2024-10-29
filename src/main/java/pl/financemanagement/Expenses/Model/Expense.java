@@ -21,8 +21,8 @@ public class Expense {
     private ExpenseCategory expenseCategory;
     private ExpenseType expenseType;
     private BigDecimal expense;
-    @ManyToOne(fetch = FetchType.LAZY)  // Wiele wydatków może należeć do jednego użytkownika
-    @JoinColumn(name = "user_id", nullable = false)  // Używamy klucza obcego do powiązania z tabelą User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
 
     public long getId() {

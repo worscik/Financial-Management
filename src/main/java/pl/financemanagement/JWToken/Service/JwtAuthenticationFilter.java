@@ -41,7 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (requestURI.matches("^/h2-console.*")
                 || requestURI.equals("/users/register")
-                || requestURI.equals("/login")) {
+                || requestURI.equals("/login")
+                || requestURI.equals("/expense/categories")){
             filterChain.doFilter(request, response);
             return;
         }

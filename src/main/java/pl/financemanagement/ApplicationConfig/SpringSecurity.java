@@ -20,12 +20,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.financemanagement.JWToken.Service.JwtAuthenticationFilter;
 
+import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
 public class SpringSecurity {
-
 
     private static final Logger log = LoggerFactory.getLogger(SpringSecurity.class);
     @Value("${jwt.secret.key}")
@@ -44,7 +45,7 @@ public class SpringSecurity {
                     .headers(headers -> headers.frameOptions().disable())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/login", "/h2-console/**", "users/register").permitAll()
+                            .requestMatchers("/login", "/h2-console/**", "users/register", "expense/categories").permitAll()
                             .anyRequest().authenticated()
                     );
         } catch (Exception e) {
