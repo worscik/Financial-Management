@@ -7,11 +7,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "BANK_ACCOUNT")
 public class BankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "external_id", nullable = false, unique = true)
     private UUID externalId;
     private long userId;
     private Instant createdOn;

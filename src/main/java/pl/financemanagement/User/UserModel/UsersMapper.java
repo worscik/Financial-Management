@@ -1,13 +1,20 @@
 package pl.financemanagement.User.UserModel;
 
+import java.time.Instant;
+import java.util.UUID;
+
 public class UsersMapper {
 
+    private final static String USER_ROLE = "USER";
+
     public static UserAccount userMapper(UserRequest userRequest) {
-        UserAccount userAccount = new UserAccount();
-        userAccount.setEmail(userRequest.getEmail());
-        userAccount.setName(userRequest.getName());
-        userAccount.setRole("USER");
-        return userAccount;
+        UserAccount userToSave = new UserAccount();
+        userToSave.setEmail(userRequest.getEmail());
+        userToSave.setName(userRequest.getName());
+        userToSave.setCreatedOn(Instant.now());
+        userToSave.setExternalId(UUID.randomUUID());
+        userToSave.setRole(USER_ROLE);
+        return userToSave;
     }
 
     public static UserDto userDtoMapper(UserAccount userAccount) {

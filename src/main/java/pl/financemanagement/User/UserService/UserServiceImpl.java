@@ -44,8 +44,6 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("User with email " + userRequest.getEmail() + " exists");
         }
         UserAccount userToSave = userMapper(userRequest);
-        userToSave.setCreatedOn(Instant.now());
-        userToSave.setExternalId(UUID.randomUUID());
         UserAccount savedUser = userDao.save(userToSave);
         String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
         return new UserResponse(true, userDtoMapper(savedUser), token);

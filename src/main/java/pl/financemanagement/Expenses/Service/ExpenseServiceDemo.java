@@ -43,6 +43,11 @@ public class ExpenseServiceDemo implements ExpenseService {
                                                                      String email) {
     }
 
+    @Override
+    public List<ExpenseCategory> getExpensesCategories() {
+        return List.of();
+    }
+
     private ExpenseDto buildExpenseDto() {
         return new ExpenseDto.Builder()
                 .userId(USER_EXTERNAL_ID)

@@ -19,10 +19,11 @@ public class Expense {
     private Instant createdOn;
     private Instant modifyOn;
     private ExpenseCategory expenseCategory;
+    private String expenseItem;
     private ExpenseType expenseType;
     private BigDecimal expense;
-    @ManyToOne(fetch = FetchType.LAZY)  // Wiele wydatków może należeć do jednego użytkownika
-    @JoinColumn(name = "user_id", nullable = false)  // Używamy klucza obcego do powiązania z tabelą User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
 
     public long getId() {
@@ -71,6 +72,14 @@ public class Expense {
 
     public void setExpenseCategory(ExpenseCategory expenseCategory) {
         this.expenseCategory = expenseCategory;
+    }
+
+    public String getExpenseItem() {
+        return expenseItem;
+    }
+
+    public void setExpenseItem(String expenseItem) {
+        this.expenseItem = expenseItem;
     }
 
     public ExpenseType getExpenseType() {

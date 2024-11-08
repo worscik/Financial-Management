@@ -39,9 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        if (requestURI.matches("^/h2-console.*")
-                || requestURI.equals("/users/register")
-                || requestURI.equals("/login")) {
+        if (shouldSkipFilter(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -132,5 +130,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getRoleFromJWT(String token) throws ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         return signedJWT.getJWTClaimsSet().getStringClaim("role");
+    }
+
+    private boolean shouldSkipFilter(String requestURI) {
+        return requestURI.matches("^/h2-console.*")
+                || requestURI.equals("/users/register")
+                || requestURI.equals("/login")
+                || requestURI.equals("/expense/categories");
     }
 }
