@@ -19,6 +19,7 @@ public class Expense {
     private Instant createdOn;
     private Instant modifyOn;
     private ExpenseCategory expenseCategory;
+    private String expenseItem;
     private ExpenseType expenseType;
     private BigDecimal expense;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -71,6 +72,14 @@ public class Expense {
 
     public void setExpenseCategory(ExpenseCategory expenseCategory) {
         this.expenseCategory = expenseCategory;
+    }
+
+    public String getExpenseItem() {
+        return expenseItem;
+    }
+
+    public void setExpenseItem(String expenseItem) {
+        this.expenseItem = expenseItem;
     }
 
     public ExpenseType getExpenseType() {
