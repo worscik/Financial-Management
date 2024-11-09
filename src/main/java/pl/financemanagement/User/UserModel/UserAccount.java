@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "USER_ACCOUNT")
 public class UserAccount {
 
     @Id

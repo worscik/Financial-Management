@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("User with email " + userRequest.getEmail() + " exists");
         }
         UserAccount userToSave = userMapper(userRequest);
-        UserAccount savedUser = userDao.save(userToSave);
+        UserAccount savedUser = userDao.saveUserAccount(userToSave);
         String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
         return new UserResponse(true, userDtoMapper(savedUser), token);
     }
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setModifyOn(Instant.now());
-        UserAccount savedUser = userDao.save(user);
+        UserAccount savedUser = userDao.saveUserAccount(user);
         String token = jwtService.generateUserToken(savedUser.getEmail(), USER.getRole());
         return new UserResponse(true, userDtoMapper(savedUser), token);
     }
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(long id, String email) throws UserNotFoundException {
-        Optional<UserAccount> user = userDao.findById(id);
+        Optional<UserAccount> user = userDao.findUserById(id);
         if (user.isPresent()) {
             return new UserResponse(true, userDtoMapper(user.get()));
         }
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
     public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
         Optional<UserAccount> user = userDao.findUserByEmailAndExternalId(email, UUID.fromString(externalId));
         if (user.isPresent()) {
-            userDao.deleteById(user.get().getId());
+            userDao.deleteUserAccountById(user.get().getId());
             return new UserDeleteResponse(true, "User deleted.");
         }
         throw new UserNotFoundException("User with email " + email + " not found.");

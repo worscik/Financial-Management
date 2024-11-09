@@ -1,21 +1,25 @@
 package pl.financemanagement.User.UserModel;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserCredentialsRequest {
 
-    private String login;
+    @NotBlank
+    private String email;
+    @NotBlank
     private String password;
 
-    public UserCredentialsRequest(String login, String password) {
-        this.login = login;
+    public UserCredentialsRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

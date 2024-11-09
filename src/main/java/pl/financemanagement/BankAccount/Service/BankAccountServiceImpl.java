@@ -36,7 +36,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     private final UserDao userDao;
     private final ExpenseDao expenseDao;
 
-    public BankAccountServiceImpl(BankAccountDao bankAccountDao, BankAccountMapper bankAccountMapper, UserDao userDao, ExpenseDao expenseDao) {
+    public BankAccountServiceImpl(BankAccountDao bankAccountDao,
+                                  BankAccountMapper bankAccountMapper,
+                                  UserDao userDao,
+                                  ExpenseDao expenseDao) {
         this.bankAccountDao = bankAccountDao;
         this.bankAccountMapper = bankAccountMapper;
         this.userDao = userDao;
@@ -86,7 +89,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
 
         bankAccountDao.deleteById(account.getId());
-        userDao.deleteById(user.getId());
+        userDao.deleteUserAccountById(user.getId());
 
         LOGGER.info("Successfully deleted user: {}, bank account: {}, and all expenses",
                 user.getEmail(), account.getAccountNumber());

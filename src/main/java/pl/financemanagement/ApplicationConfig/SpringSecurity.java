@@ -69,4 +69,10 @@ public class SpringSecurity {
             }
         };
     }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
+    }
+
 }
