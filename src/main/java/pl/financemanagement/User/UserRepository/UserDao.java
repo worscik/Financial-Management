@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,8 +21,7 @@ public class UserDao {
     @Transactional
     public Optional<UserAccount> findUserByCredentials(UserCredentialsRequest credentialsRequest) {
         return entityManager
-                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email " +
-                        "AND u.password = :password", UserAccount.class)
+                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email AND u.password = :password", UserAccount.class)
                 .setParameter("email", credentialsRequest.getEmail())
                 .setParameter("password", credentialsRequest.getPassword())
                 .getResultList()
@@ -43,21 +41,22 @@ public class UserDao {
 
     @Transactional
     public Optional<UserAccount> findUserByEmailAndExternalId(String email, UUID externalId) {
-        List<UserAccount> result = entityManager
-                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email AND u.externalId = :externalId", UserAccount.class)
+        return entityManager
+                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email " +
+                        "AND u.externalId = :externalId", UserAccount.class)
                 .setParameter("email", email)
                 .setParameter("externalId", externalId)
-                .getResultList();
-        return result.stream().findFirst();
+                .getResultList().stream().findFirst();
     }
 
     @Transactional
     public Optional<UserAccount> findUserById(long id) {
-        List<UserAccount> result = entityManager
+        return entityManager
                 .createQuery("SELECT u FROM UserAccount u WHERE u.id = :id", UserAccount.class)
                 .setParameter("id", id)
-                .getResultList();
-        return result.stream().findFirst();
+                .getResultList()
+                .stream()
+                .findFirst();
     }
 
     @Transactional
