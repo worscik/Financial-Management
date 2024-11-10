@@ -50,7 +50,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Transactional
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
-        UserAccount user = findUserAccount(email);
+        UserAccount user = findUserAccountOrThrowException(email);
 
         BankAccount bankAccount = prepareAccount(bankAccountRequest, user);
         BankAccount savedBankAccount = bankAccountDao.save(bankAccount);
@@ -61,11 +61,11 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     @Transactional
+    //TODO
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
-        UserAccount user = findUserAccount(email);
+        findUserAccountOrThrowException(email);
         BankAccount updatedAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
-
         BankAccount savedAccount = bankAccountDao.save(updatedAccount);
         LOGGER.info("Updated account with externalId {} for userId {}",
                 savedAccount.getExternalId(), savedAccount.getUserId());
@@ -74,7 +74,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountResponse findAccountByNumber(String accountNumber, String email) {
-        UserAccount user = findUserAccount(email);
+        UserAccount user = findUserAccountOrThrowException(email);
         BankAccount account = findBankAccount(user.getId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(account));
     }
@@ -82,7 +82,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     @Transactional
     public BankAccountResponse deleteAccount(String email) {
-        UserAccount user = findUserAccount(email);
+        UserAccount user = findUserAccountOrThrowException(email);
         BankAccount account = findBankAccount(user.getId());
 
         List<Expense> expenses = expenseDao.findAllExpensesByUserId(user.getId());
@@ -98,7 +98,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BigDecimal getBankAccountBalance(String email) {
-        UserAccount user = findUserAccount(email);
+        UserAccount user = findUserAccountOrThrowException(email);
         BankAccount bankAccount = findBankAccount(user.getId());
         return bankAccount.getAccountBalance();
     }
@@ -119,7 +119,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccount;
     }
 
-    private UserAccount findUserAccount(String email) {
+    private UserAccount findUserAccountOrThrowException(String email) {
         UserAccount userAccount = userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
         LOGGER.info("User account not found for user: {}", email);

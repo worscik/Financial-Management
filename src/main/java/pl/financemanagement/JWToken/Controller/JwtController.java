@@ -47,10 +47,10 @@ public class JwtController {
         }
         Optional<UserAccount> user = userDao.findUserByCredentials(userCredentialsRequest);
         if (user.isPresent()) {
+            LOGGER.info("Correctly authorized user: {}", userCredentialsRequest.getEmail());
             return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(
                     userCredentialsRequest.getEmail(), user.get().getRole()), null, SUCCESS.getStatus()));
         }
-        LOGGER.info("Correctly authorized user: {}", userCredentialsRequest.getEmail());
         throw new ForbiddenAccessException("Cannot authorize credentials");
     }
 

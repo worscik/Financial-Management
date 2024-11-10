@@ -21,21 +21,24 @@ public class UserDao {
 
     @Transactional
     public Optional<UserAccount> findUserByCredentials(UserCredentialsRequest credentialsRequest) {
-        List<UserAccount> result = entityManager
-                .createNativeQuery("SELECT * FROM USER_ACCOUNT WHERE EMAIL = :email AND password = :password", UserAccount.class)
+        return entityManager
+                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email " +
+                        "AND u.password = :password", UserAccount.class)
                 .setParameter("email", credentialsRequest.getEmail())
                 .setParameter("password", credentialsRequest.getPassword())
-                .getResultList();
-        return result.stream().findFirst();
+                .getResultList()
+                .stream()
+                .findFirst();
     }
 
     @Transactional
     public Optional<UserAccount> findUserByEmail(String email) {
-        List<UserAccount> result = entityManager
-                .createNativeQuery("SELECT * FROM USER_ACCOUNT WHERE EMAIL = :email", UserAccount.class)
+        return entityManager
+                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email", UserAccount.class)
                 .setParameter("email", email)
-                .getResultList();
-        return result.stream().findFirst();
+                .getResultList()
+                .stream()
+                .findFirst();
     }
 
     @Transactional
