@@ -40,11 +40,11 @@ CREATE TABLE expense (
 
 INSERT INTO user_account (external_id, email, name, version, role, password)
 VALUES
-(UUID(), 'admin@financialapp.com', 'admin', 1, 'ADMIN', 'admin');
+(UUID(), 'admin@financialapp.com', 'admin', 1, 'ADMIN', '$2a$12$BSTIdBUX.cpPiEZGU8bWOe1OJ1gUNB.fBB91naE55icapsDMd7n12');
 
 INSERT INTO user_account (external_id, email, name, version, role, password)
 VALUES
-(UUID(), 'demo@financialapp.com', 'demo', 1, 'USER', 'demo');
+(UUID(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$12$kL1hhmgQAroSRhL5IjZVweL.hlTVoWub3Kp4UABesOZbUf8k.FmgS');
 
 INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance)
 VALUES

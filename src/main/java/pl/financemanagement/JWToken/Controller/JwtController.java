@@ -15,6 +15,7 @@ import pl.financemanagement.JWToken.Model.JWTokenResponse;
 import pl.financemanagement.JWToken.Model.JWTokenStatus;
 import pl.financemanagement.JWToken.Model.exceptions.ForbiddenAccessException;
 import pl.financemanagement.JWToken.Service.JwtServiceImpl;
+import pl.financemanagement.PasswordTools.PasswordService;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 import pl.financemanagement.User.UserRepository.UserDao;
@@ -33,25 +34,27 @@ public class JwtController {
 
     private final JwtServiceImpl jwtService;
     private final UserDao userDao;
+    private final PasswordService passwordService;
 
-    public JwtController(JwtServiceImpl jwtService, UserDao userDao) {
+    public JwtController(JwtServiceImpl jwtService, UserDao userDao, PasswordService passwordService) {
         this.jwtService = jwtService;
         this.userDao = userDao;
+        this.passwordService = passwordService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JWTokenResponse> generateToken(@Valid @RequestBody UserCredentialsRequest userCredentialsRequest,
+    public ResponseEntity<JWTokenResponse> generateToken(@Valid @RequestBody UserCredentialsRequest request,
                                                          BindingResult result) throws JOSEException {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        Optional<UserAccount> user = userDao.findUserByCredentials(userCredentialsRequest);
-        if (user.isPresent()) {
-            LOGGER.info("Correctly authorized user: {}", userCredentialsRequest.getEmail());
+        Optional<UserAccount> user = userDao.findUserByEmail(request.getEmail());
+        if (user.isPresent() && passwordService.verifyPassword(request.getPassword(), user.get().getPassword())) {
+            LOGGER.info("Correctly authorized user: {}", request.getEmail());
             return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(
-                    userCredentialsRequest.getEmail(), user.get().getRole()), null, SUCCESS.getStatus()));
+                    request.getEmail(), user.get().getRole()), null, SUCCESS.getStatus()));
         }
-        throw new ForbiddenAccessException("Cannot authorize credentials");
+        throw new ForbiddenAccessException("Wrong email or password. Try again!");
     }
 
     static JWTokenResponse buildErrorResponse(BindingResult result) {

@@ -3,6 +3,7 @@ package pl.financemanagement.User.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
+import pl.financemanagement.PasswordTools.PasswordService;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
 
@@ -16,17 +17,6 @@ public class UserDao {
 
     public UserDao(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    @Transactional
-    public Optional<UserAccount> findUserByCredentials(UserCredentialsRequest credentialsRequest) {
-        return entityManager
-                .createQuery("SELECT u FROM UserAccount u WHERE u.email = :email AND u.password = :password", UserAccount.class)
-                .setParameter("email", credentialsRequest.getEmail())
-                .setParameter("password", credentialsRequest.getPassword())
-                .getResultList()
-                .stream()
-                .findFirst();
     }
 
     @Transactional
