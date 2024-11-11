@@ -15,7 +15,7 @@ public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private UUID externalId;
+    private String externalId;
     @Column(nullable = false, unique = true)
     private String email;
     private String name;
@@ -40,11 +40,11 @@ public class UserAccount {
         this.id = id;
     }
 
-    public UUID getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(UUID externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 

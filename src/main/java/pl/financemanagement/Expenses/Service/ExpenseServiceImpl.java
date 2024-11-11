@@ -54,7 +54,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseDao.save(expense);
         bankAccountDao.save(bankAccount);
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
-                expense, newBalance, userAccount.getExternalId()), true);
+                expense, newBalance, UUID.fromString(userAccount.getExternalId())), true);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseToUpdate.setModifyOn(Instant.now());
         expenseDao.save(expenseToUpdate);
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
-                expense, bankAccount.getAccountBalance(), userAccount.getExternalId()), true);
+                expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())), true);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return expenseDao.findAllExpensesByUserId(userAccount.getId()).stream()
                 .map(expense -> mapToDtoWithBankBalanceAndUserExternalId(
-                        expense, bankAccount.getAccountBalance(), userAccount.getExternalId()))
+                        expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())))
                 .toList();
     }
 

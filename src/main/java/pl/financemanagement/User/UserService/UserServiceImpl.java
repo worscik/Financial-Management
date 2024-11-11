@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
         userToSave.setEmail(userRequest.getEmail());
         userToSave.setName(userRequest.getName());
         userToSave.setCreatedOn(Instant.now());
-        userToSave.setExternalId(UUID.randomUUID());
+        userToSave.setExternalId(String.valueOf(UUID.randomUUID()));
         userToSave.setRole(USER_ROLE);
         userToSave.setPassword(passwordService.hashPassword(userRequest.getPassword()));
         return userToSave;
