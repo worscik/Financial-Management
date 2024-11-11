@@ -8,10 +8,14 @@ public class UserDto {
     private String name;
     private UUID externalId;
 
-    public UserDto(String email, String name, UUID externalId) {
+    private UserDto(String email, String name, UUID externalId) {
         this.email = email;
         this.name = name;
         this.externalId = externalId;
+    }
+
+    public static UserDto buildUserDto(String email, String name, UUID externalId) {
+        return new UserDto(email, name, externalId);
     }
 
     public UserDto() {
