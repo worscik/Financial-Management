@@ -20,7 +20,6 @@ import pl.financemanagement.User.UserRepository.UserDao;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static pl.financemanagement.AppTools.AppTools.validUUIDFromString;
@@ -50,10 +49,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Transactional
     public BankAccountResponse createAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
-        UserAccount user = findUserAccountOrThrowException(email);
 
-        BankAccount bankAccount = prepareAccount(bankAccountRequest, user);
-        BankAccount savedBankAccount = bankAccountDao.save(bankAccount);
+        UserAccount user = getUserByEmailOrThrow(email);
+        BankAccount account = getBankAccountByUserOrThrow(user.getId());
+
+        BankAccount accountToSave = prepareAccount(bankAccountRequest, account.getId());
+        BankAccount savedBankAccount = bankAccountDao.saveBankAccount(accountToSave);
         LOGGER.info("Added account with externalId {} for userId {}",
                 savedBankAccount.getExternalId(), savedBankAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
@@ -61,12 +62,14 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     @Transactional
-    //TODO
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
         validUUIDFromString(bankAccountRequest.getExternalId());
-        findUserAccountOrThrowException(email);
-        BankAccount updatedAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
-        BankAccount savedAccount = bankAccountDao.save(updatedAccount);
+
+        UserAccount user = getUserByEmailOrThrow(email);
+        BankAccount account = getBankAccountByUserOrThrow(user.getId());
+
+        BankAccount updatedAccount = prepareAccount(bankAccountRequest, account.getId());
+        BankAccount savedAccount = bankAccountDao.saveBankAccount(updatedAccount);
         LOGGER.info("Updated account with externalId {} for userId {}",
                 savedAccount.getExternalId(), savedAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
@@ -74,21 +77,23 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountResponse findAccountByNumber(String accountNumber, String email) {
-        UserAccount user = findUserAccountOrThrowException(email);
-        BankAccount account = findBankAccount(user.getId());
+        UserAccount user = getUserByEmailOrThrow(email);
+        BankAccount account = getBankAccountByUserOrThrow(user.getId());
+
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(account));
     }
 
     @Override
     @Transactional
     public BankAccountResponse deleteAccount(String email) {
-        UserAccount user = findUserAccountOrThrowException(email);
-        BankAccount account = findBankAccount(user.getId());
+        UserAccount user = getUserByEmailOrThrow(email);
+        BankAccount account = getBankAccountByUserOrThrow(user.getId());
 
+        //TODO EXPENSES DAO
         List<Expense> expenses = expenseDao.findAllExpensesByUserId(user.getId());
         expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
 
-        bankAccountDao.deleteById(account.getId());
+        bankAccountDao.deleteBankAccount(account);
         userDao.deleteUserAccountById(user.getId());
 
         LOGGER.info("Successfully deleted user: {}, bank account: {}, and all expenses",
@@ -98,31 +103,30 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BigDecimal getBankAccountBalance(String email) {
-        UserAccount user = findUserAccountOrThrowException(email);
-        BankAccount bankAccount = findBankAccount(user.getId());
-        return bankAccount.getAccountBalance();
+        UserAccount user = getUserByEmailOrThrow(email);
+        BankAccount account = getBankAccountByUserOrThrow(user.getId());
+        return account.getAccountBalance();
     }
 
-    private BankAccount prepareAccount(BankAccountRequest bankAccountRequest, UserAccount userAccount) {
-        BankAccount bankAccount = bankAccountMapper.mapToAccount(bankAccountRequest);
+    private BankAccount prepareAccount(BankAccountRequest bankAccountRequest, long userId) {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setUserId(userId);
+        bankAccount.setAccountName(bankAccountRequest.getAccountName());
+        bankAccount.setAccountBalance(bankAccountRequest.getAccountBalance());
         bankAccount.setCreatedOn(Instant.now());
         bankAccount.setAccountNumber(UUID.randomUUID().toString());
         bankAccount.setExternalId(UUID.randomUUID());
-        bankAccount.setUserId(userAccount.getId());
         return bankAccount;
     }
 
-    private BankAccount findBankAccount(long userId) {
-        BankAccount bankAccount = Optional.ofNullable(bankAccountDao.findAccountById(userId))
-                .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
-        LOGGER.info("Bank account not found for user: {}", userId);
-        return bankAccount;
-    }
-
-    private UserAccount findUserAccountOrThrowException(String email) {
-        UserAccount userAccount = userDao.findUserByEmail(email)
+    private UserAccount getUserByEmailOrThrow(String email) {
+        return userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
-        LOGGER.info("User account not found for user: {}", email);
-        return userAccount;
     }
+
+    private BankAccount getBankAccountByUserOrThrow(long userId) {
+        return bankAccountDao.findAccountByUserId(userId)
+                .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
+    }
+
 }
