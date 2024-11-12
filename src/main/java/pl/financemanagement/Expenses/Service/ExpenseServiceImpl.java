@@ -43,7 +43,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         UserAccount userAccount = getUserAccount(email);
 
         Expense expense = createExpenseFromRequest(expenseRequest, userAccount);
-        BankAccount bankAccount = findBankAccount(userAccount.getId());
+        BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId());
 
         if (hasNoSufficientBalance(bankAccount.getAccountBalance(), expense.getExpense())) {
             throw new NotEnoughMoneyForTransaction("Not Enough money for transaction ");
@@ -52,7 +52,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         BigDecimal newBalance = resolveOperationOnAccount(expenseRequest.getExpenseType(), bankAccount, expenseRequest);
         bankAccount.setAccountBalance(newBalance);
         expenseDao.save(expense);
-        bankAccountDao.save(bankAccount);
+        bankAccountDao.saveBankAccount(bankAccount);
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
                 expense, newBalance, UUID.fromString(userAccount.getExternalId())), true);
     }
@@ -65,7 +65,7 @@ public class ExpenseServiceImpl implements ExpenseService {
                         expenseRequest.getExternalId(), userAccount.getId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
 
-        BankAccount bankAccount = findBankAccount(userAccount.getId());
+        BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId());
 
         BigDecimal newBalance = resolveOperationOnAccount(expenseRequest.getExpenseType(), bankAccount, expenseRequest);
         bankAccount.setAccountBalance(newBalance);
@@ -80,7 +80,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public List<ExpenseDto> findExpenseByUserName(String email) {
         UserAccount userAccount = getUserAccount(email);
-        BankAccount bankAccount = findBankAccount(userAccount.getId());
+        BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId());
 
         return expenseDao.findAllExpensesByUserId(userAccount.getId()).stream()
                 .map(expense -> mapToDtoWithBankBalanceAndUserExternalId(
@@ -125,8 +125,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expense;
     }
 
-    private BankAccount findBankAccount(long userId) {
-        return Optional.ofNullable(bankAccountDao.findAccountById(userId))
+    private BankAccount getBankAccountByUserOrThrow(long userId) {
+        return bankAccountDao.findAccountByUserId(userId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
