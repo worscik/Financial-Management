@@ -10,26 +10,27 @@ import java.util.UUID;
 @Qualifier("userServiceDemo")
 public class UserDemoServiceImpl implements UserService {
 
-    private final static String USER_EMAIL = "demo@example.com";
+    private final static String USER_EMAIL = "demo@financialapp.com";
     private final static String UPDATED_USER_EMAIL = "demo1@example.com";
+    private final static String USER_NAME = "Demo";
     private final static UUID EXTERNAL_ID = UUID.fromString("f9969a5d-55d2-4e31-83e1-5759500a1e6d");
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        UserDto userDto = UserDto.buildUserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
+        UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID);
         return new UserResponse(true, userDto);
     }
 
     @Override
     public UserResponse updateUser(UserUpdateRequest userRequest, String email) {
-        UserDto userDto = UserDto.buildUserDto("demo@example.com", UPDATED_USER_EMAIL, EXTERNAL_ID);
+        UserDto userDto = UserDto.buildUserDto(UPDATED_USER_EMAIL, USER_NAME, EXTERNAL_ID);
         return new UserResponse(true, userDto);
     }
 
     @Override
-    public UserResponse isUserExistByEmail(String email) {
+    public UserResponse getBasicData(String email) {
         if (USER_EMAIL.equals(email)) {
-            UserDto userDto = UserDto.buildUserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
+            UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
         return new UserErrorResponse(false, "User not found");
@@ -37,8 +38,9 @@ public class UserDemoServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(long id, String email) {
-        if (id == 1) {
-            UserDto userDto = UserDto.buildUserDto("demo@example.com", USER_EMAIL, EXTERNAL_ID);
+        // USER DEMO IS 2 ID
+        if (id == 2) {
+            UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID);
             return new UserResponse(true, userDto);
         }
         return new UserErrorResponse(false, "User not found");

@@ -49,8 +49,8 @@ public class UserController extends DemoResolver<UserService> {
     }
 
     @GetMapping()
-    ResponseEntity<UserResponse> checkIfUserExists(Principal principal) {
-        return ResponseEntity.ok(resolveService(principal.getName()).isUserExistByEmail(principal.getName()));
+    ResponseEntity<UserResponse> getBasicData(Principal principal) {
+        return ResponseEntity.ok(resolveService(principal.getName()).getBasicData(principal.getName()));
     }
 
     @GetMapping("/id/{id}")

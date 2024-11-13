@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse isUserExistByEmail(String email) {
+    public UserResponse getBasicData(String email) {
         UserAccount user = userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
         return new UserResponse(true, userDtoMapper(user));
