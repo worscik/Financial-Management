@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController extends DemoResolver<UserService> {
 
     private final UserServiceImpl userService;
@@ -35,11 +35,7 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        UserResponse response = userService.createUser(userRequest);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok().body(response);
-        }
-        throw new UserExistsException("User with email " + userRequest.getEmail() + " exists");
+        return ResponseEntity.ok(userService.createUser(userRequest));
     }
 
     @PutMapping
@@ -52,22 +48,19 @@ public class UserController extends DemoResolver<UserService> {
         return ResponseEntity.ok(resolveService(principal.getName()).updateUser(userRequest, principal.getName()));
     }
 
-    @GetMapping("/email")
-    ResponseEntity<UserResponse> checkIfUserExists(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
-                                                   Principal principal) {
+    @GetMapping()
+    ResponseEntity<UserResponse> checkIfUserExists(Principal principal) {
         return ResponseEntity.ok(resolveService(principal.getName()).isUserExistByEmail(principal.getName()));
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
-                                                    @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                     Principal principal) throws UserNotFoundException {
         return ResponseEntity.ok(resolveService(principal.getName()).getUserById(id, principal.getName()));
     }
 
     @DeleteMapping("/{externalId}")
-    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
-                                                  @RequestParam String externalId,
+    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam String externalId,
                                                   Principal principal) throws UserNotFoundException {
         return ResponseEntity.ok(resolveService(principal.getName()).deleteUser(externalId, principal.getName()));
     }

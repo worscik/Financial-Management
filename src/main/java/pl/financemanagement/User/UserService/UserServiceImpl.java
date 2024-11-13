@@ -42,12 +42,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse createUser(UserRequest userRequest) throws JOSEException {
         LOGGER.info("Attempting to create user with email: {}", userRequest.getEmail());
-        Optional<UserAccount> existingUser = findUserByEmail(userRequest.getEmail());
+        Optional<UserAccount> existingUser = userDao.findUserByEmail(userRequest.getEmail());
         if (existingUser.isPresent()) {
+            LOGGER.info("Cannot create user with email {} because already exists", userRequest.getEmail());
             throw new UserExistsException("User with email " + userRequest.getEmail() + " exists");
         }
 
-        UserAccount userToSave = userMapper(userRequest);
+        UserAccount userToSave = mapToUserAccount(userRequest);
         UserAccount savedUser = userDao.saveUserAccount(userToSave);
         String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
         return new UserResponse(true, userDtoMapper(savedUser), token);
@@ -65,9 +66,11 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userRequest.getNewEmail() != null) {
+            LOGGER.info("Change email from {} to {}", userAccount.getEmail(), userRequest.getNewEmail());
             userAccount.setEmail(userRequest.getNewEmail());
         }
         if (userRequest.getNewName() != null) {
+            LOGGER.info("Change name from {} to {}", userAccount.getName(), userRequest.getNewName());
             userAccount.setName(userRequest.getNewName());
         }
         userAccount.setModifyOn(Instant.now());
@@ -78,35 +81,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse isUserExistByEmail(String email) {
-        Optional<UserAccount> user = userDao.findUserByEmail(email);
-        return user
-                .map(userAccount -> new UserResponse(true, userDtoMapper(userAccount)))
+        UserAccount user = userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
+        return new UserResponse(true, userDtoMapper(user));
     }
 
     @Override
     public UserResponse getUserById(long id, String email) throws UserNotFoundException {
-        Optional<UserAccount> user = userDao.findUserById(id);
-        if (user.isPresent()) {
-            return new UserResponse(true, userDtoMapper(user.get()));
-        }
-        throw new UserNotFoundException("User with id " + id + " not found.");
+        UserAccount user = userDao.findUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
+        return new UserResponse(true, userDtoMapper(user));
     }
 
     @Override
     @Transactional
     public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
-        Optional<UserAccount> user = userDao.findUserByEmailAndExternalId(email, UUID.fromString(externalId));
-        if (user.isPresent()) {
-            userDao.deleteUserAccountById(user.get().getId());
-            return new UserDeleteResponse(true, "User deleted.");
-        }
-        throw new UserNotFoundException("User with email " + email + " not found.");
-    }
-
-    private Optional<UserAccount> findUserByEmail(String email) {
-        Optional<UserAccount> account = userDao.findUserByEmail(email);
-        return account;
+        UserAccount userAccount = userDao.findUserByEmailAndExternalId(email, UUID.fromString(externalId))
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
+        userDao.deleteUserAccountById(userAccount.getId());
+        LOGGER.info("User with email {} is successfully removed", userAccount.getName());
+        return new UserDeleteResponse(true, "User deleted.");
     }
 
     private boolean isEmailAvailable(String newEmail, UserAccount currentAccount) {
@@ -114,7 +108,7 @@ public class UserServiceImpl implements UserService {
         return userWithSameEmail.isEmpty() || userWithSameEmail.get().getId() == currentAccount.getId();
     }
 
-    private UserAccount userMapper(UserRequest userRequest) {
+    private UserAccount mapToUserAccount(UserRequest userRequest) {
         UserAccount userToSave = new UserAccount();
         userToSave.setEmail(userRequest.getEmail());
         userToSave.setName(userRequest.getName());
