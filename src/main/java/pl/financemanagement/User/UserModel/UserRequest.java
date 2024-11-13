@@ -15,7 +15,6 @@ public class UserRequest {
     @NotBlank(message = "Password cannot be blank or empty")
     @Size(min = 1)
     private String password;
-    private boolean isDemo = false;
 
     public UserRequest() {
     }
@@ -25,11 +24,10 @@ public class UserRequest {
         this.name = name;
     }
 
-    public UserRequest(String email, String name, String password, boolean isDemo) {
+    public UserRequest(String email, String name, String password) {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.isDemo = isDemo;
     }
 
     public @NotBlank @Email String getEmail() {
@@ -54,13 +52,5 @@ public class UserRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isDemo() {
-        return isDemo;
-    }
-
-    public void setDemo(boolean demo) {
-        isDemo = demo;
     }
 }

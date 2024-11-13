@@ -36,7 +36,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
         return ResponseEntity.ok(
-                resolveService(bankAccountRequest.isDemo()).createAccount(bankAccountRequest, principal.getName()));
+                resolveService(principal.getName()).createAccount(bankAccountRequest, principal.getName()));
     }
 
     @PutMapping()
@@ -47,11 +47,11 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
         return ResponseEntity.ok(
-                resolveService(bankAccountRequest.isDemo()).updateAccount(bankAccountRequest, principal.getName()));
+                resolveService(principal.getName()).updateAccount(bankAccountRequest, principal.getName()));
     }
 
     @GetMapping()
-    // TODO ????
+        // TODO ????
     ResponseEntity<BankAccountResponse> findAccountByExternalId(@RequestParam(defaultValue = "") String externalId,
                                                                 @RequestParam(defaultValue = "false") boolean isDemo,
                                                                 Principal principal)
@@ -60,18 +60,18 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
             return ResponseEntity.badRequest().body(new BankAccountErrorResponse(
                     false, "externalId cannot be empty"));
         }
-        return ResponseEntity.ok(resolveService(isDemo).findAccountByNumber(externalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).findAccountByNumber(externalId, principal.getName()));
     }
 
     @DeleteMapping()
     ResponseEntity<BankAccountResponse> deleteAccount(Principal principal) {
-        return ResponseEntity.ok().body(resolveService(false).deleteAccount(principal.getName()));
+        return ResponseEntity.ok().body(resolveService(principal.getName()).deleteAccount(principal.getName()));
     }
 
     @GetMapping("/bankBalance")
     public ResponseEntity<BigDecimal> bankAccountBalance(@RequestParam(defaultValue = "false") boolean isDemo,
                                                          Principal principal) {
-        return ResponseEntity.ok(resolveService(isDemo).getBankAccountBalance(
+        return ResponseEntity.ok(resolveService(principal.getName()).getBankAccountBalance(
                 principal.getName()));
     }
 

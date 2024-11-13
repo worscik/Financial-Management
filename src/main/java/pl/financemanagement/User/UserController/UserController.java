@@ -11,6 +11,7 @@ import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserService.UserService;
+import pl.financemanagement.User.UserService.UserServiceImpl;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -20,9 +21,12 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController extends DemoResolver<UserService> {
 
+    private final UserServiceImpl userService;
+
     public UserController(@Qualifier("userServiceImpl") UserService service,
-                          @Qualifier("userServiceDemo") UserService demoService) {
+                          @Qualifier("userServiceDemo") UserService demoService, UserServiceImpl userService) {
         super(service, demoService);
+        this.userService = userService;
     }
 
     @PostMapping("/register")
@@ -31,7 +35,7 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        UserResponse response = resolveService(userRequest.isDemo()).createUser(userRequest);
+        UserResponse response = userService.createUser(userRequest);
         if (response.isSuccess()) {
             return ResponseEntity.ok().body(response);
         }
@@ -45,27 +49,27 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(resolveService(userRequest.isDemo()).updateUser(userRequest, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).updateUser(userRequest, principal.getName()));
     }
 
     @GetMapping("/email")
     ResponseEntity<UserResponse> checkIfUserExists(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                    Principal principal) {
-        return ResponseEntity.ok(resolveService(isDemo).isUserExistByEmail(principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).isUserExistByEmail(principal.getName()));
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
                                                     @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                     Principal principal) throws UserNotFoundException {
-        return ResponseEntity.ok(resolveService(isDemo).getUserById(id, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).getUserById(id, principal.getName()));
     }
 
     @DeleteMapping("/{externalId}")
     ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                   @RequestParam String externalId,
                                                   Principal principal) throws UserNotFoundException {
-        return ResponseEntity.ok(resolveService(isDemo).deleteUser(externalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).deleteUser(externalId, principal.getName()));
     }
 
     private UserErrorResponse buildErrorResponse(BindingResult result) {

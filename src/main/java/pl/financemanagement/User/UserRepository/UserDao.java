@@ -59,5 +59,4 @@ public class UserDao {
         findUserById(id).ifPresent(entityManager::remove);
     }
 
-
 }
