@@ -4,8 +4,6 @@ import com.nimbusds.jose.JOSEException;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
 
-import java.security.Principal;
-
 @Service("userService")
 public interface UserService {
 
@@ -13,7 +11,7 @@ public interface UserService {
 
     UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException;
 
-    UserResponse isUserExistByEmail(String email);
+    UserResponse getBasicData(String email);
 
     UserResponse getUserById(long id, String email) ;
 

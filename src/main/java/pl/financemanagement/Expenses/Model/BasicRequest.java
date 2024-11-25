@@ -9,7 +9,6 @@ public class BasicRequest {
     }
 
     public BasicRequest() {
-
     }
 
     public boolean isDemo() {

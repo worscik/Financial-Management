@@ -1,11 +1,10 @@
 package pl.financemanagement.BankAccount.Model;
 
 import jakarta.validation.constraints.NotBlank;
-import pl.financemanagement.Expenses.Model.BasicRequest;
 
 import java.math.BigDecimal;
 
-public class BankAccountRequest extends BasicRequest {
+public class BankAccountRequest {
 
     private String externalId;
     @NotBlank
@@ -13,16 +12,14 @@ public class BankAccountRequest extends BasicRequest {
     private long userId;
     private BigDecimal accountBalance;
 
-    public BankAccountRequest(boolean isDemo, BigDecimal accountBalance, long userId, String accountName, String externalId) {
-        super(isDemo);
+    public BankAccountRequest(BigDecimal accountBalance, long userId, String accountName, String externalId) {
         this.accountBalance = accountBalance;
         this.userId = userId;
         this.accountName = accountName;
         this.externalId = externalId;
     }
 
-    public BankAccountRequest(boolean isDemo, String accountName, long userId) {
-        super(isDemo);
+    public BankAccountRequest(String accountName, long userId) {
         this.accountName = accountName;
         this.userId = userId;
     }

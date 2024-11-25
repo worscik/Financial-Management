@@ -11,6 +11,7 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
+import pl.financemanagement.Expenses.Service.ExpenseServiceImpl;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -21,10 +22,12 @@ import java.util.Map;
 @RequestMapping("/expense")
 public class ExpenseController extends DemoResolver<ExpenseService> {
 
+    private final ExpenseServiceImpl expenseService;
 
     public ExpenseController(@Qualifier("expenseServiceImpl") ExpenseService service,
-                             @Qualifier("expenseServiceDemo") ExpenseService demoService) {
+                             @Qualifier("expenseServiceDemo") ExpenseService demoService, ExpenseServiceImpl expenseService) {
         super(service, demoService);
+        this.expenseService = expenseService;
     }
 
     @PostMapping()
@@ -34,7 +37,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(resolveService(request.isDemo()).createExpense(request, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).createExpense(request, principal.getName()));
     }
 
     @PutMapping()
@@ -44,13 +47,13 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(resolveService(request.isDemo()).updateExpense(request, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).updateExpense(request, principal.getName()));
     }
 
     @GetMapping("/list")
     ResponseEntity<List<ExpenseDto>> findExpenses(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                   Principal principal) {
-        return ResponseEntity.ok(resolveService(isDemo).findExpenseByUserName(principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByUserName(principal.getName()));
     }
 
     @GetMapping("externalId/{externalId}")
@@ -62,12 +65,12 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
 
-        return ResponseEntity.ok(resolveService(isDemo).findExpenseByIdAndUserId(externalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
     @GetMapping("/categories")
     public List<ExpenseCategory> getExpensesCategories() {
-        return resolveService(false).getExpensesCategories();
+        return expenseService.getExpensesCategories();
     }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {
