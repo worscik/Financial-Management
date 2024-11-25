@@ -59,8 +59,7 @@ public class UserServiceImpl implements UserService {
         UserAccount userAccount = userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
 
-        if (AppTools.isNotBlank(userRequest.getNewEmail())
-                && !isEmailAvailable(userRequest.getNewEmail(), userAccount)) {
+        if (AppTools.isNotBlank(userRequest.getNewEmail()) && isEmailNotAvailable(userRequest.getNewEmail(), userAccount)) {
             throw new EmailAlreadyInUseException("Email " + userRequest.getNewEmail() + " is already in use.");
         }
 
@@ -109,7 +108,7 @@ public class UserServiceImpl implements UserService {
         return account;
     }
 
-    private boolean isEmailAvailable(String newEmail, UserAccount currentAccount) {
+    private boolean isEmailNotAvailable(String newEmail, UserAccount currentAccount) {
         Optional<UserAccount> userWithSameEmail = userDao.findUserByEmail(newEmail);
         return userWithSameEmail.isEmpty() || userWithSameEmail.get().getId() == currentAccount.getId();
     }
