@@ -46,11 +46,7 @@ public class SpringSecurity {
             http
                     .csrf(csrf -> csrf.disable())
                     .headers(headers -> headers.frameOptions().disable())
-                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/login", "/h2-console/**", "users/register", "expense/categories").permitAll()
-                            .anyRequest().authenticated()
-                    );
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         } catch (Exception e) {
             log.error("Error during securityFilterChain", e);
         }

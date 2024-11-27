@@ -134,7 +134,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean shouldSkipFilter(String requestURI) {
         return requestURI.matches("^/h2-console.*")
-                || requestURI.equals("/users/register")
+                || requestURI.equals("/user/register")
                 || requestURI.equals("/login")
                 || requestURI.equals("/expense/categories");
     }

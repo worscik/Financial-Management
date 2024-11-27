@@ -62,3 +62,6 @@ VALUES
 (UUID(), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SPORT', 'Shorts', 'EXPENSE', 50.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
 (UUID(), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'FOOD', 'BigMac', 'EXPENSE', 20.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
 (UUID(), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '', '', 'INCOME', 20.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'));
+
+GRANT ALL PRIVILEGES ON financial.* TO 'root'@'%' IDENTIFIED BY 'password';
+FLUSH PRIVILEGES;
