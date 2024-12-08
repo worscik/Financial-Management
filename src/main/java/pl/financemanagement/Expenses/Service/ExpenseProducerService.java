@@ -2,6 +2,7 @@ package pl.financemanagement.Expenses.Service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
@@ -18,23 +19,29 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static pl.financemanagement.Expenses.Model.ExpenseMapper.*;
 
 @Qualifier("expenseServiceImpl")
 @Service
-public class ExpenseServiceImpl implements ExpenseService {
+public class ExpenseProducerService implements ExpenseService {
+
+    private static final String EXPENSE_TOPIC = "expenses_topic";
 
     private final ExpenseDao expenseDao;
     private final UserDao userDao;
     private final BankAccountDao bankAccountDao;
+    private final KafkaTemplate<String, ExpenseEvent> kafkaTemplate;
 
-    public ExpenseServiceImpl(ExpenseDao expenseDao, UserDao userDao, BankAccountDao bankAccountDao) {
+    public ExpenseProducerService(ExpenseDao expenseDao,
+                                  UserDao userDao,
+                                  BankAccountDao bankAccountDao,
+                                  KafkaTemplate<String, ExpenseEvent> kafkaTemplate) {
         this.expenseDao = expenseDao;
         this.userDao = userDao;
         this.bankAccountDao = bankAccountDao;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -51,8 +58,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         BigDecimal newBalance = resolveOperationOnAccount(expenseRequest.getExpenseType(), bankAccount, expenseRequest);
         bankAccount.setAccountBalance(newBalance);
-        expenseDao.save(expense);
-        bankAccountDao.saveBankAccount(bankAccount);
+
+        ExpenseEvent expenseEvent = new ExpenseEvent(UUID.randomUUID(), expenseRequest.getExpenseCategory(),
+                expenseRequest.getExpenseType(), bankAccount.getAccountBalance(), expenseRequest.getExpense(),
+                userAccount.getId());
+
+        kafkaTemplate.send(EXPENSE_TOPIC, expenseEvent);
+
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
                 expense, newBalance, UUID.fromString(userAccount.getExternalId())), true);
     }
