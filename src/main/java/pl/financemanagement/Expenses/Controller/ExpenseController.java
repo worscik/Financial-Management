@@ -11,7 +11,7 @@ import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
-import pl.financemanagement.Expenses.Service.ExpenseServiceImpl;
+import pl.financemanagement.Expenses.Service.ExpenseProducerService;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -22,10 +22,10 @@ import java.util.Map;
 @RequestMapping("/expense")
 public class ExpenseController extends DemoResolver<ExpenseService> {
 
-    private final ExpenseServiceImpl expenseService;
+    private final ExpenseProducerService expenseService;
 
     public ExpenseController(@Qualifier("expenseServiceImpl") ExpenseService service,
-                             @Qualifier("expenseServiceDemo") ExpenseService demoService, ExpenseServiceImpl expenseService) {
+                             @Qualifier("expenseServiceDemo") ExpenseService demoService, ExpenseProducerService expenseService) {
         super(service, demoService);
         this.expenseService = expenseService;
     }

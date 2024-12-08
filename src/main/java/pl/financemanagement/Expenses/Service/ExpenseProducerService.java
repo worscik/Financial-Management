@@ -72,7 +72,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense expenseToUpdate = mapToExpense(expenseRequest);
         expenseToUpdate.setModifyOn(Instant.now());
-        expenseDao.save(expenseToUpdate);
+        expenseDao.saveExpense(expenseToUpdate);
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
                 expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())), true);
     }
@@ -103,7 +103,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
-        expenseDao.delete(expense);
+        expenseDao.deleteExpense(expense);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     private Expense createExpenseFromRequest(ExpenseRequest expenseRequest, UserAccount userAccount) {
         Expense expense = mapToExpense(expenseRequest);
-        expense.setUser(userAccount);
+        expense.setUser(userAccount.getId());
         return expense;
     }
 

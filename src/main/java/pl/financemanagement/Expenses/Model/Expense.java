@@ -1,7 +1,6 @@
 package pl.financemanagement.Expenses.Model;
 
 import jakarta.persistence.*;
-import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -11,9 +10,9 @@ import java.util.UUID;
 public class Expense {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private UUID externalId;
+    private String externalId;
     @Version
     private int version;
     private Instant createdOn;
@@ -22,9 +21,10 @@ public class Expense {
     private String expenseItem;
     private ExpenseType expenseType;
     private BigDecimal expense;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserAccount user;
+    //    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+    @Column(name = "user_id")
+    private long user;
 
     public long getId() {
         return id;
@@ -34,11 +34,11 @@ public class Expense {
         this.id = id;
     }
 
-    public UUID getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(UUID externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 
@@ -98,11 +98,11 @@ public class Expense {
         this.expense = expense;
     }
 
-    public UserAccount getUser() {
+    public long getUser() {
         return user;
     }
 
-    public void setUser(UserAccount user) {
+    public void setUser(long user) {
         this.user = user;
     }
 }

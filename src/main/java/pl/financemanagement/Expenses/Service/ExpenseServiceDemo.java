@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 public class ExpenseServiceDemo implements ExpenseService {
 
-    private final static UUID UUID_NUMBER = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2945");
+    private final static String UUID_NUMBER = "2ae2eeba-7980-458c-9677-8bc41abf2945";
     private final static UUID USER_EXTERNAL_ID = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2942");
     private final static long USER_ID = 999L;
 

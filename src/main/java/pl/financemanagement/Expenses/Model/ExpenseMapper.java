@@ -10,7 +10,7 @@ public class ExpenseMapper {
                                                                       BigDecimal bankAccount,
                                                                       UUID userAccount) {
         return new ExpenseDto.Builder()
-                .externalId(expense.getExternalId())
+                .externalId(expense.getExternalId().toString())
                 .expenseCategory(expense.getExpenseCategory())
                 .expenseType(expense.getExpenseType())
                 .createdOn(expense.getCreatedOn())
@@ -23,9 +23,20 @@ public class ExpenseMapper {
         Expense expense = new Expense();
         expense.setExpenseType(request.getExpenseType());
         expense.setExpenseCategory(request.getExpenseCategory());
-        expense.setExternalId(UUID.randomUUID());
+        expense.setExternalId(UUID.randomUUID().toString());
         expense.setCreatedOn(Instant.now());
         expense.setExpense(request.getExpense());
+        return expense;
+    }
+
+    public static Expense buildExpenseEntity(ExpenseEvent expenseEvent) {
+        Expense expense = new Expense();
+        expense.setExpenseType(expenseEvent.getExpenseType());
+        expense.setExpenseCategory(expenseEvent.getExpenseCategory());
+        expense.setExternalId(expenseEvent.getExternalId().toString());
+        expense.setCreatedOn(Instant.now());
+        expense.setExpense(expenseEvent.getExpense());
+        expense.setUser(expenseEvent.getUserId());
         return expense;
     }
 

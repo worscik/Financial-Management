@@ -1,17 +1,42 @@
 package pl.financemanagement.Expenses.Repository;
 
-import org.springframework.data.repository.CrudRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Repository;
 import pl.financemanagement.Expenses.Model.Expense;
-import pl.financemanagement.User.UserModel.UserAccount;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ExpenseDao extends CrudRepository<Expense, Long> {
+@Repository
+public class ExpenseDao {
 
-    Optional<Expense> findExpenseByExternalIdAndUserId(UUID externalId, long userId);
+    private final EntityManager entityManager;
 
-    List<Expense> findAllExpensesByUserId(long id);
+    public ExpenseDao(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @Transactional
+    public Optional<Expense> findExpenseByExternalIdAndUserId(UUID externalId, long userId) {
+        return Optional.empty();
+    }
+
+    @Transactional
+    public List<Expense> findAllExpensesByUserId(long userId) {
+        return Collections.emptyList();
+    }
+
+    @Transactional
+    public void saveExpense(Expense expense) {
+        entityManager.merge(expense);
+    }
+
+    @Transactional
+    public void deleteExpense(Expense expense){
+        entityManager.remove(expense);
+    }
 
 }
