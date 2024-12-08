@@ -127,7 +127,7 @@ class UserServiceImplTest {
 
         when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
 
-        assertThat(userService.isUserExistByEmail("test@example.pl"))
+        assertThat(userService.getBasicDataByEmail("test@example.pl"))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
@@ -138,7 +138,7 @@ class UserServiceImplTest {
         when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-            userService.isUserExistByEmail("email");
+            userService.getBasicDataByEmail("email");
         });
     }
 
@@ -190,7 +190,6 @@ class UserServiceImplTest {
 
     private UserRequest buildUserRequest() {
         UserRequest userRequest = new UserRequest();
-        userRequest.setDemo(false);
         userRequest.setName("Test");
         userRequest.setPassword("1234");
         userRequest.setEmail("test@example.pl");
