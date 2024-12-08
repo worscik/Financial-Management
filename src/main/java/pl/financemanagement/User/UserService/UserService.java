@@ -2,7 +2,10 @@ package pl.financemanagement.User.UserService;
 
 import com.nimbusds.jose.JOSEException;
 import org.springframework.stereotype.Service;
-import pl.financemanagement.User.UserModel.*;
+import pl.financemanagement.User.UserModel.UserDeleteResponse;
+import pl.financemanagement.User.UserModel.UserRequest;
+import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 
 @Service("userService")
 public interface UserService {
@@ -13,7 +16,7 @@ public interface UserService {
 
     UserResponse getBasicDataByEmail(String email);
 
-    UserResponse getUserById(long id, String email) ;
+    UserResponse getUserById(long id, String email);
 
     UserDeleteResponse deleteUser(String externalId, String email);
 
