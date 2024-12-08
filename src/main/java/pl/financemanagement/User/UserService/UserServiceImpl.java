@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getBasicData(String email) {
+    public UserResponse getBasicDataByEmail(String email) {
         UserAccount user = userDao.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
         return new UserResponse(true, userDtoMapper(user));

@@ -11,7 +11,7 @@ public interface UserService {
 
     UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException;
 
-    UserResponse getBasicData(String email);
+    UserResponse getBasicDataByEmail(String email);
 
     UserResponse getUserById(long id, String email) ;
 

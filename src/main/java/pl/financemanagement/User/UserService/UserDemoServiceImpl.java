@@ -28,7 +28,7 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getBasicData(String email) {
+    public UserResponse getBasicDataByEmail(String email) {
         if (USER_EMAIL.equals(email)) {
             UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID);
             return new UserResponse(true, userDto);
