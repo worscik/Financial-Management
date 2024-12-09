@@ -1,11 +1,9 @@
 package pl.financemanagement.Expenses.Model;
 
-import pl.financemanagement.User.UserModel.UserAccount;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class ExpenseEvent {
+public class ExpenseCreateEvent {
 
     private UUID externalId;
     private ExpenseCategory expenseCategory;
@@ -14,15 +12,15 @@ public class ExpenseEvent {
     private BigDecimal expense;
     private long userId;
 
-    public ExpenseEvent() {
+    public ExpenseCreateEvent() {
     }
 
-    public ExpenseEvent(UUID externalId,
-                        ExpenseCategory expenseCategory,
-                        ExpenseType expenseType,
-                        BigDecimal bankBalance,
-                        BigDecimal expense,
-                        long userId) {
+    public ExpenseCreateEvent(UUID externalId,
+                              ExpenseCategory expenseCategory,
+                              ExpenseType expenseType,
+                              BigDecimal bankBalance,
+                              BigDecimal expense,
+                              long userId) {
         this.externalId = externalId;
         this.expenseCategory = expenseCategory;
         this.expenseType = expenseType;

@@ -11,7 +11,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import pl.financemanagement.Expenses.Model.ExpenseEvent;
+import pl.financemanagement.Expenses.Model.ExpenseCreateEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class KafkaConfiguration {
 
     @Bean
-    public ProducerFactory<String, ExpenseEvent> producerFactory() {
+    public ProducerFactory<String, ExpenseCreateEvent> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -29,14 +29,14 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, ExpenseEvent> kafkaTemplate() {
+    public KafkaTemplate<String, ExpenseCreateEvent> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
 
     @Bean
-    public ConsumerFactory<String, ExpenseEvent> consumerFactory() {
-        JsonDeserializer<ExpenseEvent> deserializer = new JsonDeserializer<>(ExpenseEvent.class);
+    public ConsumerFactory<String, ExpenseCreateEvent> consumerFactory() {
+        JsonDeserializer<ExpenseCreateEvent> deserializer = new JsonDeserializer<>(ExpenseCreateEvent.class);
         deserializer.addTrustedPackages("*");
 
         Map<String, Object> props = new HashMap<>();
@@ -52,11 +52,12 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ExpenseEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ExpenseEvent> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, ExpenseCreateEvent> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ExpenseCreateEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
+
 
 }

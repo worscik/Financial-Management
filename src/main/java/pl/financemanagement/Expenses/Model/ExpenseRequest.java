@@ -14,7 +14,7 @@ public class ExpenseRequest {
     private ExpenseType expenseType;
     @NotBlank
     private BigDecimal bankBalance;
-    private BigDecimal expense;
+    private BigDecimal expenseCost;
     private boolean demo;
 
 
@@ -58,11 +58,11 @@ public class ExpenseRequest {
         this.demo = demo;
     }
 
-    public BigDecimal getExpense() {
-        return expense;
+    public BigDecimal getExpenseCost() {
+        return expenseCost;
     }
 
-    public void setExpense(BigDecimal expense) {
-        this.expense = expense;
+    public void setExpenseCost(BigDecimal expenseCost) {
+        this.expenseCost = expenseCost;
     }
 }

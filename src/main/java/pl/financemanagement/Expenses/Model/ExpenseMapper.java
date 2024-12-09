@@ -10,7 +10,7 @@ public class ExpenseMapper {
                                                                       BigDecimal bankAccount,
                                                                       UUID userAccount) {
         return new ExpenseDto.Builder()
-                .externalId(expense.getExternalId().toString())
+                .externalId(expense.getExternalId())
                 .expenseCategory(expense.getExpenseCategory())
                 .expenseType(expense.getExpenseType())
                 .createdOn(expense.getCreatedOn())
@@ -25,18 +25,18 @@ public class ExpenseMapper {
         expense.setExpenseCategory(request.getExpenseCategory());
         expense.setExternalId(UUID.randomUUID().toString());
         expense.setCreatedOn(Instant.now());
-        expense.setExpense(request.getExpense());
+        expense.setExpense(request.getExpenseCost());
         return expense;
     }
 
-    public static Expense buildExpenseEntity(ExpenseEvent expenseEvent) {
+    public static Expense buildExpenseEntity(ExpenseCreateEvent expenseCreateEvent) {
         Expense expense = new Expense();
-        expense.setExpenseType(expenseEvent.getExpenseType());
-        expense.setExpenseCategory(expenseEvent.getExpenseCategory());
-        expense.setExternalId(expenseEvent.getExternalId().toString());
+        expense.setExpenseType(expenseCreateEvent.getExpenseType());
+        expense.setExpenseCategory(expenseCreateEvent.getExpenseCategory());
+        expense.setExternalId(expenseCreateEvent.getExternalId().toString());
         expense.setCreatedOn(Instant.now());
-        expense.setExpense(expenseEvent.getExpense());
-        expense.setUser(expenseEvent.getUserId());
+        expense.setExpense(expenseCreateEvent.getExpense());
+        expense.setUser(expenseCreateEvent.getUserId());
         return expense;
     }
 
