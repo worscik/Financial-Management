@@ -8,13 +8,11 @@ import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.Expenses.Model.Expense;
-import pl.financemanagement.Expenses.Model.ExpenseCreateEvent;
-import pl.financemanagement.Expenses.Model.ExpenseUpdateEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseCreateEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseDeleteEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseUpdateEvent;
 import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
-import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
-import pl.financemanagement.User.UserRepository.UserDao;
 
 import java.time.Instant;
 
@@ -24,12 +22,10 @@ public class ExpenseConsumerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseConsumerService.class);
 
     private final ExpenseDao expenseDao;
-    private final UserDao userDao;
     private final BankAccountDao bankAccountDao;
 
-    public ExpenseConsumerService(ExpenseDao expenseDao, UserDao userDao, BankAccountDao bankAccountDao) {
+    public ExpenseConsumerService(ExpenseDao expenseDao, BankAccountDao bankAccountDao) {
         this.expenseDao = expenseDao;
-        this.userDao = userDao;
         this.bankAccountDao = bankAccountDao;
     }
 
@@ -39,23 +35,14 @@ public class ExpenseConsumerService {
 
         Expense expense = buildExpense(event);
         expenseDao.saveExpense(expense);
+        LOGGER.info("Successful save expense on database with id {}", expense.getExternalId());
 
         BankAccount bankAccount = bankAccountDao.findAccountByUserId(event.getUserId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
         bankAccountDao.saveBankAccount(bankAccount);
-    }
-
-    private static Expense buildExpense(ExpenseCreateEvent event) {
-        Expense expense = new Expense();
-        expense.setExternalId(event.getExternalId().toString());
-        expense.setExpenseCategory(event.getExpenseCategory());
-        expense.setExpenseType(event.getExpenseType());
-        expense.setExpense(event.getExpense());
-        expense.setUser(event.getUserId());
-        expense.setCreatedOn(Instant.now());
-        return expense;
+        LOGGER.info("Saved new account balance for account {}", bankAccount.getExternalId());
     }
 
     @KafkaListener(topics = "expenses_update_topic", groupId = "expenses-group")
@@ -70,12 +57,36 @@ public class ExpenseConsumerService {
         expense.setExpense(event.getExpense());
         expense.setModifyOn(Instant.now());
         expenseDao.saveExpense(expense);
+        LOGGER.info("Successful save expense with id {}", expense.getExternalId());
 
         BankAccount bankAccount = bankAccountDao.findAccountByUserId(event.getUserId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
         bankAccountDao.saveBankAccount(bankAccount);
+        LOGGER.info("Saved new balance account for account {}", bankAccount.getExternalId());
+    }
+
+    @KafkaListener(topics = "expenses_delete_topic", groupId = "expenses-group")
+    public void consumeExpenseEventToDelete(ExpenseDeleteEvent expenseDeleteEvent) {
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(
+                        expenseDeleteEvent.getExternalId(), expenseDeleteEvent.getUserId())
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
+
+        expenseDao.deleteExpense(expense);
+        LOGGER.info("Deleted expense with id {} for user {} ", expense.getExternalId(), expense.getUser());
+
+    }
+
+    private static Expense buildExpense(ExpenseCreateEvent event) {
+        Expense expense = new Expense();
+        expense.setExternalId(event.getExternalId());
+        expense.setExpenseCategory(event.getExpenseCategory());
+        expense.setExpenseType(event.getExpenseType());
+        expense.setExpense(event.getExpense());
+        expense.setUser(event.getUserId());
+        expense.setCreatedOn(Instant.now());
+        return expense;
     }
 
 }

@@ -11,7 +11,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import pl.financemanagement.Expenses.Model.ExpenseCreateEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseCreateEvent;
 
 import java.util.HashMap;
 import java.util.Map;

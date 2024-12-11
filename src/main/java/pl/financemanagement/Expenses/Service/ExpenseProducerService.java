@@ -1,6 +1,8 @@
 package pl.financemanagement.Expenses.Service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,9 @@ import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountDao;
 import pl.financemanagement.Expenses.Model.*;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseCreateEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseDeleteEvent;
+import pl.financemanagement.Expenses.Model.ExpenseEvents.ExpenseUpdateEvent;
 import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Model.exceptions.NotEnoughMoneyForTransaction;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
@@ -26,8 +31,12 @@ import static pl.financemanagement.Expenses.Model.ExpenseMapper.*;
 @Service
 public class ExpenseProducerService implements ExpenseService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseProducerService.class);
+
     private static final String EXPENSE_CREATE_TOPIC = "expenses_topic";
     private static final String EXPENSE_UPDATE_TOPIC = "expenses_update_topic";
+    private static final String EXPENSE_DELETE_TOPIC = "expenses_delete_topic";
+
 
     private final ExpenseDao expenseDao;
     private final UserDao userDao;
@@ -59,6 +68,7 @@ public class ExpenseProducerService implements ExpenseService {
         ExpenseCreateEvent expenseCreateEvent = buildExpenseCreateEvent(expenseRequest, bankAccount, userAccount);
 
         kafkaTemplate.send(EXPENSE_CREATE_TOPIC, expenseCreateEvent);
+        LOGGER.info("Successful send event {} to kafka for add event", expenseCreateEvent.getExternalId());
 
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
                 expense, newBalance, UUID.fromString(userAccount.getExternalId())), true);
@@ -79,6 +89,8 @@ public class ExpenseProducerService implements ExpenseService {
         ExpenseUpdateEvent expenseUpdateEvent = buildExpenseUpdateEvent(expenseRequest, bankAccount, userAccount);
 
         kafkaTemplate.send(EXPENSE_UPDATE_TOPIC, expenseUpdateEvent);
+        LOGGER.info("Successful send event {} to kafka for update expense with id {}",
+                expenseUpdateEvent.getExternalId(), userAccount.getId());
 
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
                 expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())), true);
@@ -98,8 +110,8 @@ public class ExpenseProducerService implements ExpenseService {
     @Override
     public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email) {
         UserAccount userAccount = getUserAccount(email);
-        //TODO secure cast uuid
-        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
+
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(expenseExternalId, userAccount.getId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
         return new ExpenseResponse(mapToDto(expense), true);
     }
@@ -107,9 +119,13 @@ public class ExpenseProducerService implements ExpenseService {
     @Override
     public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String email) {
         UserAccount userAccount = getUserAccount(email);
-
-        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(UUID.fromString(expenseExternalId), userAccount.getId())
+        Expense expense = expenseDao.findExpenseByExternalIdAndUserId(expenseExternalId, userAccount.getId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
+
+        ExpenseDeleteEvent event = new ExpenseDeleteEvent(userAccount.getId(), expense.getExternalId());
+
+        kafkaTemplate.send(EXPENSE_DELETE_TOPIC, event);
+
         expenseDao.deleteExpense(expense);
     }
 

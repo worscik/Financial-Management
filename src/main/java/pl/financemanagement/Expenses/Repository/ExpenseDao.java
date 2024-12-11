@@ -20,7 +20,7 @@ public class ExpenseDao {
     }
 
     @Transactional
-    public Optional<Expense> findExpenseByExternalIdAndUserId(UUID externalId, long userId) {
+    public Optional<Expense> findExpenseByExternalIdAndUserId(String externalId, long userId) {
         return Optional.empty();
     }
 

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class ExpenseRequest {
 
-    private UUID externalId;
+    private String externalId;
     @NotBlank
     private ExpenseCategory expenseCategory;
     @NotBlank
@@ -18,11 +18,11 @@ public class ExpenseRequest {
     private boolean demo;
 
 
-    public UUID getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(UUID externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 
