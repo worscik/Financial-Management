@@ -75,7 +75,6 @@ public class ExpenseConsumerService {
 
         expenseDao.deleteExpense(expense);
         LOGGER.info("Deleted expense with id {} for user {} ", expense.getExternalId(), expense.getUser());
-
     }
 
     private static Expense buildExpense(ExpenseCreateEvent event) {

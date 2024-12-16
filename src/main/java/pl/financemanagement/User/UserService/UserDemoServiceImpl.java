@@ -1,5 +1,8 @@
 package pl.financemanagement.User.UserService;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.User.UserModel.*;
@@ -12,7 +15,7 @@ public class UserDemoServiceImpl implements UserService {
 
     private final static String USER_EMAIL = "demo@financialapp.com";
     private final static String UPDATED_USER_EMAIL = "demo1@example.com";
-    private final static String USER_NAME = "Demo";
+    private final static String USER_NAME = "demo";
     private final static UUID EXTERNAL_ID = UUID.fromString("f9969a5d-55d2-4e31-83e1-5759500a1e6d");
 
     @Override
@@ -50,4 +53,5 @@ public class UserDemoServiceImpl implements UserService {
     public UserDeleteResponse deleteUser(String externalId, String email) {
         return new UserDeleteResponse(true, "User deleted.");
     }
+
 }

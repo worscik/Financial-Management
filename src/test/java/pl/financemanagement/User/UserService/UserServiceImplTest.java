@@ -39,7 +39,6 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-
     @Test
     void createUserWhenNotExists() throws JOSEException {
         when(userDao.saveUserAccount(any())).thenReturn(buildUserAccount());
@@ -184,7 +183,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-           userService.deleteUser(EXTERNAL_ID, "deletedEmail");
+            userService.deleteUser(EXTERNAL_ID, "deletedEmail");
         });
     }
 

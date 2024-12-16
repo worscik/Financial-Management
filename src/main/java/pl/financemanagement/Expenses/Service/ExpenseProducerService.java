@@ -84,9 +84,9 @@ public class ExpenseProducerService implements ExpenseService {
 
         BigDecimal newBalance = resolveOperationOnAccountAndCheckBalance(
                 expenseRequest.getExpenseType(), bankAccount.getAccountBalance(), expenseRequest.getExpenseCost());
-        bankAccount.setAccountBalance(newBalance);
 
-        ExpenseUpdateEvent expenseUpdateEvent = buildExpenseUpdateEvent(expenseRequest, bankAccount, userAccount);
+        ExpenseUpdateEvent expenseUpdateEvent =
+                buildExpenseUpdateEvent(expenseRequest, bankAccount, userAccount, newBalance);
 
         kafkaTemplate.send(EXPENSE_UPDATE_TOPIC, expenseUpdateEvent);
         LOGGER.info("Successful send event {} to kafka for update expense with id {}",
@@ -178,11 +178,12 @@ public class ExpenseProducerService implements ExpenseService {
 
     private static ExpenseUpdateEvent buildExpenseUpdateEvent(ExpenseRequest expenseRequest,
                                                               BankAccount bankAccount,
-                                                              UserAccount userAccount) {
+                                                              UserAccount userAccount,
+                                                              BigDecimal newBankBalance) {
         ExpenseUpdateEvent expenseUpdateEvent = new ExpenseUpdateEvent();
         expenseUpdateEvent.setExpenseType(expenseRequest.getExpenseType());
         expenseUpdateEvent.setExpense(expenseRequest.getExpenseCost());
-        expenseUpdateEvent.setBankBalance(bankAccount.getAccountBalance());
+        expenseUpdateEvent.setBankBalance(newBankBalance);
         expenseUpdateEvent.setUserId(userAccount.getId());
         expenseUpdateEvent.setExternalId(expenseRequest.getExternalId());
         expenseUpdateEvent.setExpenseCategory(expenseRequest.getExpenseCategory());
