@@ -3,6 +3,8 @@ package pl.financemanagement.User.UserService;
 import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,10 +14,9 @@ import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
 import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
-import pl.financemanagement.User.UserRepository.UserDao;
+import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,23 +29,30 @@ class UserServiceImplTest {
 
     private final String TOKEN = "04ccbd93-150f-43cd-b54f-a5e92d7c4a9a";
     private final String EXTERNAL_ID = "04ccbd93-150f-43cd-b15f-a5e92d7c4a9a";
+    private final String USER_EMAIL = "example@email.pl";
+    private final String USER_UPDATED_EMAIL = "trele@morele.pl";
+    private final String TEST_USER_EMAIL = "test@example.pl";
+    private final String NAME = "Name";
+    private final String PASSWORD = "passwd";
 
     @Mock
     private JwtService jwtService;
     @Mock
-    private UserDao userDao;
+    private UserAccountRepository userAccountRepository;
     @Mock
     private PasswordService passwordService;
 
     @InjectMocks
     private UserServiceImpl userService;
 
-
-    @Test
-    void createUserWhenNotExists() throws JOSEException {
-        when(userDao.saveUserAccount(any())).thenReturn(buildUserAccount());
+    @ParameterizedTest
+    @ValueSource(strings = {"exampleemail@test.com", "exampleemail1@test.com", "exampleemai22@test.com"})
+    void createUserWhenNotExists(String email) throws JOSEException {
+        when(userAccountRepository.save(any())).thenReturn(buildUserAccount(PASSWORD, NAME, email));
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
-        UserResponse userResponse = new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount()), TOKEN);
+
+        UserResponse userResponse =
+                new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount(PASSWORD, NAME, email)), TOKEN);
 
         assertThat(userService.createUser(buildUserRequest()))
                 .isNotNull()
@@ -53,30 +61,30 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createUserWhenUserAlreadyExists() throws JOSEException {
+    void createUserWhenUserAlreadyExists() {
         UserRequest userRequest = buildUserRequest();
-        UserAccount existingUser = buildUserAccount();
-        when(userDao.findUserByEmail(userRequest.getEmail())).thenReturn(Optional.of(existingUser));
+        UserAccount existingUser = buildUserAccount(PASSWORD, NAME, "existingUser@example.com");
+        when(userAccountRepository.findUserByEmail(userRequest.getEmail())).thenReturn(Optional.of(existingUser));
 
         UserExistsException exception = assertThrows(UserExistsException.class, () -> {
             userService.createUser(userRequest);
         });
 
         assertThat(exception.getMessage()).isEqualTo("User with email " + userRequest.getEmail() + " exists");
-
-        verify(userDao, never()).saveUserAccount(any());
-
+        verify(userAccountRepository, never()).save(any());
     }
 
     @Test
     void updateUserWhenUserExists() throws JOSEException {
-        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
-        when(userDao.saveUserAccount(any())).thenReturn(buildUserAccount());
+        when(userAccountRepository.findUserByEmail(any()))
+                .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
+        when(userAccountRepository.save(any())).thenReturn(buildUserAccount(PASSWORD, NAME, USER_EMAIL));
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
 
-        UserResponse expectedResponse = new UserResponse(true, userDtoMapper(buildUserAccount()), TOKEN);
+        UserResponse expectedResponse =
+                new UserResponse(true, userDtoMapper(buildUserAccount(PASSWORD, NAME, USER_EMAIL)), TOKEN);
 
-        assertThat(userService.updateUser(buildUserUpdateRequest(), "example@email.pl"))
+        assertThat(userService.updateUser(buildUserUpdateRequest(), USER_EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
@@ -85,11 +93,12 @@ class UserServiceImplTest {
 
     @Test
     void updateUserWhenUserExistsAndIsNewEmail() throws JOSEException {
-        UserAccount userAccount = buildUserAccount();
-        userAccount.setEmail("trele@morele.pl");
+        UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
+        userAccount.setEmail(USER_UPDATED_EMAIL);
 
-        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
-        when(userDao.saveUserAccount(any())).thenReturn(userAccount);
+        when(userAccountRepository.findUserByEmail(any()))
+                .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
+        when(userAccountRepository.save(any())).thenReturn(userAccount);
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
 
         UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount),
@@ -103,31 +112,31 @@ class UserServiceImplTest {
 
     @Test
     void updateUserWhenUserExistsEmailIsUsed() throws JOSEException {
-        UserAccount userAccount = buildUserAccount();
-        userAccount.setEmail("trele@morele.pl");
+        UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
+        userAccount.setEmail(USER_UPDATED_EMAIL);
         UserUpdateRequest userAccount1 = buildUserUpdateRequest();
-        userAccount1.setNewEmail("trele@morele.pl");
+        userAccount1.setNewEmail(USER_UPDATED_EMAIL);
 
-        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(userAccount));
+        when(userAccountRepository.findUserByEmail(any())).thenReturn(Optional.of(userAccount));
 
         EmailAlreadyInUseException exception = assertThrows(EmailAlreadyInUseException.class, () -> {
-            userService.updateUser(userAccount1, "test@example.pl");
+            userService.updateUser(userAccount1, TEST_USER_EMAIL);
         });
 
         assertThat(exception.getMessage()).isEqualTo("Email " + userAccount.getEmail() + " is already in use.");
-
-        verify(userDao, never()).saveUserAccount(any());
+        verify(userAccountRepository, never()).save(any());
 
     }
 
     @Test
     void isUserExistByEmail() {
-        UserAccount userAccount = buildUserAccount();
+        UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
         UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount));
 
-        when(userDao.findUserByEmail(any())).thenReturn(Optional.of(buildUserAccount()));
+        when(userAccountRepository.findUserByEmail(any()))
+                .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
 
-        assertThat(userService.getBasicDataByEmail("test@example.pl"))
+        assertThat(userService.getBasicDataByEmail(TEST_USER_EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
@@ -135,7 +144,7 @@ class UserServiceImplTest {
 
     @Test
     void isUserNotExistByEmail() {
-        when(userDao.findUserByEmail(any())).thenReturn(Optional.empty());
+        when(userAccountRepository.findUserByEmail(any())).thenReturn(Optional.empty());
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.getBasicDataByEmail("email");
@@ -144,10 +153,11 @@ class UserServiceImplTest {
 
     @Test
     void getUserByIdWhenExists() {
-        UserAccount userAccount = buildUserAccount();
+        UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
         UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount));
 
-        when(userDao.findUserById(anyLong())).thenReturn(Optional.of(buildUserAccount()));
+        when(userAccountRepository.findUserById(anyLong()))
+                .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
 
         assertThat(userService.getUserById(1L, "email"))
                 .isNotNull()
@@ -157,9 +167,9 @@ class UserServiceImplTest {
 
     @Test
     void getUserByIdWhenNotExists() {
-        when(userDao.findUserById(anyLong())).thenReturn(Optional.empty());
+        when(userAccountRepository.findUserById(anyLong())).thenReturn(Optional.empty());
 
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+        assertThrows(UserNotFoundException.class, () -> {
             userService.getUserById(1, "email");
         });
     }
@@ -169,8 +179,8 @@ class UserServiceImplTest {
         UserDeleteResponse userDeleteResponse = new UserDeleteResponse(
                 true, "User deleted.");
 
-        when(userDao.findUserByEmailAndExternalId("deletedEmail", UUID.fromString(EXTERNAL_ID)))
-                .thenReturn(Optional.of(buildUserAccount()));
+        when(userAccountRepository.findUserByEmailAndExternalId("deletedEmail", EXTERNAL_ID))
+                .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
 
         assertThat(userService.deleteUser(EXTERNAL_ID, "deletedEmail"))
                 .isNotNull()
@@ -180,11 +190,11 @@ class UserServiceImplTest {
 
     @Test
     void deleteUserWhenNotExists() {
-        when(userDao.findUserByEmailAndExternalId("deletedEmail", UUID.fromString(EXTERNAL_ID)))
+        when(userAccountRepository.findUserByEmailAndExternalId("deletedEmail", EXTERNAL_ID))
                 .thenReturn(Optional.empty());
 
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-           userService.deleteUser(EXTERNAL_ID, "deletedEmail");
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.deleteUser(EXTERNAL_ID, "deletedEmail");
         });
     }
 
@@ -192,15 +202,15 @@ class UserServiceImplTest {
         UserRequest userRequest = new UserRequest();
         userRequest.setName("Test");
         userRequest.setPassword("1234");
-        userRequest.setEmail("test@example.pl");
+        userRequest.setEmail(TEST_USER_EMAIL);
         return userRequest;
     }
 
-    private UserAccount buildUserAccount() {
+    private UserAccount buildUserAccount(String password, String name, String email) {
         UserAccount userAccount = new UserAccount();
-        userAccount.setPassword("1234");
-        userAccount.setName("Test");
-        userAccount.setEmail("test@example.pl");
+        userAccount.setPassword(password);
+        userAccount.setName(name);
+        userAccount.setEmail(email);
         userAccount.setExternalId(EXTERNAL_ID);
         return userAccount;
     }
@@ -214,7 +224,7 @@ class UserServiceImplTest {
     }
 
     private UserResponse buildUserResponse() {
-        return new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount()));
+        return new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
     }
 
 }
