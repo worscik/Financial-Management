@@ -217,7 +217,6 @@ class UserServiceImplTest {
 
     private UserUpdateRequest buildUserUpdateRequest() {
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
-        userUpdateRequest.setDemo(false);
         userUpdateRequest.setNewEmail("");
         userUpdateRequest.setNewName("");
         return userUpdateRequest;

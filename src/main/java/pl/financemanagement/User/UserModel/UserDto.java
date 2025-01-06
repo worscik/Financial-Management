@@ -6,15 +6,15 @@ public class UserDto {
 
     private String email;
     private String name;
-    private UUID externalId;
+    private String externalId;
 
-    private UserDto(String email, String name, UUID externalId) {
+    private UserDto(String email, String name, String externalId) {
         this.email = email;
         this.name = name;
         this.externalId = externalId;
     }
 
-    public static UserDto buildUserDto(String email, String name, UUID externalId) {
+    public static UserDto buildUserDto(String email, String name, String externalId) {
         return new UserDto(email, name, externalId);
     }
 
@@ -37,11 +37,11 @@ public class UserDto {
         this.name = name;
     }
 
-    public UUID getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(UUID externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 }
