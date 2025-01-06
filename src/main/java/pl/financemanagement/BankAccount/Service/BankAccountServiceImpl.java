@@ -15,7 +15,7 @@ import pl.financemanagement.Expenses.Model.Expense;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
-import pl.financemanagement.User.UserRepository.UserDao;
+import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -32,16 +32,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountDao bankAccountDao;
     private final BankAccountMapper bankAccountMapper;
-    private final UserDao userDao;
+    private final UserAccountRepository userAccountRepository;
     private final ExpenseDao expenseDao;
 
     public BankAccountServiceImpl(BankAccountDao bankAccountDao,
                                   BankAccountMapper bankAccountMapper,
-                                  UserDao userDao,
+                                  UserAccountRepository userAccountRepository,
                                   ExpenseDao expenseDao) {
         this.bankAccountDao = bankAccountDao;
         this.bankAccountMapper = bankAccountMapper;
-        this.userDao = userDao;
+        this.userAccountRepository = userAccountRepository;
         this.expenseDao = expenseDao;
     }
 
@@ -91,10 +91,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         //TODO EXPENSES DAO
         List<Expense> expenses = expenseDao.findAllExpensesByUserId(user.getId());
-        expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
+//        expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
 
         bankAccountDao.deleteBankAccount(account);
-        userDao.deleteUserAccountById(user.getId());
+        userAccountRepository.delete(user);
 
         LOGGER.info("Successfully deleted user: {}, bank account: {}, and all expenses",
                 user.getEmail(), account.getAccountNumber());
@@ -120,7 +120,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private UserAccount getUserByEmailOrThrow(String email) {
-        return userDao.findUserByEmail(email)
+        return userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
     }
 

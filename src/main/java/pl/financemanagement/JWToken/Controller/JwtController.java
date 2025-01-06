@@ -18,7 +18,7 @@ import pl.financemanagement.JWToken.Service.JwtServiceImpl;
 import pl.financemanagement.PasswordTools.PasswordService;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
-import pl.financemanagement.User.UserRepository.UserDao;
+import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +33,12 @@ public class JwtController {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtController.class);
 
     private final JwtServiceImpl jwtService;
-    private final UserDao userDao;
+    private final UserAccountRepository userAccountRepository;
     private final PasswordService passwordService;
 
-    public JwtController(JwtServiceImpl jwtService, UserDao userDao, PasswordService passwordService) {
+    public JwtController(JwtServiceImpl jwtService, UserAccountRepository userAccountRepository, PasswordService passwordService) {
         this.jwtService = jwtService;
-        this.userDao = userDao;
+        this.userAccountRepository = userAccountRepository;
         this.passwordService = passwordService;
     }
 
@@ -48,7 +48,7 @@ public class JwtController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        Optional<UserAccount> user = userDao.findUserByEmail(request.getEmail());
+        Optional<UserAccount> user = userAccountRepository.findUserByEmail(request.getEmail());
         if (user.isPresent() && passwordService.verifyPassword(request.getPassword(), user.get().getPassword())) {
             LOGGER.info("Correctly authorized user: {}", request.getEmail());
             return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(

@@ -13,7 +13,7 @@ import pl.financemanagement.Expenses.Model.exceptions.NotEnoughMoneyForTransacti
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
-import pl.financemanagement.User.UserRepository.UserDao;
+import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -30,16 +30,16 @@ public class ExpenseProducerService implements ExpenseService {
     private static final String EXPENSE_UPDATE_TOPIC = "expenses_update_topic";
 
     private final ExpenseDao expenseDao;
-    private final UserDao userDao;
+    private final UserAccountRepository userAccountRepository;
     private final BankAccountDao bankAccountDao;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public ExpenseProducerService(ExpenseDao expenseDao,
-                                  UserDao userDao,
+                                  UserAccountRepository userAccountRepository,
                                   BankAccountDao bankAccountDao,
                                   KafkaTemplate<String, Object> kafkaTemplate) {
         this.expenseDao = expenseDao;
-        this.userDao = userDao;
+        this.userAccountRepository = userAccountRepository;
         this.bankAccountDao = bankAccountDao;
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -143,7 +143,7 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     private UserAccount getUserAccount(String email) {
-        return userDao.findUserByEmail(email)
+        return userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
     }
 

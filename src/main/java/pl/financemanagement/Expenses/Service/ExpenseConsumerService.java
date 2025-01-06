@@ -12,9 +12,7 @@ import pl.financemanagement.Expenses.Model.ExpenseCreateEvent;
 import pl.financemanagement.Expenses.Model.ExpenseUpdateEvent;
 import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
-import pl.financemanagement.User.UserModel.UserAccount;
-import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
-import pl.financemanagement.User.UserRepository.UserDao;
+import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.time.Instant;
 
@@ -24,12 +22,10 @@ public class ExpenseConsumerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseConsumerService.class);
 
     private final ExpenseDao expenseDao;
-    private final UserDao userDao;
     private final BankAccountDao bankAccountDao;
 
-    public ExpenseConsumerService(ExpenseDao expenseDao, UserDao userDao, BankAccountDao bankAccountDao) {
+    public ExpenseConsumerService(ExpenseDao expenseDao, BankAccountDao bankAccountDao) {
         this.expenseDao = expenseDao;
-        this.userDao = userDao;
         this.bankAccountDao = bankAccountDao;
     }
 
