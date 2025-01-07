@@ -19,18 +19,18 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     Optional<UserAccount> findUserByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true, value = """
-            SELECT u 
-            FROM user_account u 
-            WHERE u.email = :email 
-            AND u.externalId = :externalId
+            SELECT *
+            FROM user_account 
+            WHERE email = :email 
+            AND external_id = :externalId
             """)
     Optional<UserAccount> findUserByEmailAndExternalId(@Param("email") String email,
                                                        @Param("externalId") String externalId);
 
     @Query(nativeQuery = true, value = """
-            SELECT u 
-            FROM user_account u 
-            WHERE u.id = :id
+            SELECT *
+            FROM user_account 
+            WHERE id = :id
             """)
     Optional<UserAccount> findUserById(@Param("id") long id);
 

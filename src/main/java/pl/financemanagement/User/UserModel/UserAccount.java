@@ -15,6 +15,7 @@ public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "external_id", nullable = false)
     private String externalId;
     @Column(nullable = false, unique = true)
     private String email;
