@@ -14,13 +14,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 class UserAccountRepositoryTest {
 
+    private static final String BASIC_EMAIL = "email@email.com";
+    private static final String BASIC_NAME = "name";
+    private static final String EXTERNAL_ID = "7182075c-8185-4544-a4a6-dff75afeda3f";
+
     @Autowired
     private UserAccountRepository userAccountRepository;
 
     @Test
     void saveUserAccount() {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         userAccountRepository.save(userAccount);
 
@@ -32,11 +36,11 @@ class UserAccountRepositoryTest {
     @Test
     void findUserByEmail() {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         userAccountRepository.save(userAccount);
 
-        Optional<UserAccount> foundUserOpt = userAccountRepository.findUserByEmail("email@email.com");
+        Optional<UserAccount> foundUserOpt = userAccountRepository.findUserByEmail(BASIC_EMAIL);
 
         assertThat(foundUserOpt).isPresent();
         UserAccount foundUser = foundUserOpt.get();
@@ -50,12 +54,12 @@ class UserAccountRepositoryTest {
     @Test
     void findUserByEmailAndExternalId() {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         userAccountRepository.save(userAccount);
 
         Optional<UserAccount> expected =
-                userAccountRepository.findUserByEmailAndExternalId("email@email.com", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                userAccountRepository.findUserByEmailAndExternalId(BASIC_EMAIL, EXTERNAL_ID);
 
         assertThat(expected)
                 .isNotNull()
@@ -67,12 +71,12 @@ class UserAccountRepositoryTest {
     @Test
     void findUserWhenDoesNotExist() {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         userAccountRepository.save(userAccount);
 
         Optional<UserAccount> expected =
-                userAccountRepository.findUserByEmailAndExternalId("email1@email.com", "7182075c-8185-4544-a4a6-dff75afeda33");
+                userAccountRepository.findUserByEmailAndExternalId("email1@email.com", EXTERNAL_ID);
 
         assertThat(expected)
                 .isEmpty();
@@ -81,7 +85,7 @@ class UserAccountRepositoryTest {
     @Test
     void findUserById() {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         UserAccount save = userAccountRepository.save(userAccount);
 
@@ -96,7 +100,7 @@ class UserAccountRepositoryTest {
     @ValueSource(longs = {2, 3, 4, 5, 6, 7})
     void findUserByIdWhenUserDoesNotExists(long id) {
         UserAccount userAccount =
-                buildUserAccount("email@email.com", "name", "7182075c-8185-4544-a4a6-dff75afeda3f");
+                buildUserAccount(BASIC_EMAIL, BASIC_NAME, EXTERNAL_ID);
 
         userAccountRepository.save(userAccount);
 
