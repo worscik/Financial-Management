@@ -1,9 +1,12 @@
 package pl.financemanagement.User.UserModel;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class UsersMapperTest {
 
     private final static String NAME = "Demo";
