@@ -1,7 +1,5 @@
 package pl.financemanagement.User.UserModel;
 
-import java.util.UUID;
-
 public class UsersMapper {
 
     public static UserDto userDtoMapper(UserAccount userAccount) {
