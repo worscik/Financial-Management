@@ -9,8 +9,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@Qualifier("expenseServiceDemo")
-@Service
+@Service("expenseServiceDemo")
 public class ExpenseServiceDemo implements ExpenseService {
 
     private final static String UUID_NUMBER = "2ae2eeba-7980-458c-9677-8bc41abf2945";
@@ -40,7 +39,7 @@ public class ExpenseServiceDemo implements ExpenseService {
 
     @Override
     public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
-                                                                     String email) {
+                                                                  String email) {
     }
 
     @Override

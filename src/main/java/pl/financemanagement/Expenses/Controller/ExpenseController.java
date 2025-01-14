@@ -1,17 +1,17 @@
 package pl.financemanagement.Expenses.Controller;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
-import pl.financemanagement.Expenses.Model.ExpenseCategory;
 import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
 import pl.financemanagement.Expenses.Service.ExpenseService;
-import pl.financemanagement.Expenses.Service.ExpenseProducerService;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -22,12 +22,10 @@ import java.util.Map;
 @RequestMapping("/expense")
 public class ExpenseController extends DemoResolver<ExpenseService> {
 
-    private final ExpenseProducerService expenseService;
-
+    @Autowired
     public ExpenseController(@Qualifier("expenseServiceImpl") ExpenseService service,
-                             @Qualifier("expenseServiceDemo") ExpenseService demoService, ExpenseProducerService expenseService) {
+                             @Qualifier("expenseServiceDemo") ExpenseService demoService, KafkaTemplate<String, String> kafkaTemplate) {
         super(service, demoService);
-        this.expenseService = expenseService;
     }
 
     @PostMapping()
@@ -68,10 +66,10 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
-    @GetMapping("/categories")
-    public List<ExpenseCategory> getExpensesCategories() {
-        return expenseService.getExpensesCategories();
-    }
+//    @GetMapping("/categories")
+//    public List<ExpenseCategory> getExpensesCategories() {
+//        return expenseService.getExpensesCategories();
+//    }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

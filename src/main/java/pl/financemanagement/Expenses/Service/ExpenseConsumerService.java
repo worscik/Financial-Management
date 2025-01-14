@@ -6,13 +6,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
-import pl.financemanagement.BankAccount.Repository.BankAccountDao;
+import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
 import pl.financemanagement.Expenses.Model.Expense;
 import pl.financemanagement.Expenses.Model.ExpenseCreateEvent;
 import pl.financemanagement.Expenses.Model.ExpenseUpdateEvent;
 import pl.financemanagement.Expenses.Model.exceptions.ExpenseNotFoundException;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
-import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.time.Instant;
 
@@ -22,11 +21,11 @@ public class ExpenseConsumerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseConsumerService.class);
 
     private final ExpenseDao expenseDao;
-    private final BankAccountDao bankAccountDao;
+    private final BankAccountRepository bankAccountRepository;
 
-    public ExpenseConsumerService(ExpenseDao expenseDao, BankAccountDao bankAccountDao) {
+    public ExpenseConsumerService(ExpenseDao expenseDao, BankAccountRepository bankAccountRepository) {
         this.expenseDao = expenseDao;
-        this.bankAccountDao = bankAccountDao;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     @KafkaListener(topics = "expenses_topic", groupId = "expenses-group")
@@ -36,11 +35,11 @@ public class ExpenseConsumerService {
         Expense expense = buildExpense(event);
         expenseDao.saveExpense(expense);
 
-        BankAccount bankAccount = bankAccountDao.findAccountByUserId(event.getUserId())
+        BankAccount bankAccount = bankAccountRepository.findBankAccountById(event.getUserId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
-        bankAccountDao.saveBankAccount(bankAccount);
+        bankAccountRepository.save(bankAccount);
     }
 
     private static Expense buildExpense(ExpenseCreateEvent event) {
@@ -67,11 +66,11 @@ public class ExpenseConsumerService {
         expense.setModifyOn(Instant.now());
         expenseDao.saveExpense(expense);
 
-        BankAccount bankAccount = bankAccountDao.findAccountByUserId(event.getUserId())
+        BankAccount bankAccount = bankAccountRepository.findBankAccountById(event.getUserId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
-        bankAccountDao.saveBankAccount(bankAccount);
+        bankAccountRepository.save(bankAccount);
     }
 
 }
