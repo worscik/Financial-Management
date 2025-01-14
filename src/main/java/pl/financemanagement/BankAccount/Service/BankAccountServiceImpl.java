@@ -10,7 +10,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountMapper;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
-import pl.financemanagement.BankAccount.Repository.BankAccountDao;
+import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
 import pl.financemanagement.Expenses.Model.Expense;
 import pl.financemanagement.Expenses.Repository.ExpenseDao;
 import pl.financemanagement.User.UserModel.UserAccount;
@@ -30,16 +30,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BankAccountServiceImpl.class);
 
-    private final BankAccountDao bankAccountDao;
+    private final BankAccountRepository bankAccountRepository;
     private final BankAccountMapper bankAccountMapper;
     private final UserAccountRepository userAccountRepository;
     private final ExpenseDao expenseDao;
 
-    public BankAccountServiceImpl(BankAccountDao bankAccountDao,
+    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository,
                                   BankAccountMapper bankAccountMapper,
                                   UserAccountRepository userAccountRepository,
                                   ExpenseDao expenseDao) {
-        this.bankAccountDao = bankAccountDao;
+        this.bankAccountRepository = bankAccountRepository;
         this.bankAccountMapper = bankAccountMapper;
         this.userAccountRepository = userAccountRepository;
         this.expenseDao = expenseDao;
@@ -54,7 +54,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount account = getBankAccountByUserOrThrow(user.getId());
 
         BankAccount accountToSave = prepareAccount(bankAccountRequest, account.getId());
-        BankAccount savedBankAccount = bankAccountDao.saveBankAccount(accountToSave);
+        BankAccount savedBankAccount = bankAccountRepository.save(accountToSave);
         LOGGER.info("Added account with externalId {} for userId {}",
                 savedBankAccount.getExternalId(), savedBankAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
@@ -69,7 +69,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount account = getBankAccountByUserOrThrow(user.getId());
 
         BankAccount updatedAccount = prepareAccount(bankAccountRequest, account.getId());
-        BankAccount savedAccount = bankAccountDao.saveBankAccount(updatedAccount);
+        BankAccount savedAccount = bankAccountRepository.save(updatedAccount);
         LOGGER.info("Updated account with externalId {} for userId {}",
                 savedAccount.getExternalId(), savedAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
@@ -93,7 +93,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         List<Expense> expenses = expenseDao.findAllExpensesByUserId(user.getId());
 //        expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
 
-        bankAccountDao.deleteBankAccount(account);
+        bankAccountRepository.delete(account);
         userAccountRepository.delete(user);
 
         LOGGER.info("Successfully deleted user: {}, bank account: {}, and all expenses",
@@ -125,7 +125,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private BankAccount getBankAccountByUserOrThrow(long userId) {
-        return bankAccountDao.findAccountByUserId(userId)
+        return bankAccountRepository.findBankAccountById(userId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
