@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
@@ -24,7 +23,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
 
     @Autowired
     public ExpenseController(@Qualifier("expenseServiceImpl") ExpenseService service,
-                             @Qualifier("expenseServiceDemo") ExpenseService demoService, KafkaTemplate<String, String> kafkaTemplate) {
+                             @Qualifier("expenseServiceDemo") ExpenseService demoService) {
         super(service, demoService);
     }
 
@@ -66,6 +65,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
+    //TODO
 //    @GetMapping("/categories")
 //    public List<ExpenseCategory> getExpensesCategories() {
 //        return expenseService.getExpensesCategories();

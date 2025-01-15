@@ -1,5 +1,7 @@
 package pl.financemanagement.Expenses.Model;
 
+import pl.financemanagement.Expenses.Model.KafkaExpenseEvents.ExpenseCreateEvent;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;

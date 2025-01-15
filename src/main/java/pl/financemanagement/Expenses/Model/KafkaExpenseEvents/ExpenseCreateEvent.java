@@ -1,11 +1,13 @@
-package pl.financemanagement.Expenses.Model;
+package pl.financemanagement.Expenses.Model.KafkaExpenseEvents;
+
+import pl.financemanagement.Expenses.Model.ExpenseCategory;
+import pl.financemanagement.Expenses.Model.ExpenseType;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class ExpenseCreateEvent {
 
-    private UUID externalId;
+    private String externalId;
     private ExpenseCategory expenseCategory;
     private ExpenseType expenseType;
     private BigDecimal bankBalance;
@@ -15,7 +17,7 @@ public class ExpenseCreateEvent {
     public ExpenseCreateEvent() {
     }
 
-    public ExpenseCreateEvent(UUID externalId,
+    public ExpenseCreateEvent(String externalId,
                               ExpenseCategory expenseCategory,
                               ExpenseType expenseType,
                               BigDecimal bankBalance,
@@ -29,11 +31,11 @@ public class ExpenseCreateEvent {
         this.userId = userId;
     }
 
-    public UUID getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(UUID externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 

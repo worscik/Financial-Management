@@ -3,7 +3,9 @@ package pl.financemanagement.BankAccount.Service;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.BankAccount;
 import pl.financemanagement.BankAccount.Model.BankAccountMapper;
@@ -12,7 +14,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
 import pl.financemanagement.Expenses.Model.Expense;
-import pl.financemanagement.Expenses.Repository.ExpenseDao;
+import pl.financemanagement.Expenses.Repository.ExpenseRepository;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserAccountRepository;
@@ -30,19 +32,23 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BankAccountServiceImpl.class);
 
+
     private final BankAccountRepository bankAccountRepository;
     private final BankAccountMapper bankAccountMapper;
     private final UserAccountRepository userAccountRepository;
-    private final ExpenseDao expenseDao;
+    private final ExpenseRepository expenseRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    @Autowired
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository,
                                   BankAccountMapper bankAccountMapper,
                                   UserAccountRepository userAccountRepository,
-                                  ExpenseDao expenseDao) {
+                                  ExpenseRepository expenseRepository, KafkaTemplate<String, Object> kafkaTemplate) {
         this.bankAccountRepository = bankAccountRepository;
         this.bankAccountMapper = bankAccountMapper;
         this.userAccountRepository = userAccountRepository;
-        this.expenseDao = expenseDao;
+        this.expenseRepository = expenseRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -89,10 +95,10 @@ public class BankAccountServiceImpl implements BankAccountService {
         UserAccount user = getUserByEmailOrThrow(email);
         BankAccount account = getBankAccountByUserOrThrow(user.getId());
 
-        //TODO EXPENSES DAO
-        List<Expense> expenses = expenseDao.findAllExpensesByUserId(user.getId());
-//        expenses.forEach(expense -> expenseDao.deleteById(expense.getId()));
+        List<Expense> expenses = expenseRepository.findExpensesByUserId(user.getId());
+        expenses.forEach(expense -> kafkaTemplate.send("expenses_delete_topic", expenses));
 
+        //TODO move to kafka
         bankAccountRepository.delete(account);
         userAccountRepository.delete(user);
 
