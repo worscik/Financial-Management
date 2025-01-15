@@ -46,6 +46,10 @@ INSERT INTO user_account (external_id, email, name, version, role, password)
 VALUES
     (UUID(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$12$kL1hhmgQAroSRhL5IjZVweL.hlTVoWub3Kp4UABesOZbUf8k.FmgS');
 
+INSERT INTO user_account (external_id, email, name, version, role, password)
+VALUES
+    (UUID(), 'user@financialapp.com', 'user', 1, 'USER', '$2a$10$iL63eKi2Caq10WQ7iG6N3uP.zpO0e0axnKDn1DW9/osfqBtCxp2yK');
+
 INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance)
 VALUES
     (UUID(), (SELECT id FROM user_account WHERE email = 'admin@financialapp.com'), 1, 'Admin Account', '1234567890', 1000.00);
@@ -53,6 +57,10 @@ VALUES
 INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance)
 VALUES
     (UUID(), (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'), 1, 'Demo Bank Account', '0987654321', 500.00);
+
+INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance)
+VALUES
+    (UUID(), (SELECT id FROM user_account WHERE email = 'user@financialapp.com'), 1, 'User Bank Account', '0987654331', 500.00);
 
 INSERT INTO expense (external_id, version, created_on, modify_on, expense_item, expense_category, expense_type, expense, user_id)
 VALUES
