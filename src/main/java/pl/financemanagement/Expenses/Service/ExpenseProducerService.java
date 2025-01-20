@@ -1,7 +1,6 @@
 package pl.financemanagement.Expenses.Service;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +54,18 @@ public class ExpenseProducerService implements ExpenseService {
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
         UserAccount userAccount = getUserAccount(email);
 
+        BankAccount bankAccount = bankAccountRepository.findBankAccountById(userAccount.getId())
+                .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
+
+        resolveOperationOnAccountAndCheckBalance(
+                expenseRequest.getExpenseType(), bankAccount.getAccountBalance(), expenseRequest.getExpenseCost());
+
         Expense expense = mapToExpense(expenseRequest);
         expense.setUser(userAccount.getId());
         expense.setVersion(1);
 
         expenseRepository.save(expense);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountById(userAccount.getId())
-                .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
 
         ExpenseCreateEvent expenseCreateEvent = buildExpenseCreateEvent(expenseRequest, bankAccount, userAccount);
 
