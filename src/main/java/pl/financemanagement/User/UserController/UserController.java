@@ -11,7 +11,6 @@ import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
 import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserService.UserService;
-import pl.financemanagement.User.UserService.UserServiceImpl;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -21,12 +20,9 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController extends DemoResolver<UserService> {
 
-    private final UserServiceImpl userService;
-
     public UserController(@Qualifier("userServiceImpl") UserService service,
-                          @Qualifier("userServiceDemo") UserService demoService, UserServiceImpl userService) {
+                          @Qualifier("userServiceDemo") UserService demoService) {
         super(service, demoService);
-        this.userService = userService;
     }
 
     @PostMapping("/register")
@@ -35,7 +31,7 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(userService.createUser(userRequest));
+        return ResponseEntity.ok(isDemo(false).createUser(userRequest));
     }
 
     @PutMapping

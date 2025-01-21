@@ -15,4 +15,8 @@ public class DemoResolver<T> {
     public T resolveService(String email) {
         return email.equals(USER_DEMO) ? demoService : service;
     }
+
+    public T isDemo(boolean isDemo) {
+        return isDemo ? demoService : service;
+    }
 }
