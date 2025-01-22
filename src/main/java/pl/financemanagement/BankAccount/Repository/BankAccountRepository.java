@@ -18,5 +18,4 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
             """)
     Optional<BankAccount> findBankAccountById(@Param("id") long id);
 
-
 }
