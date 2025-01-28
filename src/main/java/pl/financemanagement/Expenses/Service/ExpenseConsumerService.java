@@ -47,7 +47,7 @@ public class ExpenseConsumerService {
     void consumeExpenseUpdateEvent(ExpenseUpdateEvent event) {
         LOGGER.info("Received update event: {}", event.getExternalId());
 
-        Expense expense = expenseRepository.findExpenseByExternalId(event.getExternalId(), event.getUserId())
+        Expense expense = expenseRepository.findExpenseByExternalIdAndUserId(event.getExternalId(), event.getUserId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense not found for update"));
 
         expense.setExpenseCategory(event.getExpenseCategory());
@@ -77,7 +77,7 @@ public class ExpenseConsumerService {
         expense.setExpenseCategory(event.getExpenseCategory());
         expense.setExpenseType(event.getExpenseType());
         expense.setExpense(event.getExpense());
-        expense.setUser(event.getUserId());
+        expense.setUserId(event.getUserId());
         expense.setCreatedOn(Instant.now());
         return expense;
     }

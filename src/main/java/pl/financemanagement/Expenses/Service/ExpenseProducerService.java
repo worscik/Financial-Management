@@ -61,7 +61,7 @@ public class ExpenseProducerService implements ExpenseService {
                 expenseRequest.getExpenseType(), bankAccount.getAccountBalance(), expenseRequest.getExpenseCost());
 
         Expense expense = mapToExpense(expenseRequest);
-        expense.setUser(userAccount.getId());
+        expense.setUserId(userAccount.getId());
         expense.setVersion(1);
 
         expenseRepository.save(expense);
@@ -129,8 +129,8 @@ public class ExpenseProducerService implements ExpenseService {
         LOGGER.info("Deleted event with id {}, for user {}", expenseExternalId, userAccount.getName());
     }
 
-    private Expense findExpense(String externalId, long id) {
-        return expenseRepository.findExpenseByExternalId(externalId, id)
+    private Expense findExpense(String externalId, long userId) {
+        return expenseRepository.findExpenseByExternalIdAndUserId(externalId, userId)
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
     }
 

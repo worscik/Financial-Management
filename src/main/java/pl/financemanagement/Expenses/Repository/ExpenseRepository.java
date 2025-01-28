@@ -8,25 +8,24 @@ import pl.financemanagement.Expenses.Model.Expense;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
+public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query(nativeQuery = true, value = """
             select *
             from expense
-            where external_id = :externalId and user_id = :userId;
+            where external_id = :externalId and user_id = :user_id;
             """)
-    Optional<Expense> findExpenseByExternalId(@Param("externalId") String externalId,
-                                              @Param("user") long userId);
+    Optional<Expense> findExpenseByExternalIdAndUserId(@Param("externalId") String externalId,
+                                                     @Param("user_id") long user_id);
 
 
     @Query(nativeQuery = true, value = """
             select *
             from expense
-            where user_id = :userId;
+            where user_id = :user_id;
             """)
-    List<Expense> findExpensesByUserId(@Param("userId") long userId);
+    List<Expense> findExpensesByUserId(@Param("user_id") long user_id);
 
 }

@@ -38,7 +38,7 @@ public class ExpenseMapper {
         expense.setExternalId(expenseCreateEvent.getExternalId().toString());
         expense.setCreatedOn(Instant.now());
         expense.setExpense(expenseCreateEvent.getExpense());
-        expense.setUser(expenseCreateEvent.getUserId());
+        expense.setUserId(expenseCreateEvent.getUserId());
         return expense;
     }
 
