@@ -9,7 +9,6 @@ import pl.financemanagement.Expenses.Model.Expense;
 import pl.financemanagement.Expenses.Model.ExpenseType;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +26,7 @@ class ExpenseRepositoryTest {
 
     @Test
     void successFindExpenseByExternalIdAndUser() {
-        Expense expected = expenseRepository.save(buildExpense(EXTERNAL_ID, USER_ID));
+        Expense expected = expenseRepository.save(buildExpense(EXTERNAL_ID));
 
         Optional<Expense> expenseByExternalIdAndUserId
                 = expenseRepository.findExpenseByExternalIdAndUserId(EXTERNAL_ID, USER_ID);
@@ -48,8 +47,8 @@ class ExpenseRepositoryTest {
 
     @Test
     void findExpensesByUserId() {
-        Expense expense_1 = expenseRepository.save(buildExpense(EXTERNAL_ID_2, USER_ID));
-        Expense expense_2 = expenseRepository.save(buildExpense(EXTERNAL_ID1_3, USER_ID));
+        Expense expense_1 = expenseRepository.save(buildExpense(EXTERNAL_ID_2));
+        Expense expense_2 = expenseRepository.save(buildExpense(EXTERNAL_ID1_3));
 
         assertThat(expenseRepository.findExpensesByUserId(USER_ID))
                 .hasSize(2)
@@ -62,13 +61,13 @@ class ExpenseRepositoryTest {
                 .isEmpty();
     }
 
-    private Expense buildExpense(String externalId, long userId) {
+    private Expense buildExpense(String externalId) {
         Expense expense = new Expense();
         expense.setExpense(BigDecimal.valueOf(1000));
         expense.setExpenseItem("Test");
         expense.setExternalId(externalId);
         expense.setExpenseType(ExpenseType.EXPENSE);
-        expense.setUserId(userId);
+        expense.setUserId(USER_ID);
         return expense;
     }
 
