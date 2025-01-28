@@ -32,9 +32,9 @@ class ExpenseRepositoryTest {
         Optional<Expense> expenseByExternalIdAndUserId
                 = expenseRepository.findExpenseByExternalIdAndUserId(EXTERNAL_ID, USER_ID);
 
-        assertThat(expenseByExternalIdAndUserId.get())
-                .isNotNull()
-                .isEqualTo(expected);
+        assertThat(expenseByExternalIdAndUserId)
+                .isPresent()
+                .contains(expected);
     }
 
     @ParameterizedTest
@@ -51,12 +51,9 @@ class ExpenseRepositoryTest {
         Expense expense_1 = expenseRepository.save(buildExpense(EXTERNAL_ID_2, USER_ID));
         Expense expense_2 = expenseRepository.save(buildExpense(EXTERNAL_ID1_3, USER_ID));
 
-        List<Expense> espensesList = List.of(expense_1, expense_2);
-
         assertThat(expenseRepository.findExpensesByUserId(USER_ID))
-                .isNotNull()
-                .usingDefaultComparator()
-                .isEqualTo(espensesList);
+                .hasSize(2)
+                .containsExactlyInAnyOrder(expense_1, expense_2);
     }
 
     @Test
