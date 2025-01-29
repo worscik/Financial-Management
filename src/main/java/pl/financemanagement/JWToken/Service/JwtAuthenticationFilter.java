@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret.key}")
     private final String secretKey;
-    private static final Logger logger = LogManager.getLogger(JwtAuthenticationFilter.class);
+    private static final Logger LOGGER = LogManager.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(String secretKey) {
         this.secretKey = secretKey;
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-
+        LOGGER.debug("Should skip filter ? " + (shouldSkipFilter(requestURI) + " for rquest" + requestURI));
         if (shouldSkipFilter(requestURI)) {
             filterChain.doFilter(request, response);
             return;
@@ -133,9 +133,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean shouldSkipFilter(String requestURI) {
-        return requestURI.matches("^/h2-console.*")
+        return requestURI.startsWith("/h2-console")
                 || requestURI.equals("/user/register")
                 || requestURI.equals("/login")
-                || requestURI.equals("/expense/categories");
+                || requestURI.equals("/expense/categories")
+                || requestURI.startsWith("/v3/api-docs")
+                || requestURI.startsWith("/swagger-ui");
     }
 }
