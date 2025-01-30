@@ -1,6 +1,8 @@
 package pl.financemanagement.JWToken.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -11,20 +13,12 @@ public class JWTokenResponse extends ErrorResponse {
     private String message;
     private String status;
 
-    public JWTokenResponse(Map<String, String> errors, String token, String message, String status) {
-        super(errors);
-        this.token = token;
-        this.message = message;
-        this.status = status;
-    }
-
     public JWTokenResponse(String token, String message, String status) {
         super();
         this.token = token;
         this.message = message;
         this.status = status;
     }
-
 
     public JWTokenResponse(Map<String, String> errors, String status) {
         super(errors);
