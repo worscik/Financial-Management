@@ -8,7 +8,4 @@ public enum ExpenseCategory {
     OTHER,
     SPORT
 
-
-
-
 }

@@ -96,7 +96,7 @@ public class ExpenseProducerService implements ExpenseService {
         LOGGER.info("Send event {} to kafka", expenseUpdateEvent.getExternalId());
 
         return new ExpenseResponse(mapToDtoWithBankBalanceAndUserExternalId(
-                expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())), true);
+                expense, bankAccount.getAccountBalance(), userAccount.getExternalId()), true);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ExpenseProducerService implements ExpenseService {
         return expenseRepository.findExpensesByUserId(userAccount.getId())
                 .stream()
                 .map(expense -> mapToDtoWithBankBalanceAndUserExternalId(
-                        expense, bankAccount.getAccountBalance(), UUID.fromString(userAccount.getExternalId())))
+                        expense, bankAccount.getAccountBalance(), userAccount.getExternalId()))
                 .toList();
     }
 

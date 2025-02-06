@@ -10,7 +10,7 @@ public class ExpenseMapper {
 
     public static ExpenseDto mapToDtoWithBankBalanceAndUserExternalId(Expense expense,
                                                                       BigDecimal bankAccount,
-                                                                      UUID userAccount) {
+                                                                      String userAccount) {
         return new ExpenseDto.Builder()
                 .externalId(expense.getExternalId())
                 .expenseCategory(expense.getExpenseCategory())

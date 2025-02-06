@@ -1,19 +1,17 @@
 package pl.financemanagement.Expenses.Service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.Expenses.Model.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Service("expenseServiceDemo")
 public class ExpenseServiceDemo implements ExpenseService {
 
     private final static String UUID_NUMBER = "2ae2eeba-7980-458c-9677-8bc41abf2945";
-    private final static UUID USER_EXTERNAL_ID = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2942");
+    private final static String USER_EXTERNAL_ID = "2ae2eeba-7980-458c-9677-8bc41abf2942";
     private final static long USER_ID = 999L;
 
     @Override

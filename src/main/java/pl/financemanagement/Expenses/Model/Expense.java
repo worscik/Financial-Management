@@ -20,8 +20,10 @@ public class Expense {
     private int version;
     private Instant createdOn;
     private Instant modifyOn;
+    @Enumerated(EnumType.STRING)
     private ExpenseCategory expenseCategory;
     private String expenseItem;
+    @Enumerated(EnumType.STRING)
     private ExpenseType expenseType;
     private BigDecimal expense;
     private long userId;

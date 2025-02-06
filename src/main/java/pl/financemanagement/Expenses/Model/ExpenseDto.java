@@ -10,7 +10,7 @@ public class ExpenseDto {
     private final Instant createdOn;
     private final ExpenseCategory expenseCategory;
     private final ExpenseType expenseType;
-    private final UUID userExternalId;
+    private final String userExternalId;
     private final BigDecimal bankBalance;
 
     private ExpenseDto(Builder builder) {
@@ -27,7 +27,7 @@ public class ExpenseDto {
         private Instant createdOn;
         private ExpenseCategory expenseCategory;
         private ExpenseType expenseType;
-        private UUID userExternalId;
+        private String userExternalId;
         private BigDecimal bankBalance;
 
         public Builder externalId(String externalId) {
@@ -50,7 +50,7 @@ public class ExpenseDto {
             return this;
         }
 
-        public Builder userId(UUID userExternalId) {
+        public Builder userId(String userExternalId) {
             this.userExternalId = userExternalId;
             return this;
         }
@@ -81,7 +81,7 @@ public class ExpenseDto {
         return expenseType;
     }
 
-    public UUID getUserExternalId() {
+    public String getUserExternalId() {
         return userExternalId;
     }
 
