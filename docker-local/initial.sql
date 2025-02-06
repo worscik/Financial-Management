@@ -51,12 +51,12 @@ VALUES
 
 INSERT INTO expense (external_id, version, created_on, modify_on, expense_item, expense_category, expense_type, expense, user_id)
 VALUES
-    (UUID(), 1, NOW(), NOW(), 'Home Expense', 'HOME', 'EXPENSE', 15.50, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
-    (UUID(), 1, NOW(), NOW(), 'Work Expense', 'WORK', 'EXPENSE', 2.80, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
-    (UUID(), 1, NOW(), NOW(), 'Other Expense', 'OTHER', 'EXPENSE', 10.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
-    (UUID(), 1, NOW(), NOW(), 'Sports Equipment', 'SPORT', 'EXPENSE', 50.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
-    (UUID(), 1, NOW(), NOW(), 'Food', 'FOOD', 'EXPENSE', 20.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com')),
-    (UUID(), 1, NOW(), NOW(), 'Income Other', 'OTHER', 'INCOME', 20.00, (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'));
+    (UUID(), 1, NOW(), NOW(), 'Home Expense', 'HOME', 'EXPENSE', 15.50, (SELECT id FROM user_account WHERE email = 'user@financialapp.com')),
+    (UUID(), 1, NOW(), NOW(), 'Work Expense', 'WORK', 'EXPENSE', 2.80, (SELECT id FROM user_account WHERE email = 'user@financialapp.com')),
+    (UUID(), 1, NOW(), NOW(), 'Other Expense', 'OTHER', 'EXPENSE', 10.00, (SELECT id FROM user_account WHERE email = 'user@financialapp.com')),
+    (UUID(), 1, NOW(), NOW(), 'Sports Equipment', 'SPORT', 'EXPENSE', 50.00, (SELECT id FROM user_account WHERE email = 'user@financialapp.com')),
+    (UUID(), 1, NOW(), NOW(), 'Food', 'FOOD', 'EXPENSE', 20.00, (SELECT id FROM user_account WHERE email = 'user@financialapp.com')),
+    (UUID(), 1, NOW(), NOW(), 'Income Other', 'OTHER', 'INCOME', 20.00, (SELECT id FROM user_account WHERE email = 'user@financialapp.com'));
 
 GRANT ALL PRIVILEGES ON financial.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
