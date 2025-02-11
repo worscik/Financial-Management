@@ -31,6 +31,7 @@ class UsersMapperTest {
         userDto.setName(NAME);
         userDto.setEmail(EMAIL);
         userDto.setExternalId(EXTERNAL_ID);
+        userDto.setUserRole(UserRole.USER);
         return userDto;
     }
 
@@ -39,7 +40,7 @@ class UsersMapperTest {
         userAccount.setEmail(EMAIL);
         userAccount.setName(NAME);
         userAccount.setPassword(PASSWORD);
-        userAccount.setRole("USER");
+        userAccount.setUserRole(UserRole.USER);
         userAccount.setExternalId(EXTERNAL_ID);
         return userAccount;
     }

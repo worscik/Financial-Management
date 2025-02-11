@@ -18,6 +18,7 @@ import pl.financemanagement.JWToken.Service.JwtServiceImpl;
 import pl.financemanagement.PasswordTools.PasswordService;
 import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserCredentialsRequest;
+import pl.financemanagement.User.UserModel.UserRole;
 import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.util.HashMap;
@@ -51,8 +52,11 @@ public class JwtController {
         Optional<UserAccount> user = userAccountRepository.findUserByEmail(request.getEmail());
         if (user.isPresent() && passwordService.verifyPassword(request.getPassword(), user.get().getPassword())) {
             LOGGER.info("Correctly authorized user: {}", request.getEmail());
-            return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(
-                    request.getEmail(), user.get().getRole()), null, SUCCESS.getStatus()));
+
+            UserRole userRole = user.get().getUserRole();
+            String token = jwtService.generateUserToken(request.getEmail(), userRole.getRole());
+
+            return ResponseEntity.ok().body(new JWTokenResponse(token, null, SUCCESS.getStatus(), userRole));
         }
         throw new ForbiddenAccessException("Wrong email or password. Try again!");
     }

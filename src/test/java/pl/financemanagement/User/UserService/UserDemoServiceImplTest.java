@@ -101,6 +101,7 @@ class UserDemoServiceImplTest {
         userDto.setExternalId(externalId);
         userDto.setName(name);
         userDto.setEmail(email);
+        userDto.setUserRole(UserRole.USER);
         return userDto;
     }
 

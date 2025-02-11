@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import pl.financemanagement.User.UserModel.UserAccount;
+import pl.financemanagement.User.UserModel.UserRole;
 
 import java.util.Optional;
 
@@ -114,7 +115,7 @@ class UserAccountRepositoryTest {
         userAccount.setEmail(email);
         userAccount.setName(name);
         userAccount.setPassword("password");
-        userAccount.setRole("USER");
+        userAccount.setUserRole(UserRole.USER);
         userAccount.setExternalId(externalId);
         return userAccount;
     }

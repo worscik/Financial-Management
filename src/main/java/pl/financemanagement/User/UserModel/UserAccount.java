@@ -27,7 +27,9 @@ public class UserAccount {
     private Instant modifyOn;
     @Version
     private long version;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
+    private UserRole userRole;
     private String password;
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses = new ArrayList<>();

@@ -15,7 +15,7 @@ public class UserUpdateRequest {
         return newEmail;
     }
 
-    public void setNewEmail(@Email(message = "Email is not correct") String newEmail) {
+    public void setNewEmail(String newEmail) {
         this.newEmail = newEmail;
     }
 
@@ -26,5 +26,5 @@ public class UserUpdateRequest {
     public void setNewName(String newName) {
         this.newName = newName;
     }
-    
+
 }

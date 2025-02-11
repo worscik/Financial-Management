@@ -27,7 +27,6 @@ import static pl.financemanagement.User.UserModel.UsersMapper.userDtoMapper;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-    private final static String USER_ROLE = "USER";
 
     private final JwtService jwtService;
     private final UserAccountRepository userAccountRepository;
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
         userToSave.setName(userRequest.getName());
         userToSave.setCreatedOn(Instant.now());
         userToSave.setExternalId(String.valueOf(UUID.randomUUID()));
-        userToSave.setRole(USER_ROLE);
+        userToSave.setUserRole(USER);
         userToSave.setPassword(passwordService.hashPassword(userRequest.getPassword()));
         return userToSave;
     }

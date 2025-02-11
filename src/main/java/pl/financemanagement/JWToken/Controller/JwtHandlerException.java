@@ -15,7 +15,7 @@ public class JwtHandlerException {
     @ExceptionHandler(ForbiddenAccessException.class)
     public ResponseEntity<JWTokenResponse> handleForbiddenAccessException(ForbiddenAccessException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JWTokenResponse(null,
-                "Incorrect login information sent", ERROR.getStatus()));
+                "Incorrect login information sent", ERROR.getStatus(), null));
     }
 
 }
