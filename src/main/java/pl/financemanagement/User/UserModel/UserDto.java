@@ -1,7 +1,10 @@
 package pl.financemanagement.User.UserModel;
 
-import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserDto {
 
     private String email;
@@ -18,30 +21,4 @@ public class UserDto {
         return new UserDto(email, name, externalId);
     }
 
-    public UserDto() {
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
 }

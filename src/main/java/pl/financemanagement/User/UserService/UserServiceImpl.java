@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.AppTools.AppTools;
@@ -33,7 +34,10 @@ public class UserServiceImpl implements UserService {
     private final UserAccountRepository userAccountRepository;
     private final PasswordService passwordService;
 
-    public UserServiceImpl(JwtService jwtService, UserAccountRepository userAccountRepository, PasswordService passwordService) {
+    @Autowired
+    public UserServiceImpl(JwtService jwtService,
+                           UserAccountRepository userAccountRepository,
+                           PasswordService passwordService) {
         this.jwtService = jwtService;
         this.userAccountRepository = userAccountRepository;
         this.passwordService = passwordService;

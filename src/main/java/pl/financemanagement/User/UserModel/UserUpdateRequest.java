@@ -1,30 +1,17 @@
 package pl.financemanagement.User.UserModel;
 
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserUpdateRequest {
 
     @Email(message = "Email is not correct")
     private String newEmail;
     private String newName;
 
-    public UserUpdateRequest() {
-    }
-
-    public String getNewEmail() {
-        return newEmail;
-    }
-
-    public void setNewEmail(@Email(message = "Email is not correct") String newEmail) {
-        this.newEmail = newEmail;
-    }
-
-    public String getNewName() {
-        return newName;
-    }
-
-    public void setNewName(String newName) {
-        this.newName = newName;
-    }
-    
 }
