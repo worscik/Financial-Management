@@ -3,7 +3,11 @@ package pl.financemanagement.User.UserModel;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserRequest {
 
     @NotBlank(message = "Email cannot be blank or empty")
@@ -30,27 +34,4 @@ public class UserRequest {
         this.password = password;
     }
 
-    public @NotBlank @Email String getEmail() {
-        return email;
-    }
-
-    public void setEmail(@NotBlank @Email String email) {
-        this.email = email;
-    }
-
-    public @NotBlank @Size(max = 64) String getName() {
-        return name;
-    }
-
-    public void setName(@NotBlank @Size(max = 64) String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

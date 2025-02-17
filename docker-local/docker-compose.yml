@@ -34,23 +34,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  kafkahq:
-    image: tchiotludo/kafkahq:latest
-    container_name: kafkahq
-    depends_on:
-      - kafka
-    ports:
-      - "8082:8080"
-    environment:
-      KAFKAHQ_CONFIGURATION: |
-        kafkahq:
-          connections:
-            default:
-              properties:
-                bootstrap.servers: "kafka:9092"
-    command:
-      - "--spring.main.web-environment=true"
-      - "--server.port=8080"
     networks:
       default:
         aliases:

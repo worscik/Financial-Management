@@ -1,6 +1,9 @@
 package pl.financemanagement.JWToken.Service;
 
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -10,10 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class JwtServiceImpl implements JwtService{
+public class JwtServiceImpl implements JwtService {
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
+    private final String secretKey;
+
+    public JwtServiceImpl(@Value("${jwt.secret.key}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     @Override
     public String generateUserToken(String login, String role) throws JOSEException {

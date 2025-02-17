@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.financemanagement.JWToken.Service.JwtService;
-import pl.financemanagement.PasswordTools.PasswordService;
+import pl.financemanagement.PasswordTools.PasswordServiceImpl;
 import pl.financemanagement.User.UserModel.*;
 import pl.financemanagement.User.UserModel.exceptions.EmailAlreadyInUseException;
 import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
@@ -40,7 +40,7 @@ class UserServiceImplTest {
     @Mock
     private UserAccountRepository userAccountRepository;
     @Mock
-    private PasswordService passwordService;
+    private PasswordServiceImpl passwordServiceImpl;
 
     @InjectMocks
     private UserServiceImpl userService;
