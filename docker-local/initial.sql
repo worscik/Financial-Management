@@ -39,9 +39,9 @@ CREATE TABLE expense (
 
 INSERT INTO user_account (external_id, email, name, version, role, password)
 VALUES
-    (UUID(), 'admin@financialapp.com', 'admin', 1, 'ADMIN', '$2a$12$BSTIdBUX.cpPiEZGU8bWOe1OJ1gUNB.fBB91naE55icapsDMd7n12'),
-    (UUID(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$12$kL1hhmgQAroSRhL5IjZVweL.hlTVoWub3Kp4UABesOZbUf8k.FmgS'),
-    (UUID(), 'user@financialapp.com', 'user', 1, 'USER', '$2a$10$iL63eKi2Caq10WQ7iG6N3uP.zpO0e0axnKDn1DW9/osfqBtCxp2yK');
+    (UUID(), 'admin@financialapp.com', 'admin', 1, 'ADMIN', '$2a$12$YsXuaGHGUoXSdwsMtzenY.p2A5bB.chYlBYcdCQ..QWXlKOOOMqHG'),
+    (UUID(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$12$kIB0Vsuy9Gqm/jz.LJdZPu4Nzh9Gn33CsvQ.D510wnH9.Zg4uHNzq'),
+    (UUID(), 'user@financialapp.com', 'user', 1, 'USER', '$2a$12$8tokTl6alcZURDFAWSqZ4et6eSL6jy33RLpEH8y470sN7CGWYNg/.');
 
 INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance)
 VALUES

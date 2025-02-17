@@ -28,8 +28,11 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebMvc
 public class SpringSecurity {
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
+    private final String secretKey;
+
+    public SpringSecurity(@Value("${jwt.secret.key}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
