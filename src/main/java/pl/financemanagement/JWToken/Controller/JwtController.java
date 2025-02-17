@@ -43,7 +43,6 @@ public class JwtController {
         this.passwordService = passwordService;
     }
 
-    //TODO PASSWORD SERVICE!
     @PostMapping("/login")
     public ResponseEntity<JWTokenResponse> generateToken(@Valid @RequestBody UserCredentialsRequest request,
                                                          BindingResult result) throws JOSEException {
@@ -57,9 +56,11 @@ public class JwtController {
                 .findFirst()
                 .orElseThrow(() -> new ForbiddenAccessException("Wrong email or password. Try again!"));
 
-        LOGGER.info("Correctly authorized user: {}", request.getEmail());
-        return ResponseEntity.ok().body(new JWTokenResponse(jwtService.generateUserToken(
-                request.getEmail(), user.getRole()), null, SUCCESS.getStatus()));
+        LOGGER.info("Correctly authorized user: {}. Generating new token.", request.getEmail());
+
+        String token = jwtService.generateUserToken(request.getEmail(), user.getUserRole().getRole());
+
+        return ResponseEntity.ok().body(new JWTokenResponse(token, null, SUCCESS.getStatus(), user.getUserRole()));
 
     }
 

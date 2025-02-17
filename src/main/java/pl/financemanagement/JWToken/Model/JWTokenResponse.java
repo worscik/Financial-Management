@@ -8,6 +8,8 @@ import pl.financemanagement.User.UserModel.UserRole;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Getter
+@Setter
 public class JWTokenResponse extends ErrorResponse {
 
     private String token;
@@ -28,35 +30,4 @@ public class JWTokenResponse extends ErrorResponse {
         this.status = status;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public UserRole getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
-    }
 }

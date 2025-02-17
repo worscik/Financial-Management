@@ -28,6 +28,7 @@ class UserDtoTest {
         userDto.setExternalId(EXTERNAL_ID);
         userDto.setEmail(USER_EMAIL);
         userDto.setName(USER_NAME);
+        userDto.setUserRole(UserRole.USER);
         return userDto;
     }
 }
