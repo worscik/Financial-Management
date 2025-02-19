@@ -1,5 +1,8 @@
 package pl.financemanagement.JWToken.Model;
 
+import lombok.Getter;
+
+@Getter
 public enum JWTokenStatus {
 
     SUCCESS("success"),
@@ -11,7 +14,4 @@ public enum JWTokenStatus {
         this.status = status;
     }
 
-    public String getStatus() {
-        return status;
-    }
 }

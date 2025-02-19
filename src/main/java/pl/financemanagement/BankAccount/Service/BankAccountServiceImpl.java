@@ -82,7 +82,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse findAccountByNumber(String accountNumber, String email) {
+    public BankAccountResponse findAccountByPrincipal(String email) {
         UserAccount user = getUserByEmailOrThrow(email);
         BankAccount account = getBankAccountByUserOrThrow(user.getId());
 

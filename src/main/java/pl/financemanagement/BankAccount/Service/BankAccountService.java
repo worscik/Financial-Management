@@ -14,7 +14,7 @@ public interface BankAccountService {
 
     BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email);
 
-    BankAccountResponse findAccountByNumber(String accountNumber, String email);
+    BankAccountResponse findAccountByPrincipal(String email);
 
     BankAccountResponse deleteAccount(String email);
 

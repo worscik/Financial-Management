@@ -28,11 +28,8 @@ public class BankAccountServiceDemo implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse findAccountByNumber(String accountNumber, String email) {
-        if(ACCOUNT_NUMBER.equals(accountNumber)){
+    public BankAccountResponse findAccountByPrincipal(String email) {
             return new BankAccountResponse(true, buildDemoAccount());
-        }
-        return new BankAccountErrorResponse(false, "Account not found.");
     }
 
     @Override
