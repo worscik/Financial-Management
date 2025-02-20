@@ -17,8 +17,7 @@ public class UserDemoServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
-        return new UserResponse(true, userDto);
+        return new UserResponse(true, buildUserDto());
     }
 
     @Override
@@ -28,26 +27,22 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getBasicDataByEmail(String email) {
-        if (USER_EMAIL.equals(email)) {
-            UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
-            return new UserResponse(true, userDto);
-        }
-        return new UserErrorResponse(false, "User not found");
+    public UserResponse getBasicData(String email) {
+        return new UserResponse(true, buildUserDto());
     }
 
     @Override
     public UserResponse getUserById(long id, String email) {
-        // USER DEMO IS 2 ID
-        if (id == 2) {
-            UserDto userDto = UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
-            return new UserResponse(true, userDto);
-        }
-        return new UserErrorResponse(false, "User not found");
+        return new UserResponse(true, buildUserDto());
     }
 
     @Override
     public UserDeleteResponse deleteUser(String externalId, String email) {
         return new UserDeleteResponse(true, "User deleted.");
     }
+
+    private UserDto buildUserDto() {
+        return UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
+    }
+
 }

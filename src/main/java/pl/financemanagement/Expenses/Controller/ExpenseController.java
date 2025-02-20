@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
+import pl.financemanagement.Expenses.Model.ExpenseCategory;
 import pl.financemanagement.Expenses.Model.ExpenseDto;
 import pl.financemanagement.Expenses.Model.ExpenseRequest;
 import pl.financemanagement.Expenses.Model.ExpenseResponse;
@@ -65,11 +66,11 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
-    //TODO
-//    @GetMapping("/categories")
-//    public List<ExpenseCategory> getExpensesCategories() {
-//        return expenseService.getExpensesCategories();
-//    }
+
+    @GetMapping("/categories")
+    public List<ExpenseCategory> getExpensesCategories() {
+        return service().getExpensesCategories();
+    }
 
     static ExpenseResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

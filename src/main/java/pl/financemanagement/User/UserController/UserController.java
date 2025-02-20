@@ -45,8 +45,8 @@ public class UserController extends DemoResolver<UserService> {
     }
 
     @GetMapping()
-    ResponseEntity<UserResponse> getBasicData(Principal principal) {
-        return ResponseEntity.ok(resolveService(principal.getName()).getBasicDataByEmail(principal.getName()));
+    ResponseEntity<UserResponse> getUserBasicData(Principal principal) {
+        return ResponseEntity.ok(resolveService(principal.getName()).getBasicData(principal.getName()));
     }
 
     @GetMapping("/id/{id}")

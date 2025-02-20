@@ -136,7 +136,7 @@ class UserServiceImplTest {
         when(userAccountRepository.findUserByEmail(any()))
                 .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
 
-        assertThat(userService.getBasicDataByEmail(TEST_USER_EMAIL))
+        assertThat(userService.getBasicData(TEST_USER_EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
@@ -147,7 +147,7 @@ class UserServiceImplTest {
         when(userAccountRepository.findUserByEmail(any())).thenReturn(Optional.empty());
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-            userService.getBasicDataByEmail("email");
+            userService.getBasicData("email");
         });
     }
 

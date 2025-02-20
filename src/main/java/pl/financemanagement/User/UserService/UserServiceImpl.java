@@ -53,7 +53,9 @@ public class UserServiceImpl implements UserService {
 
         UserAccount userToSave = mapToUserAccount(userRequest);
         UserAccount savedUser = userAccountRepository.save(userToSave);
+
         String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
+
         return new UserResponse(true, userDtoMapper(savedUser), token);
     }
 
@@ -63,7 +65,7 @@ public class UserServiceImpl implements UserService {
         UserAccount userAccount = userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
 
-        if (AppTools.isNotBlank(userRequest.getNewEmail()) && isEmailNotAvailable(userRequest.getNewEmail(), userAccount)) {
+        if (AppTools.isNotBlank(userRequest.getNewEmail()) && isEmailExists(userRequest.getNewEmail(), userAccount)) {
             throw new EmailAlreadyInUseException("Email " + userRequest.getNewEmail() + " is already in use.");
         }
 
@@ -75,14 +77,16 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Change name from {} to {}", userAccount.getName(), userRequest.getNewName());
             userAccount.setName(userRequest.getNewName());
         }
+
         userAccount.setModifyOn(Instant.now());
         UserAccount savedUser = userAccountRepository.save(userAccount);
         String token = jwtService.generateUserToken(savedUser.getEmail(), USER.getRole());
+
         return new UserResponse(true, userDtoMapper(savedUser), token);
     }
 
     @Override
-    public UserResponse getBasicDataByEmail(String email) {
+    public UserResponse getBasicData(String email) {
         UserAccount user = userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
         return new UserResponse(true, userDtoMapper(user));
@@ -100,12 +104,14 @@ public class UserServiceImpl implements UserService {
     public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
         UserAccount userAccount = userAccountRepository.findUserByEmailAndExternalId(email, externalId)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
+
         userAccountRepository.delete(userAccount);
         LOGGER.info("User with email {} is successfully removed", userAccount.getName());
+
         return new UserDeleteResponse(true, "User deleted.");
     }
 
-    private boolean isEmailNotAvailable(String newEmail, UserAccount currentAccount) {
+    private boolean isEmailExists(String newEmail, UserAccount currentAccount) {
         Optional<UserAccount> userWithSameEmail = userAccountRepository.findUserByEmail(newEmail);
         return userWithSameEmail.isEmpty() || userWithSameEmail.get().getId() == currentAccount.getId();
     }

@@ -46,20 +46,20 @@ class UserDemoServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"example@email.com", "example1@email.com", "example3@email.com"})
-    void getBasicDataByEmailWhenUserExists(String email) {
+    void getBasicDataWhenUserExists(String email) {
         UserErrorResponse expectedUserResponse = new UserErrorResponse(false, "User not found");
 
-        assertThat(userDemoService.getBasicDataByEmail(email))
+        assertThat(userDemoService.getBasicData(email))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedUserResponse);
     }
 
     @Test
-    void getBasicDataByEmailWhenUserDoesNotExist() {
+    void getBasicDataWhenUserDoesNotExist() {
         UserResponse expectedUserResponse = new UserResponse(true, buildUserDto(EXTERNAL_ID, NAME, EMAIL));
 
-        assertThat(userDemoService.getBasicDataByEmail(EMAIL))
+        assertThat(userDemoService.getBasicData(EMAIL))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedUserResponse);

@@ -12,7 +12,6 @@ public class ExpenseServiceDemo implements ExpenseService {
 
     private final static String UUID_NUMBER = "2ae2eeba-7980-458c-9677-8bc41abf2945";
     private final static String USER_EXTERNAL_ID = "2ae2eeba-7980-458c-9677-8bc41abf2942";
-    private final static long USER_ID = 999L;
 
     @Override
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
@@ -36,8 +35,7 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId,
-                                                                  String email) {
+    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String email) {
     }
 
     @Override

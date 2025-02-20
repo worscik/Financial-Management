@@ -63,6 +63,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount savedBankAccount = bankAccountRepository.save(accountToSave);
         LOGGER.info("Added account with externalId {} for userId {}",
                 savedBankAccount.getExternalId(), savedBankAccount.getUserId());
+
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
     }
 
@@ -75,7 +76,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount account = getBankAccountByUserOrThrow(user.getId());
 
         BankAccount updatedAccount = prepareAccount(bankAccountRequest, account.getId());
+
         BankAccount savedAccount = bankAccountRepository.save(updatedAccount);
+
         LOGGER.info("Updated account with externalId {} for userId {}",
                 savedAccount.getExternalId(), savedAccount.getUserId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
