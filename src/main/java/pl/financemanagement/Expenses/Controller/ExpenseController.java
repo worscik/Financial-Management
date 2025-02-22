@@ -66,7 +66,6 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
     }
 
-
     @GetMapping("/categories")
     public List<ExpenseCategory> getExpensesCategories() {
         return service().getExpensesCategories();

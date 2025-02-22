@@ -31,7 +31,7 @@ public class UserController extends DemoResolver<UserService> {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-        return ResponseEntity.ok(isDemo(false).createUser(userRequest));
+        return ResponseEntity.ok(service().createUser(userRequest));
     }
 
     @PutMapping

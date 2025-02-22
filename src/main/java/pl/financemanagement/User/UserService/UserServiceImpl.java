@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse createUser(UserRequest userRequest) throws JOSEException {
         LOGGER.info("Attempting to create user with email: {}", userRequest.getEmail());
         Optional<UserAccount> existingUser = userAccountRepository.findUserByEmail(userRequest.getEmail());
+
         if (existingUser.isPresent()) {
             LOGGER.info("Cannot create user with email {} because already exists", userRequest.getEmail());
             throw new UserExistsException("User with email " + userRequest.getEmail() + " exists");
