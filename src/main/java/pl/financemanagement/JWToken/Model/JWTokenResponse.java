@@ -14,10 +14,10 @@ public class JWTokenResponse extends ErrorResponse {
 
     private String token;
     private String message;
-    private String status;
+    private boolean status;
     private UserRole userRole;
 
-    public JWTokenResponse(String token, String message, String status, UserRole userRole) {
+    public JWTokenResponse(String token, String message, boolean status, UserRole userRole) {
         super();
         this.token = token;
         this.message = message;
@@ -25,7 +25,7 @@ public class JWTokenResponse extends ErrorResponse {
         this.userRole = userRole;
     }
 
-    public JWTokenResponse(Map<String, String> errors, String status) {
+    public JWTokenResponse(Map<String, String> errors, boolean status) {
         super(errors);
         this.status = status;
     }
