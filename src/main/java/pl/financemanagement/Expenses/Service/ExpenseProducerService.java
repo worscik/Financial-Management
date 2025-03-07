@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static pl.financemanagement.Expenses.Model.ExpenseMapper.*;
@@ -54,18 +53,18 @@ public class ExpenseProducerService implements ExpenseService {
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
         UserAccount userAccount = getUserAccount(email);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountById(userAccount.getId())
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+                        userAccount.getId(), expenseRequest.getBankAccountExternalId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
 
         resolveOperationOnAccountAndCheckBalance(
                 expenseRequest.getExpenseType(), bankAccount.getAccountBalance(), expenseRequest.getExpenseCost());
 
         Expense expense = mapToExpense(expenseRequest);
-        expense.setUserId(userAccount.getId());
+        expense.setUser(userAccount);
         expense.setVersion(1);
 
         expenseRepository.save(expense);
-
 
         ExpenseCreateEvent expenseCreateEvent = buildExpenseCreateEvent(expenseRequest, bankAccount, userAccount);
 
@@ -80,9 +79,9 @@ public class ExpenseProducerService implements ExpenseService {
     public ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email) {
         UserAccount userAccount = getUserAccount(email);
 
-        Expense expense = findExpense(expenseRequest.getExternalId(), userAccount.getId());
+        Expense expense = findExpenseOrThrow(expenseRequest.getExternalId(), userAccount.getId());
 
-        BankAccount bankAccount = findBankAccount(userAccount.getId());
+        BankAccount bankAccount = findBankAccountOrThrow(userAccount.getId(), expenseRequest.getBankAccountExternalId());
 
         BigDecimal newBalance = resolveOperationOnAccount(expenseRequest.getExpenseType(), bankAccount, expenseRequest);
         bankAccount.setAccountBalance(newBalance);
@@ -100,9 +99,9 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserName(String email) {
+    public List<ExpenseDto> findExpenseByUserNameAndExternalId(String email, UUID bankAccountExternalId) {
         UserAccount userAccount = getUserAccount(email);
-        BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId());
+        BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId(), bankAccountExternalId);
 
         return expenseRepository.findExpensesByUserId(userAccount.getId())
                 .stream()
@@ -112,26 +111,21 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     @Override
-    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String email) {
+    public ExpenseResponse findExpenseByIdAndUserId(String email, UUID expenseExternalId) {
         UserAccount userAccount = getUserAccount(email);
-        Expense expense = findExpense(expenseExternalId, userAccount.getId());
+        Expense expense = findExpenseOrThrow(expenseExternalId, userAccount.getId());
 
         return new ExpenseResponse(mapToDto(expense), true);
     }
 
     @Override
-    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String email) {
+    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String email, UUID expenseExternalId) {
         UserAccount userAccount = getUserAccount(email);
 
-        Expense expense = findExpense(expenseExternalId, userAccount.getId());
+        Expense expense = findExpenseOrThrow(expenseExternalId, userAccount.getId());
 
         kafkaTemplate.send("expenses_delete_topic", new ExpenseDeleteEvent(expense));
         LOGGER.info("Deleted event with id {}, for user {}", expenseExternalId, userAccount.getName());
-    }
-
-    private Expense findExpense(String externalId, long userId) {
-        return expenseRepository.findExpenseByExternalIdAndUserId(externalId, userId)
-                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
     }
 
     @Override
@@ -139,21 +133,16 @@ public class ExpenseProducerService implements ExpenseService {
         return Arrays.stream(ExpenseCategory.values()).toList();
     }
 
-    private BigDecimal resolveOperationOnAccountAndCheckBalance(ExpenseType expenseType,
-                                                                BigDecimal accountBalance,
-                                                                BigDecimal expenseCost) {
+    private void resolveOperationOnAccountAndCheckBalance(ExpenseType expenseType,
+                                                          BigDecimal accountBalance,
+                                                          BigDecimal expenseCost) {
         if (accountBalance.compareTo(expenseCost) <= 0) {
             throw new NotEnoughMoneyForTransaction("Not Enough money for transaction ");
         }
-        return switch (expenseType) {
-            case EXPENSE -> accountBalance.subtract(expenseCost);
-            case INCOME -> accountBalance.add(expenseCost);
-            default -> throw new IllegalArgumentException("Unsupported expense type: " + expenseType);
-        };
     }
 
-    private BankAccount getBankAccountByUserOrThrow(long userId) {
-        return bankAccountRepository.findBankAccountById(userId)
+    private BankAccount getBankAccountByUserOrThrow(long userId, UUID externalId) {
+        return bankAccountRepository.findBankAccountByUserIdAndExternalId(userId, externalId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
@@ -169,7 +158,7 @@ public class ExpenseProducerService implements ExpenseService {
         expenseCreateEvent.setExpenseType(expenseRequest.getExpenseType());
         expenseCreateEvent.setExpense(expenseRequest.getExpenseCost());
         expenseCreateEvent.setBankBalance(bankAccount.getAccountBalance());
-        expenseCreateEvent.setUserId(userAccount.getId());
+        expenseCreateEvent.setUserAccount(userAccount);
         expenseCreateEvent.setExternalId(expenseRequest.getExternalId());
         expenseCreateEvent.setExpenseCategory(expenseRequest.getExpenseCategory());
         return expenseCreateEvent;
@@ -195,15 +184,14 @@ public class ExpenseProducerService implements ExpenseService {
         return account.getAccountBalance().add(request.getBankBalance());
     }
 
-    private BankAccount findBankAccount(long userId) {
-        Optional<BankAccount> bankAccount = bankAccountRepository.findBankAccountById(userId);
-        if (bankAccount.isEmpty()) {
-            throw new BankAccountNotFoundException("Account for user " + userId + " not found");
-        }
-        return bankAccount.get();
+    private BankAccount findBankAccountOrThrow(long userId, UUID externalId) {
+        return bankAccountRepository.findBankAccountByUserIdAndExternalId(userId, externalId)
+                .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
-    private boolean hasSufficientBalance(BigDecimal bankBalance, BigDecimal expenseAmount) {
-        return bankBalance.compareTo(expenseAmount) >= 0;
+    private Expense findExpenseOrThrow(UUID externalId, long userId) {
+        return expenseRepository.findExpenseByExternalIdAndUserId(externalId, userId)
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense with ID was not found."));
     }
+
 }

@@ -1,68 +1,27 @@
 package pl.financemanagement.Expenses.Model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class ExpenseRequest {
 
-    private String externalId;
-    @NotBlank
+    private UUID externalId;
+    @NotBlank(message = "expense category cannot be blank")
     private ExpenseCategory expenseCategory;
-    @NotBlank
+    @NotBlank(message = "expense type cannot be blank")
     private ExpenseType expenseType;
-    @NotBlank
+    @NotNull(message = "bankBalance cannot be null")
     private BigDecimal bankBalance;
     private BigDecimal expenseCost;
-    private boolean demo;
+    private UUID bankAccountExternalId;
 
-
-    public String getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
-
-    public ExpenseCategory getExpenseCategory() {
-        return expenseCategory;
-    }
-
-    public void setExpenseCategory(ExpenseCategory expenseCategory) {
-        this.expenseCategory = expenseCategory;
-    }
-
-    public ExpenseType getExpenseType() {
-        return expenseType;
-    }
-
-    public void setExpenseType(ExpenseType expenseType) {
-        this.expenseType = expenseType;
-    }
-
-    public BigDecimal getBankBalance() {
-        return bankBalance;
-    }
-
-    public void setBankBalance(BigDecimal bankBalance) {
-        this.bankBalance = bankBalance;
-    }
-
-    public boolean isDemo() {
-        return demo;
-    }
-
-    public void setDemo(boolean demo) {
-        this.demo = demo;
-    }
-
-    public BigDecimal getExpenseCost() {
-        return expenseCost;
-    }
-
-    public void setExpenseCost(BigDecimal expenseCost) {
-        this.expenseCost = expenseCost;
-    }
 }

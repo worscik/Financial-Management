@@ -34,7 +34,7 @@ class BankAccountRepositoryTest {
     @ParameterizedTest
     @ValueSource(longs = {1,2,3,4,5})
     void findBankAccountByExistingId(long id) {
-        Optional<BankAccount> account = bankAccountRepository.findBankAccountById(id);
+        Optional<BankAccount> account = bankAccountRepository.findBankAccountByUserId(id);
         assertThat(account.isEmpty());
     }
 

@@ -1,4 +1,4 @@
-package pl.financemanagement.ApplicationConfig;
+package pl.financemanagement.ApplicationConfig.HandlerException;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -39,9 +39,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleInvalidInput(HttpMessageNotReadableException e) {
-        log.error("Error during processes request: ", e);
-        return ResponseEntity.badRequest().body("Invalid request payload.");
+    public ResponseEntity<GlobalErrorResponse> handleInvalidInput(HttpMessageNotReadableException e) {
+        log.error("Error during processes request: {}", e.getMessage());
+        GlobalErrorResponse response = new GlobalErrorResponse("Cannot deserialize value from request ", false);
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

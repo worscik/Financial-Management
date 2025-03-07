@@ -5,6 +5,7 @@ import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 @Service
@@ -14,12 +15,10 @@ public interface BankAccountService {
 
     BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email);
 
-    BankAccountResponse findAccountByPrincipal(String email);
+    BankAccountResponse findAccountByPrincipal(String email, UUID bankAccountExternalId);
 
-    BankAccountResponse deleteAccount(String email);
+    BankAccountResponse deleteAccount(String email, UUID bankAccountExternalId);
 
-    BigDecimal getBankAccountBalance(String email);
-
-
+    BigDecimal getBankAccountBalance(String email, UUID bankAccountExternalId);
 
 }

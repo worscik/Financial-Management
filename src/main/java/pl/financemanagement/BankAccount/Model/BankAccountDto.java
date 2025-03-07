@@ -7,14 +7,16 @@ public class BankAccountDto {
 
     private final UUID externalId;
     private final String accountName;
-    private final String accountNumber;
+    private final UUID accountNumber;
     private final BigDecimal accountBalance;
+    private final Currency currency;
 
     private BankAccountDto(AccountDtoBuilder builder) {
         this.externalId = builder.externalId;
         this.accountName = builder.accountName;
         this.accountNumber = builder.accountNumber;
         this.accountBalance = builder.accountBalance;
+        this.currency = builder.currency;
     }
 
     public UUID getExternalId() {
@@ -25,7 +27,7 @@ public class BankAccountDto {
         return accountName;
     }
 
-    public String getAccountNumber() {
+    public UUID getAccountNumber() {
         return accountNumber;
     }
 
@@ -33,11 +35,16 @@ public class BankAccountDto {
         return accountBalance;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+
     public static final class AccountDtoBuilder {
         private UUID externalId;
         private String accountName;
-        private String accountNumber;
+        private UUID accountNumber;
         private BigDecimal accountBalance;
+        private Currency currency;
 
         public AccountDtoBuilder() {
         }
@@ -56,13 +63,18 @@ public class BankAccountDto {
             return this;
         }
 
-        public AccountDtoBuilder withAccountNumber(String accountNumber) {
+        public AccountDtoBuilder withAccountNumber(UUID accountNumber) {
             this.accountNumber = accountNumber;
             return this;
         }
 
         public AccountDtoBuilder withAccountBalance(BigDecimal accountBalance) {
             this.accountBalance = accountBalance;
+            return this;
+        }
+
+        public AccountDtoBuilder withCurrency(Currency currency) {
+            this.currency = currency;
             return this;
         }
 

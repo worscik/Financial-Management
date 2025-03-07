@@ -17,6 +17,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/expense")
@@ -48,22 +49,22 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).updateExpense(request, principal.getName()));
     }
 
-    @GetMapping("/list")
-    ResponseEntity<List<ExpenseDto>> findExpenses(@RequestParam(required = false, defaultValue = "false") boolean isDemo,
-                                                  Principal principal) {
-        return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByUserName(principal.getName()));
+    @GetMapping("/list/{externalId}")
+    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable UUID externalId, Principal principal) {
+        return ResponseEntity.ok(resolveService(
+                principal.getName()).findExpenseByUserNameAndExternalId(principal.getName(), externalId));
     }
 
     @GetMapping("externalId/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@PathVariable String externalId,
+    ResponseEntity<ExpenseResponse> findExpenses(@PathVariable UUID externalId,
                                                  @RequestParam(required = false, defaultValue = "false") boolean isDemo,
                                                  BindingResult result,
                                                  Principal principal) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(buildErrorResponse(result));
         }
-
-        return ResponseEntity.ok(resolveService(principal.getName()).findExpenseByIdAndUserId(externalId, principal.getName()));
+        return ResponseEntity.ok(resolveService(
+                principal.getName()).findExpenseByIdAndUserId(principal.getName(), externalId));
     }
 
     @GetMapping("/categories")

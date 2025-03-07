@@ -6,12 +6,13 @@ import pl.financemanagement.Expenses.Model.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service("expenseServiceDemo")
 public class ExpenseServiceDemo implements ExpenseService {
 
-    private final static String UUID_NUMBER = "2ae2eeba-7980-458c-9677-8bc41abf2945";
-    private final static String USER_EXTERNAL_ID = "2ae2eeba-7980-458c-9677-8bc41abf2942";
+    private final static UUID UUID_NUMBER = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2945");
+    private final static UUID USER_EXTERNAL_ID = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2942");
 
     @Override
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
@@ -24,18 +25,18 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserName(String email) {
+    public List<ExpenseDto> findExpenseByUserNameAndExternalId(String email, UUID bankAccountExternalId) {
         return List.of(buildExpenseDto());
     }
 
 
     @Override
-    public ExpenseResponse findExpenseByIdAndUserId(String expenseExternalId, String userExternalId) {
+    public ExpenseResponse findExpenseByIdAndUserId(String userExternalId, UUID bankAccountExternalId) {
         return new ExpenseResponse(buildUpsertedExpenseDto(), true);
     }
 
     @Override
-    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String expenseExternalId, String email) {
+    public void deleteExpenseByUserExternalIdAndExpenseExternalId(String email, UUID bankAccountExternalId) {
     }
 
     @Override
@@ -45,7 +46,7 @@ public class ExpenseServiceDemo implements ExpenseService {
 
     private ExpenseDto buildExpenseDto() {
         return new ExpenseDto.Builder()
-                .userId(USER_EXTERNAL_ID)
+                .userExternalId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.INCOME)
                 .createdOn(Instant.now())
                 .externalId(UUID_NUMBER)
@@ -56,7 +57,7 @@ public class ExpenseServiceDemo implements ExpenseService {
 
     private ExpenseDto buildUpsertedExpenseDto() {
         return new ExpenseDto.Builder()
-                .userId(USER_EXTERNAL_ID)
+                .userExternalId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.EXPENSE)
                 .createdOn(Instant.now())
                 .externalId(UUID_NUMBER)

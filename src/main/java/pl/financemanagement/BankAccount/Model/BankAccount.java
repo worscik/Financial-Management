@@ -1,101 +1,53 @@
 package pl.financemanagement.BankAccount.Model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "bank_account")
 public class BankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name = "external_id", nullable = false, unique = true)
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID externalId;
-    private long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserAccount user;
+
     private Instant createdOn;
     private Instant modifyOn;
+
     @Version
     private long accountVersion;
+
+    @Column(name = "account_name", nullable = false, unique = true)
     private String accountName;
-    private String accountNumber;
+
+    @Column(name = "account_number", nullable = false, unique = true)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    private UUID accountNumber;
+
+    @Column(nullable = false)
     private BigDecimal accountBalance;
 
-    public BankAccount() {
-    }
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public UUID getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(UUID externalId) {
-        this.externalId = externalId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public Instant getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Instant createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public Instant getModifyOn() {
-        return modifyOn;
-    }
-
-    public void setModifyOn(Instant modifyOn) {
-        this.modifyOn = modifyOn;
-    }
-
-    public long getAccountVersion() {
-        return accountVersion;
-    }
-
-    public void setAccountVersion(long accountVersion) {
-        this.accountVersion = accountVersion;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public BigDecimal getAccountBalance() {
-        return accountBalance;
-    }
-
-    public void setAccountBalance(BigDecimal accountBalance) {
-        this.accountBalance = accountBalance;
-    }
 }

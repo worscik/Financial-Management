@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
@@ -26,7 +27,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     }
 
     @PostMapping()
-    ResponseEntity<BankAccountResponse> create(@RequestBody BankAccountRequest bankAccountRequest,
+    ResponseEntity<BankAccountResponse> create(@RequestBody @Valid BankAccountRequest bankAccountRequest,
                                                BindingResult result,
                                                Principal principal) {
         if (result.hasErrors()) {
@@ -47,19 +48,22 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
                 resolveService(principal.getName()).updateAccount(bankAccountRequest, principal.getName()));
     }
 
-    @GetMapping()
-    ResponseEntity<BankAccountResponse> findAccountByExternalId(Principal principal) {
-        return ResponseEntity.ok(resolveService(principal.getName()).findAccountByPrincipal(principal.getName()));
+    @GetMapping("/{externalId}")
+    ResponseEntity<BankAccountResponse> findAccountByExternalId(@PathVariable UUID externalId, Principal principal) {
+        return ResponseEntity.ok(resolveService(
+                principal.getName()).findAccountByPrincipal(principal.getName(), externalId));
     }
 
-    @DeleteMapping()
-    ResponseEntity<BankAccountResponse> deleteAccount(Principal principal) {
-        return ResponseEntity.ok().body(resolveService(principal.getName()).deleteAccount(principal.getName()));
+    @DeleteMapping("/{externalId}")
+    ResponseEntity<BankAccountResponse> deleteAccount(@PathVariable UUID externalId, Principal principal) {
+        return ResponseEntity.ok().body(resolveService(
+                principal.getName()).deleteAccount(principal.getName(), externalId));
     }
 
-    @GetMapping("/bankBalance")
-    public ResponseEntity<BigDecimal> bankAccountBalance(Principal principal) {
-        return ResponseEntity.ok(resolveService(principal.getName()).getBankAccountBalance(principal.getName()));
+    @GetMapping("/bankBalance/{externalId}")
+    public ResponseEntity<BigDecimal> bankAccountBalance(@PathVariable UUID externalId, Principal principal) {
+        return ResponseEntity.ok(resolveService(
+                principal.getName()).getBankAccountBalance(principal.getName(), externalId));
     }
 
     static BankAccountResponse buildErrorResponse(BindingResult result) {

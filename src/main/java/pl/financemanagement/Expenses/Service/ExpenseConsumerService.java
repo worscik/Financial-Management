@@ -36,8 +36,9 @@ public class ExpenseConsumerService {
         Expense expense = buildExpense(event);
         expenseRepository.save(expense);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountById(event.getUserId())
-                .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+                event.getUserAccount().getId(), event.getBankAccountExternalId() )
+                .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserAccount().getId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
         bankAccountRepository.save(bankAccount);
@@ -56,7 +57,8 @@ public class ExpenseConsumerService {
         expense.setModifyOn(Instant.now());
         expenseRepository.save(expense);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountById(event.getUserId())
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+                event.getUserId(), event.getBankAccountExternalId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());
         bankAccount.setModifyOn(Instant.now());
@@ -77,7 +79,7 @@ public class ExpenseConsumerService {
         expense.setExpenseCategory(event.getExpenseCategory());
         expense.setExpenseType(event.getExpenseType());
         expense.setExpense(event.getExpense());
-        expense.setUserId(event.getUserId());
+        expense.setUser(event.getUserAccount());
         expense.setCreatedOn(Instant.now());
         return expense;
     }

@@ -60,13 +60,13 @@ public class JwtController {
 
         String token = jwtService.generateUserToken(request.getEmail(), user.getUserRole().getRole());
 
-        return ResponseEntity.ok().body(new JWTokenResponse(token, null, SUCCESS.getStatus(), user.getUserRole()));
+        return ResponseEntity.ok().body(new JWTokenResponse(token, null, true, user.getUserRole()));
 
     }
 
     static JWTokenResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new JWTokenResponse(errors, JWTokenStatus.ERROR.getStatus());
+        return new JWTokenResponse(errors, false);
     }
 }

@@ -1,16 +1,13 @@
 package pl.financemanagement.BankAccount.Controller;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 public class BankAccountHandlerExceptions {
@@ -25,10 +22,9 @@ public class BankAccountHandlerExceptions {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BankAccountErrorResponse(false, ex.getMessage()));
     }
 
-    private Map<String, String> buildErrorResponse(BindingResult result) {
-        Map<String, String> errors = new HashMap<>();
-        result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return errors;
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BankAccountErrorResponse(false, ex.getMessage()));
     }
 
 }

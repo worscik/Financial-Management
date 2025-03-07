@@ -2,7 +2,6 @@ package pl.financemanagement.Expenses.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pl.financemanagement.BankAccount.Model.BankAccountDto;
 
 import java.util.Map;
 

@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public class ExpenseDto {
 
-    private final String externalId;
+    private final UUID externalId;
     private final Instant createdOn;
     private final ExpenseCategory expenseCategory;
     private final ExpenseType expenseType;
-    private final String userExternalId;
+    private final UUID userExternalId;
     private final BigDecimal bankBalance;
 
     private ExpenseDto(Builder builder) {
@@ -23,14 +23,14 @@ public class ExpenseDto {
     }
 
     public static class Builder {
-        private String externalId;
+        private UUID externalId;
         private Instant createdOn;
         private ExpenseCategory expenseCategory;
         private ExpenseType expenseType;
-        private String userExternalId;
+        private UUID userExternalId;
         private BigDecimal bankBalance;
 
-        public Builder externalId(String externalId) {
+        public Builder externalId(UUID externalId) {
             this.externalId = externalId;
             return this;
         }
@@ -50,7 +50,7 @@ public class ExpenseDto {
             return this;
         }
 
-        public Builder userId(String userExternalId) {
+        public Builder userExternalId(UUID userExternalId) {
             this.userExternalId = userExternalId;
             return this;
         }
@@ -65,7 +65,7 @@ public class ExpenseDto {
         }
     }
 
-    public String getExternalId() {
+    public UUID getExternalId() {
         return externalId;
     }
 
@@ -81,7 +81,7 @@ public class ExpenseDto {
         return expenseType;
     }
 
-    public String getUserExternalId() {
+    public UUID getUserExternalId() {
         return userExternalId;
     }
 

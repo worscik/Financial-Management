@@ -1,6 +1,6 @@
 CREATE TABLE user_account (
                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                              external_id CHAR(36) NOT NULL,
+                              external_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                               email VARCHAR(255) NOT NULL UNIQUE,
                               name VARCHAR(255),
                               created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -12,13 +12,13 @@ CREATE TABLE user_account (
 
 CREATE TABLE bank_account (
                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                              external_id CHAR(36) NOT NULL,
+                              external_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                               user_id BIGINT NOT NULL,
                               created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               modify_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               account_version BIGINT NOT NULL,
                               account_name VARCHAR(255) NOT NULL,
-                              account_number CHAR(36) NOT NULL,
+                              account_number CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                               account_balance DECIMAL(19, 4),
                               currency VARCHAR(255),
                               FOREIGN KEY (user_id) REFERENCES user_account(id)
@@ -26,7 +26,7 @@ CREATE TABLE bank_account (
 
 CREATE TABLE expense (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         external_id CHAR(36) NOT NULL,
+                         external_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                          version INT NOT NULL,
                          created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                          modify_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,7 +47,7 @@ VALUES
 INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance, currency)
 VALUES
     (UUID(), (SELECT id FROM user_account WHERE email = 'admin@financialapp.com'), 1, 'Admin Account', '9e1f957c-3239-43a4-bd36-550e2ebc03ac', 1000.00, 'USD'),
-    (UUID(), (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'), 1, 'Demo Bank Account', 'ea8ff5cf-6b4e-4e1f-8629-a6806da85f55', 500.00, 'USD'),
+    (UUID(), (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'), 1, 'Demo Bank Account', 'ea8ff5cf-6b4e-4e1f-8629-a6806da85f55', 500.00, 'PLN'),
     (UUID(), (SELECT id FROM user_account WHERE email = 'user@financialapp.com'), 1, 'User Bank Account', '14d67eea-a317-4b6e-88e7-bc5da229f280', 500.00, 'USD');
 
 INSERT INTO expense (external_id, version, created_on, modify_on, expense_item, expense_category, expense_type, expense, user_id)

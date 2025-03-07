@@ -1,62 +1,29 @@
 package pl.financemanagement.BankAccount.Model;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BankAccountRequest {
 
-    private String externalId;
-    @NotBlank
+    private UUID externalId;
+    @NotBlank(message = "account name cannot be empty")
     private String accountName;
-    private long userId;
+    @NotNull(message = "account balance cannot be null")
+    @DecimalMin(value = "0.0", message = "account balance should be more then 0")
     private BigDecimal accountBalance;
+    @NotNull(message = "Currency cannot be null")
+    private Currency currency;
 
-    public BankAccountRequest(BigDecimal accountBalance, long userId, String accountName, String externalId) {
-        this.accountBalance = accountBalance;
-        this.userId = userId;
-        this.accountName = accountName;
-        this.externalId = externalId;
-    }
-
-    public BankAccountRequest(String accountName, long userId) {
-        this.accountName = accountName;
-        this.userId = userId;
-    }
-
-    public BankAccountRequest(long userId) {
-        this.userId = userId;
-    }
-
-    public String getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public BigDecimal getAccountBalance() {
-        return accountBalance;
-    }
-
-    public void setAccountBalance(BigDecimal accountBalance) {
-        this.accountBalance = accountBalance;
-    }
 }
