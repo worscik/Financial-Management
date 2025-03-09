@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import pl.financemanagement.Expenses.Model.Expense;
 
 import java.time.Instant;
@@ -17,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "user_account")
+@Table(name = "user_account", schema = "app")
 public class UserAccount {
 
     @Id
@@ -25,7 +23,6 @@ public class UserAccount {
     private long id;
 
     @Column(name = "external_id", nullable = false, unique = true)
-    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID externalId;
 
     @Column(nullable = false, unique = true)

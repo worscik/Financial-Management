@@ -13,14 +13,14 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
 
     @Query(nativeQuery = true, value = """
             SELECT * 
-            FROM user_account 
+            FROM app.user_account 
             WHERE email = :email
             """)
     Optional<UserAccount> findUserByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true, value = """
             SELECT *
-            FROM user_account 
+            FROM app.user_account 
             WHERE email = :email 
             AND external_id = :externalId
             """)
@@ -29,7 +29,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
 
     @Query(nativeQuery = true, value = """
             SELECT *
-            FROM user_account 
+            FROM app.user_account 
             WHERE id = :id
             """)
     Optional<UserAccount> findUserById(@Param("id") long id);

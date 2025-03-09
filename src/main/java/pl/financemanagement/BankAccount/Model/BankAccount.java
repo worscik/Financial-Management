@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
@@ -16,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "bank_account")
+@Table(name = "bank_account", schema = "app")
 public class BankAccount {
 
     @Id
@@ -24,7 +22,6 @@ public class BankAccount {
     private long id;
 
     @Column(name = "external_id", nullable = false, unique = true)
-    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID externalId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,7 +38,6 @@ public class BankAccount {
     private String accountName;
 
     @Column(name = "account_number", nullable = false, unique = true)
-    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID accountNumber;
 
     @Column(nullable = false)

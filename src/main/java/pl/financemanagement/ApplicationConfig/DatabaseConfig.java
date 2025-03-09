@@ -13,10 +13,10 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/financial");
-        hikariConfig.setUsername("root");
+        hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/finapp");
+        hikariConfig.setUsername("user");
         hikariConfig.setPassword("password");
-        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        hikariConfig.setDriverClassName("org.postgresql.Driver");
         hikariConfig.setMaximumPoolSize(10);
         hikariConfig.setMinimumIdle(2);
         hikariConfig.setIdleTimeout(30000);

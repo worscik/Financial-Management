@@ -3,8 +3,6 @@ package pl.financemanagement.Expenses.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
@@ -14,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "expense")
+@Table(name = "expense", schema = "app")
 public class Expense {
 
     @Id
@@ -22,7 +20,6 @@ public class Expense {
     private long id;
 
     @Column(name = "external_id", nullable = false)
-    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID externalId;
 
     @Version

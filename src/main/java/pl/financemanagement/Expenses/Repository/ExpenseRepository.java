@@ -15,7 +15,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query(nativeQuery = true, value = """
             select *
-            from expense
+            from app.expense
             where external_id = :externalId and user_id = :user_id;
             """)
     Optional<Expense> findExpenseByExternalIdAndUserId(@Param("externalId") UUID externalId,
@@ -24,7 +24,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query(nativeQuery = true, value = """
             select *
-            from expense
+            from app.expense
             where user_id = :user_id;
             """)
     List<Expense> findExpensesByUserId(@Param("user_id") long user_id);

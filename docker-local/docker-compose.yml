@@ -1,18 +1,16 @@
 version: '3'
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    environment:
-      MYSQL_DATABASE: 'financial'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./:/docker-entrypoint-initdb.d
+  db:
+      image: postgres:15
+      environment:
+        POSTGRES_DB: finapp
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: password
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./:/docker-entrypoint-initdb.d
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1

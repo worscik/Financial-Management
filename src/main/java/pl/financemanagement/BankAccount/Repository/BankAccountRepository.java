@@ -15,7 +15,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
 
     @Query(nativeQuery = true, value = """
                         SELECT * 
-                        FROM bank_account  
+                        FROM app.bank_account  
                         WHERE  user_id = :user_id and external_id = :external_id
             """)
     Optional<BankAccount> findBankAccountByUserIdAndExternalId(@Param("user_id") long user_id,
@@ -23,7 +23,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
 
     @Query(nativeQuery = true, value = """
                         select currency 
-                        from bank_account 
+                        from app.bank_account 
                         where user_id = :userId
             """)
     List<String> findAllAccountCurrenciesForUser(@Param("userId") long userId);
