@@ -17,6 +17,7 @@ import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
 import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +29,7 @@ import static pl.financemanagement.User.UserModel.UsersMapper.userDtoMapper;
 class UserServiceImplTest {
 
     private final String TOKEN = "04ccbd93-150f-43cd-b54f-a5e92d7c4a9a";
-    private final String EXTERNAL_ID = "04ccbd93-150f-43cd-b15f-a5e92d7c4a9a";
+    private final UUID EXTERNAL_ID = UUID.fromString("04ccbd93-150f-43cd-b15f-a5e92d7c4a9a");
     private final String USER_EMAIL = "example@email.pl";
     private final String USER_UPDATED_EMAIL = "trele@morele.pl";
     private final String TEST_USER_EMAIL = "test@example.pl";

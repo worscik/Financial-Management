@@ -39,7 +39,7 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     @Override
-    public UserDeleteResponse deleteUser(String externalId, String email) {
+    public UserDeleteResponse deleteUser(UUID externalId, String email) {
         return new UserDeleteResponse(true, "User deleted.");
     }
 

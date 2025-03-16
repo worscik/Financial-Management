@@ -15,6 +15,7 @@ import pl.financemanagement.User.UserService.UserService;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -56,7 +57,7 @@ public class UserController extends DemoResolver<UserService> {
     }
 
     @DeleteMapping("/{externalId}")
-    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam String externalId,
+    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam UUID externalId,
                                                   Principal principal) throws UserNotFoundException {
         return ResponseEntity.ok(resolveService(principal.getName()).deleteUser(externalId, principal.getName()));
     }

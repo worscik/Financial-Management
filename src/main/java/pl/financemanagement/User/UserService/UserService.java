@@ -7,6 +7,8 @@ import pl.financemanagement.User.UserModel.UserRequest;
 import pl.financemanagement.User.UserModel.UserResponse;
 import pl.financemanagement.User.UserModel.UserUpdateRequest;
 
+import java.util.UUID;
+
 @Service("userService")
 public interface UserService {
 
@@ -18,6 +20,6 @@ public interface UserService {
 
     UserResponse getUserById(long id, String email);
 
-    UserDeleteResponse deleteUser(String externalId, String email);
+    UserDeleteResponse deleteUser(UUID externalId, String email);
 
 }

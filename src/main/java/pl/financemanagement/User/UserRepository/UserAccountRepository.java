@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Long> {
@@ -25,7 +26,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
             AND external_id = :externalId
             """)
     Optional<UserAccount> findUserByEmailAndExternalId(@Param("email") String email,
-                                                       @Param("externalId") String externalId);
+                                                       @Param("externalId") UUID externalId);
 
     @Query(nativeQuery = true, value = """
             SELECT *

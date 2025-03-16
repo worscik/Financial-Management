@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -11,7 +13,7 @@ class UserDtoTest {
 
     private final static String USER_EMAIL = "demo@financialapp.com";
     private final static String USER_NAME = "Demo";
-    private final static String EXTERNAL_ID = "f9969a5d-55d2-4e31-83e1-5759500a1e6d";
+    private final static UUID EXTERNAL_ID = UUID.fromString("f9969a5d-55d2-4e31-83e1-5759500a1e6d");
 
     @Test
     void buildUserDto() {

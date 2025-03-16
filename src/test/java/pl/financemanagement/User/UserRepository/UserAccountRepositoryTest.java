@@ -1,5 +1,6 @@
 package pl.financemanagement.User.UserRepository;
 
+import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -9,6 +10,7 @@ import pl.financemanagement.User.UserModel.UserAccount;
 import pl.financemanagement.User.UserModel.UserRole;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -17,7 +19,7 @@ class UserAccountRepositoryTest {
 
     private static final String BASIC_EMAIL = "email@email.com";
     private static final String BASIC_NAME = "name";
-    private static final String EXTERNAL_ID = "7182075c-8185-4544-a4a6-dff75afeda3f";
+    private static final UUID EXTERNAL_ID = UUID.fromString("7182075c-8185-4544-a4a6-dff75afeda3f");
 
     @Autowired
     private UserAccountRepository userAccountRepository;
@@ -110,7 +112,7 @@ class UserAccountRepositoryTest {
         assertThat(expected).isEmpty();
     }
 
-    private static UserAccount buildUserAccount(String email, String name, String externalId) {
+    private static UserAccount buildUserAccount(String email, String name, UUID externalId) {
         UserAccount userAccount = new UserAccount();
         userAccount.setEmail(email);
         userAccount.setName(name);

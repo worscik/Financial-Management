@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDeleteResponse deleteUser(String externalId, String email) throws UserNotFoundException {
+    public UserDeleteResponse deleteUser(UUID externalId, String email) throws UserNotFoundException {
         UserAccount userAccount = userAccountRepository.findUserByEmailAndExternalId(email, externalId)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
 
