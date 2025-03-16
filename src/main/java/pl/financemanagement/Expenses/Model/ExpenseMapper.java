@@ -11,7 +11,7 @@ public class ExpenseMapper {
     public static ExpenseDto mapToDtoWithBankBalanceAndUserExternalId(Expense expense,
                                                                       BigDecimal bankAccount,
                                                                       UUID userAccount) {
-        return new ExpenseDto.Builder()
+        return ExpenseDto.builder()
                 .externalId(expense.getExternalId())
                 .expenseCategory(expense.getExpenseCategory())
                 .expenseType(expense.getExpenseType())
@@ -43,7 +43,7 @@ public class ExpenseMapper {
     }
 
     public static ExpenseDto mapToDto(Expense expense) {
-        return new ExpenseDto.Builder()
+        return ExpenseDto.builder()
                 .externalId(expense.getExternalId())
                 .expenseCategory(expense.getExpenseCategory())
                 .expenseType(expense.getExpenseType())

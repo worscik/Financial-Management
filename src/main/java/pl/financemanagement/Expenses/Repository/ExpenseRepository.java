@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.financemanagement.Expenses.Model.Expense;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,18 +15,18 @@ import java.util.UUID;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query(nativeQuery = true, value = """
-            select *
-            from app.expense
-            where external_id = :externalId and user_id = :user_id;
+            SELECT *
+            FROM app.expense
+            WHERE external_id = :externalId AND user_id = :user_id;
             """)
     Optional<Expense> findExpenseByExternalIdAndUserId(@Param("externalId") UUID externalId,
-                                                     @Param("user_id") long user_id);
+                                                       @Param("user_id") long user_id);
 
 
     @Query(nativeQuery = true, value = """
-            select *
-            from app.expense
-            where user_id = :user_id;
+            SELECT *
+            FROM app.expense
+            WHERE user_id = :user_id;
             """)
     List<Expense> findExpensesByUserId(@Param("user_id") long user_id);
 

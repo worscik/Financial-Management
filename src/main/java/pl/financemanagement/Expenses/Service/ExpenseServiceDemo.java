@@ -45,7 +45,7 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     private ExpenseDto buildExpenseDto() {
-        return new ExpenseDto.Builder()
+        return ExpenseDto.builder()
                 .userExternalId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.INCOME)
                 .createdOn(Instant.now())
@@ -56,7 +56,7 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     private ExpenseDto buildUpsertedExpenseDto() {
-        return new ExpenseDto.Builder()
+        return ExpenseDto.builder()
                 .userExternalId(USER_EXTERNAL_ID)
                 .expenseType(ExpenseType.EXPENSE)
                 .createdOn(Instant.now())

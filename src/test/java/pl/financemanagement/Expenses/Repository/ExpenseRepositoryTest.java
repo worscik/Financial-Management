@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ExpenseRepositoryTest {
 
     private static final UUID EXTERNAL_ID = UUID.fromString("2ae2eeba-7980-458c-9677-8bc41abf2945");
-    private static final UUID USER_EXTERNAL_ID = UUID.fromString("167b91fc-d8e3-45f1-bae2-4131e8a073d8"));
+    private static final UUID USER_EXTERNAL_ID = UUID.fromString("167b91fc-d8e3-45f1-bae2-4131e8a073d8");
     private static final UUID EXTERNAL_ID_2 = UUID.fromString("d8853a30-5c3f-4744-9a86-59f5f4ee1d0b");
     private static final UUID EXTERNAL_ID1_3 = UUID.fromString("4e4221eb-d6ee-4c92-9ec5-d595d9897f40");
     private static final String EMAIL = "exampleEmail";
