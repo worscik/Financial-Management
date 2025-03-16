@@ -45,7 +45,8 @@ public class SpringSecurity {
                                 "/v3/api-docs/**",
                                 "/user/register",
                                 "/login",
-                                "/expense/categories").permitAll()
+                                "/expense/categories",
+                                "/event/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
