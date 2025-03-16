@@ -11,10 +11,6 @@ public class AppTools {
     public static final String UUID_REGEX =
             String.valueOf(Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"));
 
-    public static boolean isBlank(String value){
-        return value.isBlank() || value.isEmpty();
-    }
-
     public static boolean isNotBlank(String value){
         return !value.isBlank() || !value.isEmpty();
     }

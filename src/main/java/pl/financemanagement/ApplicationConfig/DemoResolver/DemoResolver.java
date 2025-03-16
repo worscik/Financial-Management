@@ -20,7 +20,4 @@ public class DemoResolver<T> {
         return service;
     }
 
-    public T isDemo(boolean isDemo) {
-        return isDemo ? demoService : service;
-    }
 }
