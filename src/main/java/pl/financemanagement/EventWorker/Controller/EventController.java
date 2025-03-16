@@ -1,6 +1,8 @@
 package pl.financemanagement.EventWorker.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,13 +12,14 @@ import pl.financemanagement.EventWorker.Service.EventServiceImpl;
 
 @RestController
 @RequestMapping("/event")
+@EnableKafka
 public class EventController {
 
-    private final EventServiceImpl eventService;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
-    public EventController(EventServiceImpl eventService) {
-        this.eventService = eventService;
+    public EventController(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @GetMapping("/testEvent")
@@ -26,7 +29,7 @@ public class EventController {
                 .eventType(EventType.CALCULATE_REVENUE_STATS)
                 .userId(1L)
                 .build();
-        eventService.execute(event);
+        kafkaTemplate.send("event", event);
     }
 
 }

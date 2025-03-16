@@ -7,7 +7,7 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.Instant;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
