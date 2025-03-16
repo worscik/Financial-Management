@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.financemanagement.JWToken.Model.JWTokenResponse;
-import pl.financemanagement.JWToken.Model.JWTokenStatus;
 import pl.financemanagement.JWToken.Model.exceptions.ForbiddenAccessException;
 import pl.financemanagement.JWToken.Service.JwtServiceImpl;
 import pl.financemanagement.PasswordTools.PasswordService;
@@ -22,8 +21,6 @@ import pl.financemanagement.User.UserRepository.UserAccountRepository;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static pl.financemanagement.JWToken.Model.JWTokenStatus.SUCCESS;
 
 @RestController
 @CrossOrigin(value = "*")
@@ -61,7 +58,6 @@ public class JwtController {
         String token = jwtService.generateUserToken(request.getEmail(), user.getUserRole().getRole());
 
         return ResponseEntity.ok().body(new JWTokenResponse(token, null, true, user.getUserRole()));
-
     }
 
     static JWTokenResponse buildErrorResponse(BindingResult result) {
@@ -69,4 +65,5 @@ public class JwtController {
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new JWTokenResponse(errors, false);
     }
+
 }
